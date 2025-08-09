@@ -1,3 +1,4 @@
 export function BulldozeTool() {
-	return null;
+  // TODO: implementar remoção de objeto/parede/piso sob cursor (raycast)
+  return null;
 }

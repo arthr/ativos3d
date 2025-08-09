@@ -1,4 +1,4 @@
 export function FloorLayer() {
-	// Placeholder: piso (tiles) serão renderizados aqui
-	return null;
+  // TODO: renderizar tiles de piso (instanced boxes/quads) com textura
+  return null;
 }

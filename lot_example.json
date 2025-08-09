@@ -1,9 +1,10 @@
 {
-    "width": 30,
-    "height": 20,
-    "objects": [],
-    "walls": [],
-    "floor": [],
-    "budget": { "funds": 1000, "spent": 0 },
-    "version": 1
-  }
+  "width": 30,
+  "depth": 50,
+  "height": 3,
+  "objects": [],
+  "walls": [],
+  "floor": [],
+  "budget": { "funds": 1000, "spent": 0 },
+  "version": 1
+}

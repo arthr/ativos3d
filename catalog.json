@@ -57,8 +57,8 @@
     "name": "Luminária",
     "price": 90,
     "category": "light",
-    "tags": [],
-    "footprint": { "kind": "box", "w": 0.5, "d": 0.5, "h": 1.6 },
+    "tags": ["fixed_to_ceiling"],
+    "footprint": { "kind": "box", "w": 0.5, "d": 0.5, "h": 0.6 },
     "art": { "color": "#f59e0b" }
   },
   {
@@ -94,6 +94,7 @@
     "price": 4,
     "category": "floor",
     "tags": ["floor"],
+    "footprint": { "kind": "box", "w": 1, "d": 1, "h": 0.01 },
     "art": { "texture": "/assets/textures/floor_wood.jpg" }
   },
   {

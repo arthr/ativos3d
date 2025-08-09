@@ -7,10 +7,10 @@ SPA para construir um cômodo em grade 3D (plano XZ), posicionar objetos do cat�
 - React Three Fiber (Three.js)
 - Zustand
 
-Dependências opcionais: nenhuma no MVP. O projeto usa `OrbitControls` da Three (via `three/examples`), sem `@react-three/drei`.
+Dependências relevantes: usamos `@react-three/drei` (Hud/Html). Não usamos `OrbitControls` neste MVP.
 
 ## Decisões de Renderização
-- Câmera ortográfica top‑down com leve tilt (isométrico leve): posição padrão `[20, 20, 20]`, apontando para `[0, 0, 0]`.
+- Câmera perspective com tilt isométrico leve: posição padrão `[20, 20, 20]`, apontando para `[0, 0, 0]`. //TODO: oferecer modo ortográfico alternativo
 - Plano de trabalho em XZ (Y = altura). Grid renderizado com `gridHelper`.
 - Unidades: 1 unidade = 1 tile.
 
@@ -18,7 +18,7 @@ Dependências opcionais: nenhuma no MVP. O projeto usa `OrbitControls` da Three 
 - 1 Place, 2 Move/Rotate, 3 Wall, 4 Floor, B Bulldoze, E Eyedropper, R Rotaciona
 - Ctrl+Z / Ctrl+Y: Undo/Redo
 
-## Estrutura de Pastas (inicial)
+## Estrutura de Pastas (atual)
 ```
 /src
   /app
@@ -49,11 +49,16 @@ Dependências opcionais: nenhuma no MVP. O projeto usa `OrbitControls` da Three 
       BulldozeTool.tsx
       EyedropperTool.tsx
   /ui
-    CatalogPanel.tsx
+    /hud
+      CatalogHud.tsx
+      InspectorHud.tsx
+      index.ts
     Toolbar.tsx
-    Inspector.tsx
     BudgetBar.tsx
     Topbar.tsx
+  /assets
+    /models   (.gitkeep)
+    /textures (.gitkeep)
 main.tsx
 index.css
 ```
@@ -73,6 +78,8 @@ index.css
 - Mapa do repo: `docs/repo_map.md`
 
 ## Próximos Passos
-- Completar ferramentas (Place/Move/Wall/Floor) e pipeline de validação 3D
-- Evoluir `catalog.json` para footprints 3D (box/poly) e slots em XZ
-- Implementar export/import e geração de thumbnail (`gl.domElement.toDataURL()`)
+- Completar ferramentas (Move/Wall/Floor/Bulldoze/Eyedropper) //TODO
+- Pipeline de validação 3D (clearance, needs_wall, slots) //TODO
+- Evoluir `catalog.json` para footprints poly e slots completos //TODO
+- Export/import lote + thumbnail (`gl.domElement.toDataURL()`) //TODO
+- Adicionar lint/format (ESLint + Prettier) e scripts no `package.json` //TODO

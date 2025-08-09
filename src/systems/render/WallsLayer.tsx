@@ -1,4 +1,4 @@
 export function WallsLayer() {
-	// Placeholder: paredes serão renderizadas aqui
-	return null;
+  // TODO: extrusar segmentos de parede como boxes finos (espessura/altura)
+  return null;
 }

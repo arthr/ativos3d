@@ -1,3 +1,4 @@
 export function MoveRotateTool() {
-	return null;
+  // TODO: implementar drag para mover objeto selecionado e tecla R para rotacionar
+  return null;
 }

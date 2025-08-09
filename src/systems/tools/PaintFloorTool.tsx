@@ -1,3 +1,4 @@
 export function PaintFloorTool() {
-	return null;
+  // TODO: implementar pincel por tile; clique adiciona/alternar textura de piso
+  return null;
 }
