@@ -2,7 +2,7 @@ import { useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { useStore } from "../../store/useStore";
-import { intersectGround, isHudEventTarget, snapToGrid } from "./toolUtils";
+import { intersectGround, snapToGrid } from "./toolUtils";
 import { eventBus } from "../../core/events";
 
 export function BulldozeTool() {
@@ -10,6 +10,7 @@ export function BulldozeTool() {
   const cameraGestureActive = useStore((s) => s.cameraGestureActive);
   const { camera, gl, scene } = useThree();
   const raycaster = useMemo(() => new THREE.Raycaster(), []);
+  // pointerNdc do store é usado apenas para calcular ndc atual ao clicar
   const pointerNdc = useStore((s) => s.input.pointerNdc);
   const hover = useRef<
     { kind: "object"; id: string } | { kind: "tile"; x: number; z: number } | null

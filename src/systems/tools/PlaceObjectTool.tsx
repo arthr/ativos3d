@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { useStore } from "../../store/useStore";
 import { catalog } from "../../core/catalog";
-import { intersectGround, isHudEventTarget, snapToGrid } from "./toolUtils";
+import { intersectGround, snapToGrid } from "./toolUtils";
 import { eventBus } from "../../core/events";
 
 export function PlaceObjectTool() {

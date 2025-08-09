@@ -2,7 +2,7 @@ import { useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { useStore } from "../../store/useStore";
-import { intersectGround, isHudEventTarget, snapToGrid } from "./toolUtils";
+import { intersectGround, snapToGrid } from "./toolUtils";
 import { eventBus } from "../../core/events";
 
 export function PaintFloorTool() {
@@ -11,7 +11,7 @@ export function PaintFloorTool() {
   const selectedCatalogId = useStore((s) => s.selectedCatalogId);
   const { camera, gl } = useThree();
   const raycaster = useMemo(() => new THREE.Raycaster(), []);
-  const pointerNdc = useStore((s) => s.input.pointerNdc);
+  // pointerNdc não é mais necessário aqui; usamos eventBus
   const hoverTile = useRef<{ x: number; z: number } | null>(null);
 
   useEffect(() => {

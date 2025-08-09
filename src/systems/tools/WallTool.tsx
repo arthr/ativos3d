@@ -1,4 +1,4 @@
-import { useThree } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { useStore } from "../../store/useStore";
@@ -79,23 +79,24 @@ export function WallTool() {
         setEnd(null);
       }, 0);
     }
-    function onPointerMoveDraw() {
-      if (activeTool !== "wall" || cameraGestureActive || !start) return;
-      const ndc = new THREE.Vector2(pointerNdc.x, pointerNdc.y);
-      const hit = intersectGround(raycaster, camera, ndc);
-      if (!hit) return;
-      const snapped = snapToGrid(hit, "round");
-      setEnd(snapped);
-    }
     window.addEventListener("mousedown", onPointerDown);
     window.addEventListener("mouseup", onPointerUp);
-    const id = setInterval(onPointerMoveDraw, 16);
     return () => {
       window.removeEventListener("mousedown", onPointerDown);
       window.removeEventListener("mouseup", onPointerUp);
-      clearInterval(id);
     };
   }, [activeTool, camera, gl, raycaster, start, end, pointerNdc, cameraGestureActive]);
+
+  // Atualiza o preview sincronizado ao render loop
+  useFrame(() => {
+    if (activeTool !== "wall" || cameraGestureActive || !start) return;
+    const ndc = new THREE.Vector2(pointerNdc.x, pointerNdc.y);
+    const hit = intersectGround(raycaster, camera, ndc);
+    if (!hit) return;
+    const snapped = snapToGrid(hit, "round");
+    // Evita setState redundante
+    if (!end || !end.equals(snapped)) setEnd(snapped);
+  });
 
   // Opcional: encerrar desenho ao pointerUp via eventBus
   useEffect(() => {
