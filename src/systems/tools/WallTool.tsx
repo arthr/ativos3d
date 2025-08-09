@@ -2,6 +2,7 @@ import { useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { useStore } from "../../store/useStore";
+import { getNormalizedPointer, intersectGround, isHudEventTarget, snapToGrid } from "./toolUtils";
 
 export function WallTool() {
   const activeTool = useStore((s) => s.activeTool);
@@ -15,9 +16,7 @@ export function WallTool() {
 
   useEffect(() => {
     function onPointerMove(e: PointerEvent) {
-      const rect = gl.domElement.getBoundingClientRect();
-      pointer.current.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-      pointer.current.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+      getNormalizedPointer(e, gl.domElement, pointer.current);
     }
     window.addEventListener("pointermove", onPointerMove);
     return () => window.removeEventListener("pointermove", onPointerMove);
@@ -25,67 +24,73 @@ export function WallTool() {
 
   useEffect(() => {
     function onPointerDown(e: MouseEvent) {
-      if (activeTool !== "wall" || cameraGestureActive) return;
-      const rect = gl.domElement.getBoundingClientRect();
-      const target = e.target as HTMLElement | null;
-      if (target?.closest('[data-hud="true"]')) return;
-      pointer.current.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-      pointer.current.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
-      raycaster.setFromCamera(pointer.current, camera);
-      const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
-      const hit = raycaster.ray.intersectPlane(plane, new THREE.Vector3());
+      // Somente botão esquerdo, sem gesto de câmera e sem Space pressionado
+      if (
+        activeTool !== "wall" ||
+        cameraGestureActive ||
+        e.button !== 0 ||
+        e.getModifierState("Space")
+      )
+        return;
+      if (isHudEventTarget(e)) return;
+      getNormalizedPointer(e, gl.domElement, pointer.current);
+      const hit = intersectGround(raycaster, camera, pointer.current);
       if (!hit) return;
-      const snapped = new THREE.Vector3(Math.round(hit.x), 0, Math.round(hit.z));
+      const snapped = snapToGrid(hit, "round");
       setStart(snapped);
       setEnd(snapped.clone());
     }
     function onPointerUp(e: MouseEvent) {
-      if (activeTool !== "wall" || cameraGestureActive || !start || !end) return;
-      // Constrange a ortogonal e cria sequência de segmentos
-      const dx = Math.round(end.x - start.x);
-      const dz = Math.round(end.z - start.z);
-      let segments: { ax: number; ay: number; az: number; bx: number; by: number; bz: number }[] =
-        [];
-      if (Math.abs(dx) >= Math.abs(dz)) {
-        const step = dx >= 0 ? 1 : -1;
-        for (let i = 0; i !== dx; i += step) {
-          const ax = start.x + i;
-          const bx = start.x + i + step;
-          segments.push({ ax, ay: 0, az: start.z, bx, by: 0, bz: start.z });
+      if (e.button !== 0) return;
+      // adiar commit para garantir Stage atualizar gesture
+      setTimeout(() => {
+        if (activeTool !== "wall" || useStore.getState().cameraGestureActive || !start || !end)
+          return;
+        // Constrange a ortogonal e cria sequência de segmentos
+        const dx = Math.round(end.x - start.x);
+        const dz = Math.round(end.z - start.z);
+        let segments: { ax: number; ay: number; az: number; bx: number; by: number; bz: number }[] =
+          [];
+        if (Math.abs(dx) >= Math.abs(dz)) {
+          const step = dx >= 0 ? 1 : -1;
+          for (let i = 0; i !== dx; i += step) {
+            const ax = start.x + i;
+            const bx = start.x + i + step;
+            segments.push({ ax, ay: 0, az: start.z, bx, by: 0, bz: start.z });
+          }
+        } else {
+          const step = dz >= 0 ? 1 : -1;
+          for (let i = 0; i !== dz; i += step) {
+            const az = start.z + i;
+            const bz = start.z + i + step;
+            segments.push({ ax: start.x, ay: 0, az, bx: start.x, by: 0, bz });
+          }
         }
-      } else {
-        const step = dz >= 0 ? 1 : -1;
-        for (let i = 0; i !== dz; i += step) {
-          const az = start.z + i;
-          const bz = start.z + i + step;
-          segments.push({ ax: start.x, ay: 0, az, bx: start.x, by: 0, bz });
+        // Clipa aos limites do lote
+        const lotState = useStore.getState().lot;
+        segments = segments.filter(
+          (s) =>
+            s.ax >= 0 &&
+            s.bx >= 0 &&
+            s.az >= 0 &&
+            s.bz >= 0 &&
+            s.ax <= lotState.width &&
+            s.bx <= lotState.width &&
+            s.az <= lotState.depth &&
+            s.bz <= lotState.depth,
+        );
+        if (segments.length) {
+          useStore.setState((s) => ({ walls: [...s.walls, ...segments] }));
         }
-      }
-      // Clipa aos limites do lote
-      segments = segments.filter(
-        (s) =>
-          s.ax >= 0 &&
-          s.bx >= 0 &&
-          s.az >= 0 &&
-          s.bz >= 0 &&
-          s.ax <= lot.width &&
-          s.bx <= lot.width &&
-          s.az <= lot.depth &&
-          s.bz <= lot.depth,
-      );
-      if (segments.length) {
-        useStore.setState((s) => ({ walls: [...s.walls, ...segments] }));
-      }
-      setStart(null);
-      setEnd(null);
+        setStart(null);
+        setEnd(null);
+      }, 0);
     }
     function onPointerMoveDraw() {
       if (activeTool !== "wall" || cameraGestureActive || !start) return;
-      raycaster.setFromCamera(pointer.current, camera);
-      const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
-      const hit = raycaster.ray.intersectPlane(plane, new THREE.Vector3());
+      const hit = intersectGround(raycaster, camera, pointer.current);
       if (!hit) return;
-      const snapped = new THREE.Vector3(Math.round(hit.x), 0, Math.round(hit.z));
+      const snapped = snapToGrid(hit, "round");
       setEnd(snapped);
     }
     window.addEventListener("mousedown", onPointerDown);
@@ -108,6 +113,7 @@ export function WallTool() {
   const cx = (start.x + end.x) / 2;
   const cz = (start.z + end.z) / 2;
   const previewHeight = Math.max(1, lot.height * 0.5);
+  //TODO: Validar e evitar segmentos vazios quando start===end (comprimento 0)
   return (
     <mesh position={[cx, previewHeight / 2, cz]} rotation={[0, yaw, 0]}>
       <boxGeometry args={[Math.max(0.001, len), previewHeight, 0.05]} />

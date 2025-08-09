@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { useStore } from "../../store/useStore";
 import { catalog } from "../../core/catalog";
+import { getNormalizedPointer, intersectGround, isHudEventTarget, snapToGrid } from "./toolUtils";
 
 export function PlaceObjectTool() {
   const activeTool = useStore((s) => s.activeTool);
@@ -48,9 +49,7 @@ export function PlaceObjectTool() {
   useEffect(() => {
     function onPointerMove(e: PointerEvent) {
       // Usar o retângulo do canvas, independente do alvo do evento (HUD Html é irmão, não pai, do canvas)
-      const rect = gl.domElement.getBoundingClientRect();
-      pointer.current.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-      pointer.current.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+      getNormalizedPointer(e, gl.domElement, pointer.current);
     }
     window.addEventListener("pointermove", onPointerMove);
     return () => window.removeEventListener("pointermove", onPointerMove);
@@ -62,9 +61,7 @@ export function PlaceObjectTool() {
       return;
     }
     // Raycast contra plano XZ (y=0)
-    raycaster.setFromCamera(pointer.current, camera);
-    const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
-    const hit = raycaster.ray.intersectPlane(plane, new THREE.Vector3());
+    const hit = intersectGround(raycaster, camera, pointer.current);
     if (!hit) {
       setPreview(null);
       return;
@@ -76,7 +73,7 @@ export function PlaceObjectTool() {
     }
     const fp = item.footprint || { w: 1, d: 1, h: 1 };
     // Snap ao grid inteiro
-    const snapped = new THREE.Vector3(Math.floor(hit.x), 0, Math.floor(hit.z));
+    const snapped = snapToGrid(hit, "floor");
 
     const yaw = (preview?.yawDeg ?? 0) as 0 | 90 | 180 | 270;
     const baseW = fp.w ?? 1;
@@ -138,9 +135,8 @@ export function PlaceObjectTool() {
 
   useEffect(() => {
     function onClick(e: MouseEvent) {
-      const target = e.target as HTMLElement | null;
       // Ignorar cliques na HUD (Html overlay) identificada por data-hud ou se a câmera está em gesto
-      if (target?.closest('[data-hud="true"]') || cameraGestureActive) return;
+      if (isHudEventTarget(e) || cameraGestureActive) return;
       if (activeTool !== "place" || !preview || !selectedCatalogId || !preview.valid) return;
       const id = crypto.randomUUID();
       const obj = {

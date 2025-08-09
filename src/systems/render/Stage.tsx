@@ -13,6 +13,7 @@ export function Stage() {
   const setCameraGestureActive = useStore((s) => s.setCameraGestureActive);
   const [isSpaceDown, setIsSpaceDown] = useState(false);
   const [isPanDragging, setIsPanDragging] = useState(false);
+  const [isRotateDragging, setIsRotateDragging] = useState(false);
   useEffect(() => {
     const cam = camera as THREE.PerspectiveCamera;
     // Config padrão: isométrico leve
@@ -54,7 +55,12 @@ export function Stage() {
       if (e.code === "Space") {
         e.preventDefault();
         setIsSpaceDown(false);
-        if (!isPanDragging) canvas.style.cursor = "auto";
+        if (isPanDragging) {
+          setIsPanDragging(false);
+        }
+        // recomputa gesto ativo baseado em rotate
+        setCameraGestureActive(isRotateDragging);
+        canvas.style.cursor = isRotateDragging ? "auto" : "auto";
       }
     };
     const onPointerDown = (e: PointerEvent) => {
@@ -65,15 +71,23 @@ export function Stage() {
       }
       if (e.button === 2) {
         // Right mouse begins rotate gesture
+        setIsRotateDragging(true);
         setCameraGestureActive(true);
       }
     };
-    const onPointerUp = () => {
-      if (isPanDragging) {
+    const onPointerUp = (e: PointerEvent) => {
+      let nextPan = isPanDragging;
+      let nextRot = isRotateDragging;
+      if (e.button === 0 && isPanDragging) {
+        nextPan = false;
         setIsPanDragging(false);
         canvas.style.cursor = isSpaceDown ? "grab" : "auto";
       }
-      setCameraGestureActive(false);
+      if (e.button === 2 && isRotateDragging) {
+        nextRot = false;
+        setIsRotateDragging(false);
+      }
+      setCameraGestureActive(nextPan || nextRot);
     };
     const onContextMenu = (e: Event) => {
       // Evitar menu de contexto durante rotação com botão direito

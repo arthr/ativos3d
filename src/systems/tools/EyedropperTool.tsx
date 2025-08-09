@@ -2,6 +2,7 @@ import { useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { useStore } from "../../store/useStore";
+import { getNormalizedPointer, isHudEventTarget } from "./toolUtils";
 
 export function EyedropperTool() {
   const activeTool = useStore((s) => s.activeTool);
@@ -14,9 +15,7 @@ export function EyedropperTool() {
 
   useEffect(() => {
     function onPointerMove(e: PointerEvent) {
-      const rect = gl.domElement.getBoundingClientRect();
-      pointer.current.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-      pointer.current.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+      getNormalizedPointer(e, gl.domElement, pointer.current);
       if (activeTool !== "eyedropper") return;
       raycaster.setFromCamera(pointer.current, camera);
       const hits = raycaster.intersectObjects(scene.children, true);
@@ -32,8 +31,7 @@ export function EyedropperTool() {
   useEffect(() => {
     function onClick(e: MouseEvent) {
       if (activeTool !== "eyedropper" || cameraGestureActive) return;
-      const target = e.target as HTMLElement | null;
-      if (target?.closest('[data-hud="true"]')) return;
+      if (isHudEventTarget(e)) return;
       raycaster.setFromCamera(pointer.current, camera);
       const hits = raycaster.intersectObjects(scene.children, true);
       const objHit = hits.find((h) => h.object?.userData?.defId);

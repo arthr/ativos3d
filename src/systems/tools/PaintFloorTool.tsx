@@ -2,6 +2,7 @@ import { useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { useStore } from "../../store/useStore";
+import { getNormalizedPointer, intersectGround, isHudEventTarget, snapToGrid } from "./toolUtils";
 
 export function PaintFloorTool() {
   const activeTool = useStore((s) => s.activeTool);
@@ -14,18 +15,15 @@ export function PaintFloorTool() {
 
   useEffect(() => {
     function onPointerMove(e: PointerEvent) {
-      const rect = gl.domElement.getBoundingClientRect();
-      pointer.current.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-      pointer.current.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+      getNormalizedPointer(e, gl.domElement, pointer.current);
       if (activeTool !== "floor") return;
-      raycaster.setFromCamera(pointer.current, camera);
-      const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
-      const hit = raycaster.ray.intersectPlane(plane, new THREE.Vector3());
+      const hit = intersectGround(raycaster, camera, pointer.current);
       if (!hit) {
         hoverTile.current = null;
         return;
       }
-      hoverTile.current = { x: Math.floor(hit.x), z: Math.floor(hit.z) };
+      const snapped = snapToGrid(hit, "floor");
+      hoverTile.current = { x: snapped.x, z: snapped.z };
     }
     window.addEventListener("pointermove", onPointerMove);
     return () => window.removeEventListener("pointermove", onPointerMove);
@@ -34,15 +32,14 @@ export function PaintFloorTool() {
   useEffect(() => {
     function onClick(e: MouseEvent) {
       if (activeTool !== "floor" || cameraGestureActive) return;
-      const target = e.target as HTMLElement | null;
-      if (target?.closest('[data-hud="true"]')) return;
+      if (isHudEventTarget(e)) return;
       raycaster.setFromCamera(pointer.current, camera);
-      const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
-      const hit = raycaster.ray.intersectPlane(plane, new THREE.Vector3());
+      const hit = intersectGround(raycaster, camera, pointer.current);
       if (!hit) return;
+      const snapped = snapToGrid(hit, "floor");
       const tile = {
-        x: Math.floor(hit.x),
-        z: Math.floor(hit.z),
+        x: snapped.x,
+        z: snapped.z,
         tex: selectedCatalogId ?? "floor",
       };
       useStore.setState((s) => {

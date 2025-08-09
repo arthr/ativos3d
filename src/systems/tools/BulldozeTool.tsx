@@ -2,6 +2,7 @@ import { useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { useStore } from "../../store/useStore";
+import { getNormalizedPointer, intersectGround, isHudEventTarget, snapToGrid } from "./toolUtils";
 
 export function BulldozeTool() {
   const activeTool = useStore((s) => s.activeTool);
@@ -15,9 +16,7 @@ export function BulldozeTool() {
 
   useEffect(() => {
     function onPointerMove(e: PointerEvent) {
-      const rect = gl.domElement.getBoundingClientRect();
-      pointer.current.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-      pointer.current.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+      getNormalizedPointer(e, gl.domElement, pointer.current);
       if (activeTool !== "bulldoze") return;
       raycaster.setFromCamera(pointer.current, camera);
       const hits = raycaster.intersectObjects(scene.children, true);
@@ -26,13 +25,13 @@ export function BulldozeTool() {
         hover.current = { kind: "object", id: objHit.object.userData.idObjeto as string };
         return;
       }
-      const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
-      const hit = raycaster.ray.intersectPlane(plane, new THREE.Vector3());
+      const hit = intersectGround(raycaster, camera, pointer.current);
       if (!hit) {
         hover.current = null;
         return;
       }
-      hover.current = { kind: "tile", x: Math.floor(hit.x), z: Math.floor(hit.z) };
+      const snapped = snapToGrid(hit, "floor");
+      hover.current = { kind: "tile", x: snapped.x, z: snapped.z };
     }
     window.addEventListener("pointermove", onPointerMove);
     return () => window.removeEventListener("pointermove", onPointerMove);
@@ -41,8 +40,7 @@ export function BulldozeTool() {
   useEffect(() => {
     function onClick(e: MouseEvent) {
       if (activeTool !== "bulldoze" || cameraGestureActive) return;
-      const target = e.target as HTMLElement | null;
-      if (target?.closest('[data-hud="true"]')) return;
+      if (isHudEventTarget(e)) return;
       raycaster.setFromCamera(pointer.current, camera);
       // Raycast na cena por meshes com userData.idObjeto
       const hits = raycaster.intersectObjects(scene.children, true);
@@ -53,11 +51,11 @@ export function BulldozeTool() {
         return;
       }
       // Nada de objeto: apagar piso do tile clicado
-      const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
-      const hit = raycaster.ray.intersectPlane(plane, new THREE.Vector3());
+      const hit = intersectGround(raycaster, camera, pointer.current);
       if (!hit) return;
-      const x = Math.floor(hit.x);
-      const z = Math.floor(hit.z);
+      const snapped = snapToGrid(hit, "floor");
+      const x = snapped.x;
+      const z = snapped.z;
       useStore.setState((s) => ({ floor: s.floor.filter((t) => !(t.x === x && t.z === z)) }));
     }
     window.addEventListener("click", onClick);
