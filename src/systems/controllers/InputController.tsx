@@ -2,7 +2,8 @@ import { useEffect, useMemo, useRef } from "react";
 import { useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { useStore } from "../../store/useStore";
-import { getNormalizedPointer, intersectGround } from "../tools/toolUtils";
+import { getNormalizedPointer, intersectGround, isHudEventTarget } from "../tools/toolUtils";
+import { eventBus } from "../../core/events";
 
 // Mediator/Observer: centraliza eventos de ponteiro/teclado e publica no store
 export function InputController() {
@@ -19,20 +20,48 @@ export function InputController() {
       setPointerNdc(ndc.current.x, ndc.current.y);
       const hit = intersectGround(raycaster, camera, ndc.current);
       setGroundPoint(hit ? { x: hit.x, y: hit.y, z: hit.z } : null);
+      eventBus.emit("pointerNdc", { x: ndc.current.x, y: ndc.current.y });
+      eventBus.emit("groundPoint", hit ? { x: hit.x, y: hit.y, z: hit.z } : null);
     }
     function onKeyDown(e: KeyboardEvent) {
       setKeyDown(e.code, true);
+      eventBus.emit("keyDown", {
+        code: e.code,
+        shift: e.shiftKey,
+        alt: e.altKey,
+        ctrl: e.ctrlKey,
+        meta: e.metaKey,
+      });
     }
     function onKeyUp(e: KeyboardEvent) {
       setKeyDown(e.code, false);
+      eventBus.emit("keyUp", {
+        code: e.code,
+        shift: e.shiftKey,
+        alt: e.altKey,
+        ctrl: e.ctrlKey,
+        meta: e.metaKey,
+      });
+    }
+    function onClick(e: MouseEvent) {
+      // Usa último NDC/ground calculado; evita recomputar aqui
+      const hudTarget = isHudEventTarget(e);
+      eventBus.emit("click", {
+        button: e.button,
+        ndc: { x: ndc.current.x, y: ndc.current.y },
+        ground: useStore.getState().input.groundPoint,
+        hudTarget,
+      });
     }
     window.addEventListener("pointermove", onPointerMove);
     window.addEventListener("keydown", onKeyDown);
     window.addEventListener("keyup", onKeyUp);
+    window.addEventListener("click", onClick);
     return () => {
       window.removeEventListener("pointermove", onPointerMove);
       window.removeEventListener("keydown", onKeyDown);
       window.removeEventListener("keyup", onKeyUp);
+      window.removeEventListener("click", onClick);
     };
   }, [camera, gl, raycaster, setPointerNdc, setGroundPoint, setKeyDown]);
 
