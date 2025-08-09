@@ -4,6 +4,7 @@ import * as THREE from "three";
 import { useStore } from "../../store/useStore";
 import { catalog } from "../../core/catalog";
 import { intersectGround, isHudEventTarget, snapToGrid } from "./toolUtils";
+import { eventBus } from "../../core/events";
 
 export function PlaceObjectTool() {
   const activeTool = useStore((s) => s.activeTool);
@@ -128,10 +129,10 @@ export function PlaceObjectTool() {
   });
 
   useEffect(() => {
-    function onClick(e: MouseEvent) {
-      // Ignorar cliques na HUD (Html overlay) identificada por data-hud ou se a câmera está em gesto
-      if (isHudEventTarget(e) || cameraGestureActive) return;
-      if (activeTool !== "place" || !preview || !selectedCatalogId || !preview.valid) return;
+    if (activeTool !== "place") return;
+    const off = eventBus.on("click", ({ button, hudTarget }) => {
+      if (hudTarget || cameraGestureActive || button !== 0) return;
+      if (!preview || !selectedCatalogId || !preview.valid) return;
       const id = crypto.randomUUID();
       const obj = {
         id,
@@ -140,9 +141,8 @@ export function PlaceObjectTool() {
         rot: { x: 0, y: preview.yawDeg ?? 0, z: 0 },
       };
       useStore.setState((s) => ({ objects: [...s.objects, obj] }));
-    }
-    window.addEventListener("click", onClick);
-    return () => window.removeEventListener("click", onClick);
+    });
+    return () => off();
   }, [activeTool, preview, selectedCatalogId, cameraGestureActive, pointerNdc]);
 
   if (!preview || activeTool !== "place") return null;

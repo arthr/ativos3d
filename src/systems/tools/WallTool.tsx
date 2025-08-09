@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { useStore } from "../../store/useStore";
 import { intersectGround, isHudEventTarget, snapToGrid } from "./toolUtils";
+import { eventBus } from "../../core/events";
 
 export function WallTool() {
   const activeTool = useStore((s) => s.activeTool);
@@ -95,6 +96,15 @@ export function WallTool() {
       clearInterval(id);
     };
   }, [activeTool, camera, gl, raycaster, start, end, pointerNdc, cameraGestureActive]);
+
+  // Opcional: encerrar desenho ao pointerUp via eventBus
+  useEffect(() => {
+    if (activeTool !== "wall") return;
+    const off = eventBus.on("pointerUp", () => {
+      // noop por ora; mantemos lógica existente no mouseup
+    });
+    return () => off();
+  }, [activeTool]);
 
   if (activeTool !== "wall" || !start || !end) return null;
   // Preview

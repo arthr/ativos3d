@@ -53,15 +53,45 @@ export function InputController() {
         hudTarget,
       });
     }
+    function onPointerDown(e: PointerEvent) {
+      const hudTarget = isHudEventTarget(e);
+      eventBus.emit("pointerDown", {
+        button: e.button,
+        ndc: { x: ndc.current.x, y: ndc.current.y },
+        ground: useStore.getState().input.groundPoint,
+        hudTarget,
+        shift: e.shiftKey,
+        alt: e.altKey,
+        ctrl: e.ctrlKey,
+        meta: e.metaKey,
+      });
+    }
+    function onPointerUp(e: PointerEvent) {
+      const hudTarget = isHudEventTarget(e);
+      eventBus.emit("pointerUp", {
+        button: e.button,
+        ndc: { x: ndc.current.x, y: ndc.current.y },
+        ground: useStore.getState().input.groundPoint,
+        hudTarget,
+        shift: e.shiftKey,
+        alt: e.altKey,
+        ctrl: e.ctrlKey,
+        meta: e.metaKey,
+      });
+    }
     window.addEventListener("pointermove", onPointerMove);
     window.addEventListener("keydown", onKeyDown);
     window.addEventListener("keyup", onKeyUp);
     window.addEventListener("click", onClick);
+    window.addEventListener("pointerdown", onPointerDown);
+    window.addEventListener("pointerup", onPointerUp);
     return () => {
       window.removeEventListener("pointermove", onPointerMove);
       window.removeEventListener("keydown", onKeyDown);
       window.removeEventListener("keyup", onKeyUp);
       window.removeEventListener("click", onClick);
+      window.removeEventListener("pointerdown", onPointerDown);
+      window.removeEventListener("pointerup", onPointerUp);
     };
   }, [camera, gl, raycaster, setPointerNdc, setGroundPoint, setKeyDown]);
 

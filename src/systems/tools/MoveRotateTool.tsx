@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { useStore } from "../../store/useStore";
 import { intersectGround, isHudEventTarget, snapToGrid } from "./toolUtils";
+import { eventBus } from "../../core/events";
 
 export function MoveRotateTool() {
   const activeTool = useStore((s) => s.activeTool);
@@ -59,6 +60,15 @@ export function MoveRotateTool() {
       window.removeEventListener("keydown", onKeyDown);
     };
   }, [activeTool, camera, gl, raycaster, selectedIds, cameraGestureActive, pointerNdc]);
+
+  // Integração opcional com eventBus para soltar drag ao pointerUp
+  useEffect(() => {
+    if (activeTool !== "move") return;
+    const off = eventBus.on("pointerUp", () => {
+      if (dragging.current) dragging.current = false;
+    });
+    return () => off();
+  }, [activeTool]);
 
   return null;
 }

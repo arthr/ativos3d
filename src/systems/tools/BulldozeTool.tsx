@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { useStore } from "../../store/useStore";
 import { intersectGround, isHudEventTarget, snapToGrid } from "./toolUtils";
+import { eventBus } from "../../core/events";
 
 export function BulldozeTool() {
   const activeTool = useStore((s) => s.activeTool);
@@ -34,12 +35,11 @@ export function BulldozeTool() {
   }, [gl, activeTool, camera, raycaster, scene, pointerNdc]);
 
   useEffect(() => {
-    function onClick(e: MouseEvent) {
-      if (activeTool !== "bulldoze" || cameraGestureActive) return;
-      if (isHudEventTarget(e)) return;
+    if (activeTool !== "bulldoze") return;
+    const off = eventBus.on("click", ({ button, hudTarget }) => {
+      if (cameraGestureActive || hudTarget || button !== 0) return;
       const ndc = new THREE.Vector2(pointerNdc.x, pointerNdc.y);
       raycaster.setFromCamera(ndc, camera);
-      // Raycast na cena por meshes com userData.idObjeto
       const hits = raycaster.intersectObjects(scene.children, true);
       const objHit = hits.find((h) => h.object?.userData?.idObjeto);
       if (objHit?.object?.userData?.idObjeto) {
@@ -47,17 +47,15 @@ export function BulldozeTool() {
         useStore.setState((s) => ({ objects: s.objects.filter((o) => o.id !== id) }));
         return;
       }
-      // Nada de objeto: apagar piso do tile clicado
       const hit = intersectGround(raycaster, camera, ndc);
       if (!hit) return;
       const snapped = snapToGrid(hit, "floor");
-      const x = snapped.x;
-      const z = snapped.z;
-      useStore.setState((s) => ({ floor: s.floor.filter((t) => !(t.x === x && t.z === z)) }));
-    }
-    window.addEventListener("click", onClick);
-    return () => window.removeEventListener("click", onClick);
-  }, [activeTool, camera, raycaster, scene, cameraGestureActive]);
+      useStore.setState((s) => ({
+        floor: s.floor.filter((t) => !(t.x === snapped.x && t.z === snapped.z)),
+      }));
+    });
+    return () => off();
+  }, [activeTool, camera, raycaster, scene, cameraGestureActive, pointerNdc]);
 
   if (activeTool !== "bulldoze" || !hover.current) return null;
   if (hover.current.kind === "object") {
