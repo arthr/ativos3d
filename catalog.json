@@ -6,23 +6,33 @@
     "category": "seating",
     "tags": ["requires_slots:table_edge"],
     "variants": ["oak", "black"],
-    "footprint": { "kind": "rect", "w": 1, "h": 1, "clearance": 1 },
-    "art": { "atlasFrame": "chair_basic" }
+    "footprint": { "kind": "box", "w": 1, "d": 1, "h": 1, "clearance": 1 },
+    "art": { "color": "#4b5563" }
   },
   {
     "id": "table_small",
     "name": "Mesa Pequena",
     "price": 120,
     "category": "surface",
-    "tags": ["provides_slots:table_edge"],
+    "tags": ["provides_slots:table_edge", "provides_slots:table_top"],
     "slots": [
-      { "id": "edge_n", "type": "table_edge", "localPos": { "x": 0.5, "y": -0.1 }, "face": 0 },
-      { "id": "edge_s", "type": "table_edge", "localPos": { "x": 0.5, "y": 1.1 }, "face": 180 },
-      { "id": "edge_w", "type": "table_edge", "localPos": { "x": -0.1, "y": 0.5 }, "face": 270 },
-      { "id": "edge_e", "type": "table_edge", "localPos": { "x": 1.1, "y": 0.5 }, "face": 90 }
+      { "id": "edge_n", "type": "table_edge", "localPos": { "x": 1, "y": 0, "z": -0.1 }, "yawDeg": 0 },
+      { "id": "edge_s", "type": "table_edge", "localPos": { "x": 1, "y": 0, "z": 1.1 },  "yawDeg": 180 },
+      { "id": "edge_w", "type": "table_edge", "localPos": { "x": -0.1, "y": 0, "z": 0.5 }, "yawDeg": 270 },
+      { "id": "edge_e", "type": "table_edge", "localPos": { "x": 2.1, "y": 0, "z": 0.5 },  "yawDeg": 90 },
+      { "id": "top_center", "type": "table_top", "localPos": { "x": 1, "y": 0.75, "z": 0.5 }, "yawDeg": 0 }
     ],
-    "footprint": { "kind": "rect", "w": 2, "h": 1, "clearance": 1 },
-    "art": { "atlasFrame": "table_small" }
+    "footprint": { "kind": "box", "w": 2, "d": 1, "h": 0.75 },
+    "art": { "color": "#9ca3af" }
+  },
+  {
+    "id": "notebook",
+    "name": "Notebook",
+    "price": 2000,
+    "category": "decor",
+    "tags": ["requires_slots:table_top"],
+    "footprint": { "kind": "box", "w": 0.3, "d": 0.2, "h": 0.02 },
+    "art": { "color": "#111827" }
   },
   {
     "id": "sofa_basic",
@@ -30,8 +40,8 @@
     "price": 300,
     "category": "decor",
     "tags": ["snap_to_wall"],
-    "footprint": { "kind": "rect", "w": 2, "h": 1, "clearance": 1 },
-    "art": { "atlasFrame": "sofa_basic" }
+    "footprint": { "kind": "box", "w": 2, "d": 1, "h": 1, "clearance": 1 },
+    "art": { "color": "#475569" }
   },
   {
     "id": "bed_single",
@@ -39,8 +49,8 @@
     "price": 250,
     "category": "bed",
     "tags": ["snap_to_wall"],
-    "footprint": { "kind": "rect", "w": 2, "h": 1, "clearance": 1 },
-    "art": { "atlasFrame": "bed_single" }
+    "footprint": { "kind": "box", "w": 2, "d": 1, "h": 0.5, "clearance": 1 },
+    "art": { "color": "#94a3b8" }
   },
   {
     "id": "lamp_floor",
@@ -48,8 +58,8 @@
     "price": 90,
     "category": "light",
     "tags": [],
-    "footprint": { "kind": "rect", "w": 1, "h": 1 },
-    "art": { "atlasFrame": "lamp_floor" }
+    "footprint": { "kind": "box", "w": 0.5, "d": 0.5, "h": 1.6 },
+    "art": { "color": "#f59e0b" }
   },
   {
     "id": "vase_plant",
@@ -57,8 +67,8 @@
     "price": 40,
     "category": "decor",
     "tags": [],
-    "footprint": { "kind": "rect", "w": 1, "h": 1 },
-    "art": { "atlasFrame": "vase_plant" }
+    "footprint": { "kind": "box", "w": 0.5, "d": 0.5, "h": 0.8 },
+    "art": { "color": "#10b981" }
   },
   {
     "id": "door_1",
@@ -66,8 +76,8 @@
     "price": 80,
     "category": "door",
     "tags": ["door", "needs_wall"],
-    "footprint": { "kind": "rect", "w": 1, "h": 1 },
-    "art": { "atlasFrame": "door_1" }
+    "footprint": { "kind": "box", "w": 1, "d": 0.2, "h": 2 },
+    "art": { "color": "#7c3aed" }
   },
   {
     "id": "window_1",
@@ -75,8 +85,8 @@
     "price": 60,
     "category": "window",
     "tags": ["window", "needs_wall"],
-    "footprint": { "kind": "rect", "w": 1, "h": 1 },
-    "art": { "atlasFrame": "window_1" }
+    "footprint": { "kind": "box", "w": 1, "d": 0.2, "h": 1 },
+    "art": { "color": "#38bdf8" }
   },
   {
     "id": "floor_wood",
@@ -84,7 +94,7 @@
     "price": 4,
     "category": "floor",
     "tags": ["floor"],
-    "art": { "atlasFrame": "floor_wood" }
+    "art": { "texture": "/assets/textures/floor_wood.jpg" }
   },
   {
     "id": "floor_ceramic",
@@ -92,6 +102,6 @@
     "price": 3,
     "category": "floor",
     "tags": ["floor"],
-    "art": { "atlasFrame": "floor_ceramic" }
+    "art": { "texture": "/assets/textures/floor_ceramic.jpg" }
   }
 ]
