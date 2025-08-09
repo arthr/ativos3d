@@ -6,12 +6,16 @@ import { ObjectsLayer } from "../systems/render/ObjectsLayer";
 import { WallsLayer } from "../systems/render/WallsLayer";
 import { FloorLayer } from "../systems/render/FloorLayer";
 import { Hud } from "../ui/hud";
-import { PlaceObjectTool } from "../systems/tools/PlaceObjectTool";
-import { MoveRotateTool } from "../systems/tools/MoveRotateTool";
-import { WallTool } from "../systems/tools/WallTool";
-import { PaintFloorTool } from "../systems/tools/PaintFloorTool";
-import { BulldozeTool } from "../systems/tools/BulldozeTool";
-import { EyedropperTool } from "../systems/tools/EyedropperTool";
+import { ToolManager } from "../systems/tools/ToolManager";
+import { createPlaceStrategy } from "../systems/tools/strategies/PlaceStrategy";
+import { createMoveStrategy } from "../systems/tools/strategies/MoveStrategy";
+import { createWallStrategy } from "../systems/tools/strategies/WallStrategy";
+import { createFloorStrategy } from "../systems/tools/strategies/FloorStrategy";
+import { createBulldozeStrategy } from "../systems/tools/strategies/BulldozeStrategy";
+import { createEyedropperStrategy } from "../systems/tools/strategies/EyedropperStrategy";
+// TODO: adicionar estratégias para move, wall, floor, bulldoze, eyedropper
+import { useThree } from "@react-three/fiber";
+import { useMemo } from "react";
 
 export function App() {
   return (
@@ -24,12 +28,16 @@ export function App() {
           <FloorLayer />
           <WallsLayer />
           <ObjectsLayer />
-          <PlaceObjectTool />
-          <MoveRotateTool />
-          <WallTool />
-          <PaintFloorTool />
-          <BulldozeTool />
-          <EyedropperTool />
+          <ToolManager
+            strategies={{
+              place: (ctx) => createPlaceStrategy(ctx),
+              move: (ctx) => createMoveStrategy(ctx),
+              wall: (ctx) => createWallStrategy(ctx),
+              floor: (ctx) => createFloorStrategy(ctx),
+              bulldoze: (ctx) => createBulldozeStrategy(ctx),
+              eyedropper: (ctx) => createEyedropperStrategy(ctx),
+            }}
+          />
         </Suspense>
       </Canvas>
       <Hud />
