@@ -1,7 +1,7 @@
 import { create } from "zustand";
-import { FloorTile3D, PlacedObject3D, WallSegment3D } from "../core/types";
+import { FloorTile3D, PlacedObject3D, WallSegment3D, Mode, Tool } from "../core/types";
 
-export type Tool = "place" | "move" | "wall" | "floor" | "bulldoze" | "eyedropper";
+// Tool agora vem de core/types
 
 export interface Command {
   execute: () => void;
@@ -23,6 +23,7 @@ export interface BudgetState {
 export interface AppState {
   lot: Lot3DState;
   budget: BudgetState;
+  mode: Mode;
   activeTool: Tool;
   cameraControlsEnabled: boolean;
   undo: Command[];
@@ -34,6 +35,7 @@ export interface AppState {
   hoverId?: string;
   selectedCatalogId?: string;
   setTool: (t: Tool) => void;
+  setMode: (m: Mode) => void;
   setCameraControlsEnabled: (enabled: boolean) => void;
   pushCommand: (c: Command) => void;
   undoOnce: () => void;
@@ -46,6 +48,7 @@ export interface AppState {
 export const useStore = create<AppState>((set, get) => ({
   lot: { width: 30, depth: 50, height: 3 },
   budget: { funds: 10000, spent: 0 },
+  mode: "buy",
   activeTool: "place",
   cameraControlsEnabled: true,
   undo: [],
@@ -91,7 +94,8 @@ export const useStore = create<AppState>((set, get) => ({
   walls: [],
   floor: [],
   selectedIds: [],
-  setTool: (t) => set({ activeTool: t }),
+  setTool: (t) => set({ activeTool: t, mode: t === "wall" || t === "floor" ? "build" : "buy" }),
+  setMode: (m) => set({ mode: m }),
   setCameraControlsEnabled: (enabled) => set({ cameraControlsEnabled: enabled }),
   pushCommand: (c) => set((s) => ({ undo: [...s.undo, c], redo: [] })),
   undoOnce: () => {

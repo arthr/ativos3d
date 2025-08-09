@@ -3,11 +3,13 @@ import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "@react-three/drei";
 import { useStore } from "../../store/useStore";
+import { getCursorForTool } from "../../core/modeMachine";
 
 export function Stage() {
   const { camera, gl, scene } = useThree();
   const controlsEnabled = useStore((s) => s.cameraControlsEnabled);
   const controlsRef = useRef<any>(null);
+  const activeTool = useStore((s) => s.activeTool);
   const [isSpaceDown, setIsSpaceDown] = useState(false);
   const [isPanDragging, setIsPanDragging] = useState(false);
   useEffect(() => {
@@ -83,6 +85,21 @@ export function Stage() {
       canvas.removeEventListener("contextmenu", onContextMenu);
     };
   }, [gl, isSpaceDown, isPanDragging]);
+
+  // Cursor comportamental por ferramenta (prioridade: dragging pan > space pan > cursor por ferramenta)
+  useEffect(() => {
+    const canvas = gl.domElement as HTMLCanvasElement;
+    if (isPanDragging) {
+      canvas.style.cursor = "grabbing";
+      return;
+    }
+    if (isSpaceDown) {
+      canvas.style.cursor = "grab";
+      return;
+    }
+    const toolCursor = getCursorForTool(activeTool);
+    canvas.style.cursor = toolCursor ?? "auto";
+  }, [gl, activeTool, isSpaceDown, isPanDragging]);
   return (
     <>
       <ambientLight intensity={0.7} />
