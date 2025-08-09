@@ -5,7 +5,8 @@ import { Grid } from "../systems/render/Grid";
 import { ObjectsLayer } from "../systems/render/ObjectsLayer";
 import { WallsLayer } from "../systems/render/WallsLayer";
 import { FloorLayer } from "../systems/render/FloorLayer";
-import { HudOverlay } from "../systems/render/HudOverlay";
+// Removido HudOverlay em favor de um HUD DOM externo ao Canvas
+import { NewHud } from "../ui/hud";
 import { PlaceObjectTool } from "../systems/tools/PlaceObjectTool";
 import { MoveRotateTool } from "../systems/tools/MoveRotateTool";
 import { WallTool } from "../systems/tools/WallTool";
@@ -30,9 +31,9 @@ export function App() {
           <PaintFloorTool />
           <BulldozeTool />
           <EyedropperTool />
-          <HudOverlay />
         </Suspense>
       </Canvas>
+      <NewHud />
     </div>
   );
 }
