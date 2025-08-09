@@ -5,6 +5,7 @@ import { useStore } from "../../store/useStore";
 
 export function BulldozeTool() {
   const activeTool = useStore((s) => s.activeTool);
+  const cameraGestureActive = useStore((s) => s.cameraGestureActive);
   const { camera, gl, scene } = useThree();
   const raycaster = useMemo(() => new THREE.Raycaster(), []);
   const pointer = useRef(new THREE.Vector2(0, 0));
@@ -39,7 +40,7 @@ export function BulldozeTool() {
 
   useEffect(() => {
     function onClick(e: MouseEvent) {
-      if (activeTool !== "bulldoze") return;
+      if (activeTool !== "bulldoze" || cameraGestureActive) return;
       const target = e.target as HTMLElement | null;
       if (target?.closest('[data-hud="true"]')) return;
       raycaster.setFromCamera(pointer.current, camera);
@@ -61,7 +62,7 @@ export function BulldozeTool() {
     }
     window.addEventListener("click", onClick);
     return () => window.removeEventListener("click", onClick);
-  }, [activeTool, camera, raycaster, scene]);
+  }, [activeTool, camera, raycaster, scene, cameraGestureActive]);
 
   if (activeTool !== "bulldoze" || !hover.current) return null;
   if (hover.current.kind === "object") {

@@ -5,6 +5,7 @@ import { useStore } from "../../store/useStore";
 
 export function PaintFloorTool() {
   const activeTool = useStore((s) => s.activeTool);
+  const cameraGestureActive = useStore((s) => s.cameraGestureActive);
   const selectedCatalogId = useStore((s) => s.selectedCatalogId);
   const { camera, gl } = useThree();
   const raycaster = useMemo(() => new THREE.Raycaster(), []);
@@ -32,7 +33,7 @@ export function PaintFloorTool() {
 
   useEffect(() => {
     function onClick(e: MouseEvent) {
-      if (activeTool !== "floor") return;
+      if (activeTool !== "floor" || cameraGestureActive) return;
       const target = e.target as HTMLElement | null;
       if (target?.closest('[data-hud="true"]')) return;
       raycaster.setFromCamera(pointer.current, camera);
@@ -55,7 +56,7 @@ export function PaintFloorTool() {
     }
     window.addEventListener("click", onClick);
     return () => window.removeEventListener("click", onClick);
-  }, [activeTool, camera, raycaster, selectedCatalogId]);
+  }, [activeTool, camera, raycaster, selectedCatalogId, cameraGestureActive]);
 
   if (activeTool !== "floor" || !hoverTile.current) return null;
   const t = hoverTile.current;

@@ -5,6 +5,7 @@ import { useStore } from "../../store/useStore";
 
 export function EyedropperTool() {
   const activeTool = useStore((s) => s.activeTool);
+  const cameraGestureActive = useStore((s) => s.cameraGestureActive);
   const setSelectedCatalogId = useStore((s) => s.setSelectedCatalogId);
   const { camera, gl, scene } = useThree();
   const raycaster = useMemo(() => new THREE.Raycaster(), []);
@@ -30,7 +31,7 @@ export function EyedropperTool() {
 
   useEffect(() => {
     function onClick(e: MouseEvent) {
-      if (activeTool !== "eyedropper") return;
+      if (activeTool !== "eyedropper" || cameraGestureActive) return;
       const target = e.target as HTMLElement | null;
       if (target?.closest('[data-hud="true"]')) return;
       raycaster.setFromCamera(pointer.current, camera);
@@ -44,7 +45,7 @@ export function EyedropperTool() {
     }
     window.addEventListener("click", onClick);
     return () => window.removeEventListener("click", onClick);
-  }, [activeTool, camera, raycaster, scene, setSelectedCatalogId]);
+  }, [activeTool, camera, raycaster, scene, setSelectedCatalogId, cameraGestureActive]);
 
   // Ghost preview simples: realçar área com um retângulo abaixo do objeto alvo (opcional)
   if (activeTool !== "eyedropper" || !hover.current) return null;

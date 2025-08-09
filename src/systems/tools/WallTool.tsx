@@ -5,6 +5,8 @@ import { useStore } from "../../store/useStore";
 
 export function WallTool() {
   const activeTool = useStore((s) => s.activeTool);
+  const cameraGestureActive = useStore((s) => s.cameraGestureActive);
+  const lot = useStore((s) => s.lot);
   const { camera, gl } = useThree();
   const raycaster = useMemo(() => new THREE.Raycaster(), []);
   const pointer = useRef(new THREE.Vector2(0, 0));
@@ -23,7 +25,7 @@ export function WallTool() {
 
   useEffect(() => {
     function onPointerDown(e: MouseEvent) {
-      if (activeTool !== "wall") return;
+      if (activeTool !== "wall" || cameraGestureActive) return;
       const rect = gl.domElement.getBoundingClientRect();
       const target = e.target as HTMLElement | null;
       if (target?.closest('[data-hud="true"]')) return;
@@ -38,8 +40,7 @@ export function WallTool() {
       setEnd(snapped.clone());
     }
     function onPointerUp(e: MouseEvent) {
-      if (activeTool !== "wall" || !start || !end) return;
-      const lot = useStore.getState().lot;
+      if (activeTool !== "wall" || cameraGestureActive || !start || !end) return;
       // Constrange a ortogonal e cria sequência de segmentos
       const dx = Math.round(end.x - start.x);
       const dz = Math.round(end.z - start.z);
@@ -79,7 +80,7 @@ export function WallTool() {
       setEnd(null);
     }
     function onPointerMoveDraw() {
-      if (activeTool !== "wall" || !start) return;
+      if (activeTool !== "wall" || cameraGestureActive || !start) return;
       raycaster.setFromCamera(pointer.current, camera);
       const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
       const hit = raycaster.ray.intersectPlane(plane, new THREE.Vector3());
@@ -106,9 +107,10 @@ export function WallTool() {
   const yaw = useX ? 0 : Math.PI / 2;
   const cx = (start.x + end.x) / 2;
   const cz = (start.z + end.z) / 2;
+  const previewHeight = Math.max(1, lot.height * 0.5);
   return (
-    <mesh position={[cx, 0.05, cz]} rotation={[0, yaw, 0]}>
-      <boxGeometry args={[Math.max(0.001, len), 0.1, 0.05]} />
+    <mesh position={[cx, previewHeight / 2, cz]} rotation={[0, yaw, 0]}>
+      <boxGeometry args={[Math.max(0.001, len), previewHeight, 0.05]} />
       <meshStandardMaterial color="#38bdf8" transparent opacity={0.5} />
     </mesh>
   );

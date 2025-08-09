@@ -10,6 +10,7 @@ export function Stage() {
   const controlsEnabled = useStore((s) => s.cameraControlsEnabled);
   const controlsRef = useRef<any>(null);
   const activeTool = useStore((s) => s.activeTool);
+  const setCameraGestureActive = useStore((s) => s.setCameraGestureActive);
   const [isSpaceDown, setIsSpaceDown] = useState(false);
   const [isPanDragging, setIsPanDragging] = useState(false);
   useEffect(() => {
@@ -60,6 +61,11 @@ export function Stage() {
       if (e.button === 0 && isSpaceDown) {
         setIsPanDragging(true);
         canvas.style.cursor = "grabbing";
+        setCameraGestureActive(true);
+      }
+      if (e.button === 2) {
+        // Right mouse begins rotate gesture
+        setCameraGestureActive(true);
       }
     };
     const onPointerUp = () => {
@@ -67,6 +73,7 @@ export function Stage() {
         setIsPanDragging(false);
         canvas.style.cursor = isSpaceDown ? "grab" : "auto";
       }
+      setCameraGestureActive(false);
     };
     const onContextMenu = (e: Event) => {
       // Evitar menu de contexto durante rotação com botão direito

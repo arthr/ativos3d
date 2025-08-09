@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { FloorTile3D, PlacedObject3D, WallSegment3D, Mode, Tool } from "../core/types";
+import { isToolAllowedInMode, modeToTools } from "../core/modeMachine";
 
 // Tool agora vem de core/types
 
@@ -26,6 +27,7 @@ export interface AppState {
   mode: Mode;
   activeTool: Tool;
   cameraControlsEnabled: boolean;
+  cameraGestureActive: boolean;
   undo: Command[];
   redo: Command[];
   objects: PlacedObject3D[];
@@ -37,6 +39,7 @@ export interface AppState {
   setTool: (t: Tool) => void;
   setMode: (m: Mode) => void;
   setCameraControlsEnabled: (enabled: boolean) => void;
+  setCameraGestureActive: (active: boolean) => void;
   pushCommand: (c: Command) => void;
   undoOnce: () => void;
   redoOnce: () => void;
@@ -51,6 +54,7 @@ export const useStore = create<AppState>((set, get) => ({
   mode: "buy",
   activeTool: "place",
   cameraControlsEnabled: true,
+  cameraGestureActive: false,
   undo: [],
   redo: [],
   objects: [
@@ -95,8 +99,15 @@ export const useStore = create<AppState>((set, get) => ({
   floor: [],
   selectedIds: [],
   setTool: (t) => set({ activeTool: t, mode: t === "wall" || t === "floor" ? "build" : "buy" }),
-  setMode: (m) => set({ mode: m }),
+  setMode: (m) =>
+    set((s) => {
+      if (m === "view") return { mode: m };
+      const keepTool = isToolAllowedInMode(s.activeTool, m);
+      const fallbackTool = modeToTools[m][0];
+      return { mode: m, activeTool: keepTool ? s.activeTool : fallbackTool };
+    }),
   setCameraControlsEnabled: (enabled) => set({ cameraControlsEnabled: enabled }),
+  setCameraGestureActive: (active) => set({ cameraGestureActive: active }),
   pushCommand: (c) => set((s) => ({ undo: [...s.undo, c], redo: [] })),
   undoOnce: () => {
     const { undo, redo } = get();

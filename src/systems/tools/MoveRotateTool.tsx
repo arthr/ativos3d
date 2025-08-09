@@ -5,6 +5,7 @@ import { useStore } from "../../store/useStore";
 
 export function MoveRotateTool() {
   const activeTool = useStore((s) => s.activeTool);
+  const cameraGestureActive = useStore((s) => s.cameraGestureActive);
   const selectedIds = useStore((s) => s.selectedIds);
   const { camera, gl } = useThree();
   const raycaster = useMemo(() => new THREE.Raycaster(), []);
@@ -30,7 +31,7 @@ export function MoveRotateTool() {
       }));
     }
     function onPointerDown(e: MouseEvent) {
-      if (activeTool !== "move" || selectedIds.length === 0) return;
+      if (activeTool !== "move" || cameraGestureActive || selectedIds.length === 0) return;
       const target = e.target as HTMLElement | null;
       if (target?.closest('[data-hud="true"]')) return;
       dragging.current = true;
@@ -61,7 +62,7 @@ export function MoveRotateTool() {
       window.removeEventListener("mouseup", onPointerUp);
       window.removeEventListener("keydown", onKeyDown);
     };
-  }, [activeTool, camera, gl, raycaster, selectedIds]);
+  }, [activeTool, camera, gl, raycaster, selectedIds, cameraGestureActive]);
 
   return null;
 }
