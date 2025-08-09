@@ -1,6 +1,7 @@
 import { useThree } from "@react-three/fiber";
 import { useEffect } from "react";
 import * as THREE from "three";
+import { OrbitControls } from "@react-three/drei";
 
 export function Stage() {
   const { camera, gl, scene } = useThree();
@@ -30,6 +31,7 @@ export function Stage() {
         shadow-camera-far={60}
       />
       {/* TODO: adicionar controles de pan/zoom (Orbit/MapControls custom) */}
+      <OrbitControls makeDefault enableDamping dampingFactor={0.1} enablePan enableZoom />
     </>
   );
 }
