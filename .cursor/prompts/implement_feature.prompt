@@ -1,5 +1,5 @@
 Implemente a funcionalidade solicitada seguindo estas diretrizes:
-- Usar TypeScript e React com PixiJS.
+- Usar TypeScript e React Three Fiber.
 - Estado global no Zustand (`/store`).
 - Código separado por domínios: core (tipos, utilitários), systems (render, lógica), ui (componentes React).
 - Se envolver colocação de objetos, aplicar regras descritas em docs/validation_pipeline.md.

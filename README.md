@@ -1,8 +1,8 @@
-# Build/Buy MVP
+# Build MVP
 
 ## Stack
 - React + TypeScript + Vite
-- PixiJS para render
+- React Three Fiber
 - Zustand para estado global
 
 ## Estrutura de Pastas
