@@ -4,7 +4,7 @@ import { Toolbar } from "../Toolbar";
 import { CatalogHud } from "./CatalogHud";
 import { InspectorHud } from "./InspectorHud";
 
-export function NewHud() {
+export function Hud() {
   // Overlay DOM com componentes reais; containers apenas posicionam e liberam eventos
   return (
     <div
@@ -57,4 +57,4 @@ export function NewHud() {
   );
 }
 
-export default NewHud;
+export default Hud;
