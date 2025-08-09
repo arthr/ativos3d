@@ -28,6 +28,11 @@ export interface AppState {
   activeTool: Tool;
   cameraControlsEnabled: boolean;
   cameraGestureActive: boolean;
+  input: {
+    pointerNdc: { x: number; y: number };
+    groundPoint: { x: number; y: number; z: number } | null;
+    keysDown: Record<string, boolean>;
+  };
   undo: Command[];
   redo: Command[];
   objects: PlacedObject3D[];
@@ -40,6 +45,9 @@ export interface AppState {
   setMode: (m: Mode) => void;
   setCameraControlsEnabled: (enabled: boolean) => void;
   setCameraGestureActive: (active: boolean) => void;
+  setPointerNdc: (x: number, y: number) => void;
+  setGroundPoint: (gp: { x: number; y: number; z: number } | null) => void;
+  setKeyDown: (code: string, down: boolean) => void;
   pushCommand: (c: Command) => void;
   undoOnce: () => void;
   redoOnce: () => void;
@@ -55,6 +63,7 @@ export const useStore = create<AppState>((set, get) => ({
   activeTool: "place",
   cameraControlsEnabled: true,
   cameraGestureActive: false,
+  input: { pointerNdc: { x: 0, y: 0 }, groundPoint: null, keysDown: {} },
   undo: [],
   redo: [],
   objects: [
@@ -108,6 +117,10 @@ export const useStore = create<AppState>((set, get) => ({
     }),
   setCameraControlsEnabled: (enabled) => set({ cameraControlsEnabled: enabled }),
   setCameraGestureActive: (active) => set({ cameraGestureActive: active }),
+  setPointerNdc: (x, y) => set((s) => ({ input: { ...s.input, pointerNdc: { x, y } } })),
+  setGroundPoint: (gp) => set((s) => ({ input: { ...s.input, groundPoint: gp } })),
+  setKeyDown: (code, down) =>
+    set((s) => ({ input: { ...s.input, keysDown: { ...s.input.keysDown, [code]: down } } })),
   pushCommand: (c) => set((s) => ({ undo: [...s.undo, c], redo: [] })),
   undoOnce: () => {
     const { undo, redo } = get();

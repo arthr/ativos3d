@@ -2,7 +2,7 @@ import { useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { useStore } from "../../store/useStore";
-import { getNormalizedPointer, intersectGround, isHudEventTarget, snapToGrid } from "./toolUtils";
+import { intersectGround, isHudEventTarget, snapToGrid } from "./toolUtils";
 
 export function PaintFloorTool() {
   const activeTool = useStore((s) => s.activeTool);
@@ -10,31 +10,30 @@ export function PaintFloorTool() {
   const selectedCatalogId = useStore((s) => s.selectedCatalogId);
   const { camera, gl } = useThree();
   const raycaster = useMemo(() => new THREE.Raycaster(), []);
-  const pointer = useRef(new THREE.Vector2(0, 0));
+  const pointerNdc = useStore((s) => s.input.pointerNdc);
   const hoverTile = useRef<{ x: number; z: number } | null>(null);
 
   useEffect(() => {
-    function onPointerMove(e: PointerEvent) {
-      getNormalizedPointer(e, gl.domElement, pointer.current);
-      if (activeTool !== "floor") return;
-      const hit = intersectGround(raycaster, camera, pointer.current);
-      if (!hit) {
-        hoverTile.current = null;
-        return;
-      }
-      const snapped = snapToGrid(hit, "floor");
-      hoverTile.current = { x: snapped.x, z: snapped.z };
+    if (activeTool !== "floor") {
+      hoverTile.current = null;
+      return;
     }
-    window.addEventListener("pointermove", onPointerMove);
-    return () => window.removeEventListener("pointermove", onPointerMove);
-  }, [gl, activeTool, camera, raycaster]);
+    const ndc = new THREE.Vector2(pointerNdc.x, pointerNdc.y);
+    const hit = intersectGround(raycaster, camera, ndc);
+    if (!hit) {
+      hoverTile.current = null;
+      return;
+    }
+    const snapped = snapToGrid(hit, "floor");
+    hoverTile.current = { x: snapped.x, z: snapped.z };
+  }, [pointerNdc, activeTool, camera, raycaster, gl]);
 
   useEffect(() => {
     function onClick(e: MouseEvent) {
       if (activeTool !== "floor" || cameraGestureActive) return;
       if (isHudEventTarget(e)) return;
-      raycaster.setFromCamera(pointer.current, camera);
-      const hit = intersectGround(raycaster, camera, pointer.current);
+      const ndc = new THREE.Vector2(pointerNdc.x, pointerNdc.y);
+      const hit = intersectGround(raycaster, camera, ndc);
       if (!hit) return;
       const snapped = snapToGrid(hit, "floor");
       const tile = {
@@ -53,7 +52,7 @@ export function PaintFloorTool() {
     }
     window.addEventListener("click", onClick);
     return () => window.removeEventListener("click", onClick);
-  }, [activeTool, camera, raycaster, selectedCatalogId, cameraGestureActive]);
+  }, [activeTool, camera, raycaster, selectedCatalogId, cameraGestureActive, pointerNdc]);
 
   if (activeTool !== "floor" || !hoverTile.current) return null;
   const t = hoverTile.current;

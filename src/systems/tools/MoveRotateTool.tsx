@@ -2,7 +2,7 @@ import { useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { useStore } from "../../store/useStore";
-import { getNormalizedPointer, intersectGround, isHudEventTarget, snapToGrid } from "./toolUtils";
+import { intersectGround, isHudEventTarget, snapToGrid } from "./toolUtils";
 
 export function MoveRotateTool() {
   const activeTool = useStore((s) => s.activeTool);
@@ -10,14 +10,14 @@ export function MoveRotateTool() {
   const selectedIds = useStore((s) => s.selectedIds);
   const { camera, gl } = useThree();
   const raycaster = useMemo(() => new THREE.Raycaster(), []);
-  const pointer = useRef(new THREE.Vector2(0, 0));
+  const pointerNdc = useStore((s) => s.input.pointerNdc);
   const dragging = useRef(false);
 
   useEffect(() => {
-    function onPointerMove(e: PointerEvent) {
-      getNormalizedPointer(e, gl.domElement, pointer.current);
+    function onPointerMove() {
       if (!dragging.current || activeTool !== "move" || selectedIds.length === 0) return;
-      const hit = intersectGround(raycaster, camera, pointer.current);
+      const ndc = new THREE.Vector2(pointerNdc.x, pointerNdc.y);
+      const hit = intersectGround(raycaster, camera, ndc);
       if (!hit) return;
       const snapped = snapToGrid(hit, "floor");
       const id = selectedIds[0];
@@ -58,7 +58,7 @@ export function MoveRotateTool() {
       window.removeEventListener("mouseup", onPointerUp);
       window.removeEventListener("keydown", onKeyDown);
     };
-  }, [activeTool, camera, gl, raycaster, selectedIds, cameraGestureActive]);
+  }, [activeTool, camera, gl, raycaster, selectedIds, cameraGestureActive, pointerNdc]);
 
   return null;
 }

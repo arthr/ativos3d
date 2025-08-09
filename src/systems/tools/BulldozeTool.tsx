@@ -2,46 +2,43 @@ import { useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { useStore } from "../../store/useStore";
-import { getNormalizedPointer, intersectGround, isHudEventTarget, snapToGrid } from "./toolUtils";
+import { intersectGround, isHudEventTarget, snapToGrid } from "./toolUtils";
 
 export function BulldozeTool() {
   const activeTool = useStore((s) => s.activeTool);
   const cameraGestureActive = useStore((s) => s.cameraGestureActive);
   const { camera, gl, scene } = useThree();
   const raycaster = useMemo(() => new THREE.Raycaster(), []);
-  const pointer = useRef(new THREE.Vector2(0, 0));
+  const pointerNdc = useStore((s) => s.input.pointerNdc);
   const hover = useRef<
     { kind: "object"; id: string } | { kind: "tile"; x: number; z: number } | null
   >(null);
 
   useEffect(() => {
-    function onPointerMove(e: PointerEvent) {
-      getNormalizedPointer(e, gl.domElement, pointer.current);
-      if (activeTool !== "bulldoze") return;
-      raycaster.setFromCamera(pointer.current, camera);
-      const hits = raycaster.intersectObjects(scene.children, true);
-      const objHit = hits.find((h) => h.object?.userData?.idObjeto);
-      if (objHit?.object?.userData?.idObjeto) {
-        hover.current = { kind: "object", id: objHit.object.userData.idObjeto as string };
-        return;
-      }
-      const hit = intersectGround(raycaster, camera, pointer.current);
-      if (!hit) {
-        hover.current = null;
-        return;
-      }
-      const snapped = snapToGrid(hit, "floor");
-      hover.current = { kind: "tile", x: snapped.x, z: snapped.z };
+    if (activeTool !== "bulldoze") return;
+    const ndc = new THREE.Vector2(pointerNdc.x, pointerNdc.y);
+    raycaster.setFromCamera(ndc, camera);
+    const hits = raycaster.intersectObjects(scene.children, true);
+    const objHit = hits.find((h) => h.object?.userData?.idObjeto);
+    if (objHit?.object?.userData?.idObjeto) {
+      hover.current = { kind: "object", id: objHit.object.userData.idObjeto as string };
+      return;
     }
-    window.addEventListener("pointermove", onPointerMove);
-    return () => window.removeEventListener("pointermove", onPointerMove);
-  }, [gl, activeTool, camera, raycaster, scene]);
+    const hit = intersectGround(raycaster, camera, ndc);
+    if (!hit) {
+      hover.current = null;
+      return;
+    }
+    const snapped = snapToGrid(hit, "floor");
+    hover.current = { kind: "tile", x: snapped.x, z: snapped.z };
+  }, [gl, activeTool, camera, raycaster, scene, pointerNdc]);
 
   useEffect(() => {
     function onClick(e: MouseEvent) {
       if (activeTool !== "bulldoze" || cameraGestureActive) return;
       if (isHudEventTarget(e)) return;
-      raycaster.setFromCamera(pointer.current, camera);
+      const ndc = new THREE.Vector2(pointerNdc.x, pointerNdc.y);
+      raycaster.setFromCamera(ndc, camera);
       // Raycast na cena por meshes com userData.idObjeto
       const hits = raycaster.intersectObjects(scene.children, true);
       const objHit = hits.find((h) => h.object?.userData?.idObjeto);
@@ -51,7 +48,7 @@ export function BulldozeTool() {
         return;
       }
       // Nada de objeto: apagar piso do tile clicado
-      const hit = intersectGround(raycaster, camera, pointer.current);
+      const hit = intersectGround(raycaster, camera, ndc);
       if (!hit) return;
       const snapped = snapToGrid(hit, "floor");
       const x = snapped.x;

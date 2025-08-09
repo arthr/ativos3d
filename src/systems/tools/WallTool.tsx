@@ -2,7 +2,7 @@ import { useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { useStore } from "../../store/useStore";
-import { getNormalizedPointer, intersectGround, isHudEventTarget, snapToGrid } from "./toolUtils";
+import { intersectGround, isHudEventTarget, snapToGrid } from "./toolUtils";
 
 export function WallTool() {
   const activeTool = useStore((s) => s.activeTool);
@@ -10,17 +10,9 @@ export function WallTool() {
   const lot = useStore((s) => s.lot);
   const { camera, gl } = useThree();
   const raycaster = useMemo(() => new THREE.Raycaster(), []);
-  const pointer = useRef(new THREE.Vector2(0, 0));
   const [start, setStart] = useState<THREE.Vector3 | null>(null);
   const [end, setEnd] = useState<THREE.Vector3 | null>(null);
-
-  useEffect(() => {
-    function onPointerMove(e: PointerEvent) {
-      getNormalizedPointer(e, gl.domElement, pointer.current);
-    }
-    window.addEventListener("pointermove", onPointerMove);
-    return () => window.removeEventListener("pointermove", onPointerMove);
-  }, [gl]);
+  const pointerNdc = useStore((s) => s.input.pointerNdc);
 
   useEffect(() => {
     function onPointerDown(e: MouseEvent) {
@@ -33,8 +25,8 @@ export function WallTool() {
       )
         return;
       if (isHudEventTarget(e)) return;
-      getNormalizedPointer(e, gl.domElement, pointer.current);
-      const hit = intersectGround(raycaster, camera, pointer.current);
+      const ndc = new THREE.Vector2(pointerNdc.x, pointerNdc.y);
+      const hit = intersectGround(raycaster, camera, ndc);
       if (!hit) return;
       const snapped = snapToGrid(hit, "round");
       setStart(snapped);
@@ -88,7 +80,8 @@ export function WallTool() {
     }
     function onPointerMoveDraw() {
       if (activeTool !== "wall" || cameraGestureActive || !start) return;
-      const hit = intersectGround(raycaster, camera, pointer.current);
+      const ndc = new THREE.Vector2(pointerNdc.x, pointerNdc.y);
+      const hit = intersectGround(raycaster, camera, ndc);
       if (!hit) return;
       const snapped = snapToGrid(hit, "round");
       setEnd(snapped);
@@ -101,7 +94,7 @@ export function WallTool() {
       window.removeEventListener("mouseup", onPointerUp);
       clearInterval(id);
     };
-  }, [activeTool, camera, gl, raycaster, start, end]);
+  }, [activeTool, camera, gl, raycaster, start, end, pointerNdc, cameraGestureActive]);
 
   if (activeTool !== "wall" || !start || !end) return null;
   // Preview

@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { useStore } from "../../store/useStore";
 import { catalog } from "../../core/catalog";
-import { getNormalizedPointer, intersectGround, isHudEventTarget, snapToGrid } from "./toolUtils";
+import { intersectGround, isHudEventTarget, snapToGrid } from "./toolUtils";
 
 export function PlaceObjectTool() {
   const activeTool = useStore((s) => s.activeTool);
@@ -12,7 +12,7 @@ export function PlaceObjectTool() {
   const objects = useStore((s) => s.objects);
   const { camera, gl } = useThree();
   const raycaster = useMemo(() => new THREE.Raycaster(), []);
-  const pointer = useRef(new THREE.Vector2(0, 0));
+  const pointerNdc = useStore((s) => s.input.pointerNdc);
   const [preview, setPreview] = useState<{
     pos: THREE.Vector3;
     w: number;
@@ -46,14 +46,7 @@ export function PlaceObjectTool() {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [activeTool, selectedCatalogId]);
 
-  useEffect(() => {
-    function onPointerMove(e: PointerEvent) {
-      // Usar o retângulo do canvas, independente do alvo do evento (HUD Html é irmão, não pai, do canvas)
-      getNormalizedPointer(e, gl.domElement, pointer.current);
-    }
-    window.addEventListener("pointermove", onPointerMove);
-    return () => window.removeEventListener("pointermove", onPointerMove);
-  }, [gl]);
+  // Pointer NDC já é atualizado pelo InputController
 
   useFrame(() => {
     if (activeTool !== "place" || !selectedCatalogId) {
@@ -61,7 +54,8 @@ export function PlaceObjectTool() {
       return;
     }
     // Raycast contra plano XZ (y=0)
-    const hit = intersectGround(raycaster, camera, pointer.current);
+    const ndc = new THREE.Vector2(pointerNdc.x, pointerNdc.y);
+    const hit = intersectGround(raycaster, camera, ndc);
     if (!hit) {
       setPreview(null);
       return;
@@ -149,7 +143,7 @@ export function PlaceObjectTool() {
     }
     window.addEventListener("click", onClick);
     return () => window.removeEventListener("click", onClick);
-  }, [activeTool, preview, selectedCatalogId, cameraGestureActive]);
+  }, [activeTool, preview, selectedCatalogId, cameraGestureActive, pointerNdc]);
 
   if (!preview || activeTool !== "place") return null;
   return (
