@@ -1,0 +1,6 @@
+Refatore o código mantendo comportamento igual, mas:
+- Garantir tipagem forte em todos os parâmetros e retornos.
+- Extrair funções utilitárias para `/core`.
+- Reduzir duplicação.
+- Manter compatibilidade com o pipeline de validação.
+- Preservar a estrutura de pastas e importações.

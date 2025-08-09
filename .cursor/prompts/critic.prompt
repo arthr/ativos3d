@@ -1,0 +1,3 @@
+Atue como revisor técnico. Verifique: aderência ao docs/validation_pipeline.md,
+performance (quadtree, dirty render), tipagem forte, comandos com undo/redo e mensagens de erro úteis.
+Sugira ajustes concisos e patch incremental.

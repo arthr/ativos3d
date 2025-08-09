@@ -1,0 +1,97 @@
+[
+  {
+    "id": "chair_basic",
+    "name": "Cadeira Básica",
+    "price": 50,
+    "category": "seating",
+    "tags": ["requires_slots:table_edge"],
+    "variants": ["oak", "black"],
+    "footprint": { "kind": "rect", "w": 1, "h": 1, "clearance": 1 },
+    "art": { "atlasFrame": "chair_basic" }
+  },
+  {
+    "id": "table_small",
+    "name": "Mesa Pequena",
+    "price": 120,
+    "category": "surface",
+    "tags": ["provides_slots:table_edge"],
+    "slots": [
+      { "id": "edge_n", "type": "table_edge", "localPos": { "x": 0.5, "y": -0.1 }, "face": 0 },
+      { "id": "edge_s", "type": "table_edge", "localPos": { "x": 0.5, "y": 1.1 }, "face": 180 },
+      { "id": "edge_w", "type": "table_edge", "localPos": { "x": -0.1, "y": 0.5 }, "face": 270 },
+      { "id": "edge_e", "type": "table_edge", "localPos": { "x": 1.1, "y": 0.5 }, "face": 90 }
+    ],
+    "footprint": { "kind": "rect", "w": 2, "h": 1, "clearance": 1 },
+    "art": { "atlasFrame": "table_small" }
+  },
+  {
+    "id": "sofa_basic",
+    "name": "Sofá",
+    "price": 300,
+    "category": "decor",
+    "tags": ["snap_to_wall"],
+    "footprint": { "kind": "rect", "w": 2, "h": 1, "clearance": 1 },
+    "art": { "atlasFrame": "sofa_basic" }
+  },
+  {
+    "id": "bed_single",
+    "name": "Cama Solteiro",
+    "price": 250,
+    "category": "bed",
+    "tags": ["snap_to_wall"],
+    "footprint": { "kind": "rect", "w": 2, "h": 1, "clearance": 1 },
+    "art": { "atlasFrame": "bed_single" }
+  },
+  {
+    "id": "lamp_floor",
+    "name": "Luminária",
+    "price": 90,
+    "category": "light",
+    "tags": [],
+    "footprint": { "kind": "rect", "w": 1, "h": 1 },
+    "art": { "atlasFrame": "lamp_floor" }
+  },
+  {
+    "id": "vase_plant",
+    "name": "Vaso de Planta",
+    "price": 40,
+    "category": "decor",
+    "tags": [],
+    "footprint": { "kind": "rect", "w": 1, "h": 1 },
+    "art": { "atlasFrame": "vase_plant" }
+  },
+  {
+    "id": "door_1",
+    "name": "Porta Simples",
+    "price": 80,
+    "category": "door",
+    "tags": ["door", "needs_wall"],
+    "footprint": { "kind": "rect", "w": 1, "h": 1 },
+    "art": { "atlasFrame": "door_1" }
+  },
+  {
+    "id": "window_1",
+    "name": "Janela",
+    "price": 60,
+    "category": "window",
+    "tags": ["window", "needs_wall"],
+    "footprint": { "kind": "rect", "w": 1, "h": 1 },
+    "art": { "atlasFrame": "window_1" }
+  },
+  {
+    "id": "floor_wood",
+    "name": "Piso Madeira",
+    "price": 4,
+    "category": "floor",
+    "tags": ["floor"],
+    "art": { "atlasFrame": "floor_wood" }
+  },
+  {
+    "id": "floor_ceramic",
+    "name": "Piso Cerâmica",
+    "price": 3,
+    "category": "floor",
+    "tags": ["floor"],
+    "art": { "atlasFrame": "floor_ceramic" }
+  }
+]

@@ -1,0 +1,4 @@
+Blueprints:
+- feature: título, definição de pronto, critérios de aceitação, atualização docs.
+- refactor: metas, medição antes/depois, riscos, rollback.
+- bugfix: steps de repro, causa raiz, correção mínima.
