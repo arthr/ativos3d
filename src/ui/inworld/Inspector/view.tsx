@@ -35,14 +35,7 @@ export function SelectedInspector() {
 
   return (
     <group position={[cx, cy, cz]}>
-      <Html
-        center
-        occlude
-        distanceFactor={8}
-        style={{ pointerEvents: "auto", zIndex: 0 }}
-        transform
-        sprite
-      >
+      <Html center occlude distanceFactor={8} style={{ pointerEvents: "auto" }} transform sprite>
         <SelectedInspectorPanel
           id={selected.id}
           selected={selected}
