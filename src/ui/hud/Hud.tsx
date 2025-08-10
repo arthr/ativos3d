@@ -3,6 +3,7 @@ import { BudgetBar } from "../BudgetBar";
 import { Toolbar } from "../Toolbar";
 import { CatalogHud } from "./CatalogHud";
 import { InspectorHud } from "./InspectorHud";
+import { Topbar } from "../Topbar";
 
 export function Hud() {
   // Overlay DOM com componentes reais; containers apenas posicionam e liberam eventos
@@ -16,7 +17,7 @@ export function Hud() {
         zIndex: 10,
       }}
     >
-      {/* Top bar (Budget) */}
+      {/* Topbar com controles e abaixo BudgetBar */}
       <div
         data-hud="true"
         style={{
@@ -27,6 +28,7 @@ export function Hud() {
           pointerEvents: "auto",
         }}
       >
+        <Topbar />
         <BudgetBar />
       </div>
 

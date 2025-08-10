@@ -1,13 +1,14 @@
 import { useThree } from "@react-three/fiber";
 import { useEffect, useState } from "react";
 import * as THREE from "three";
-import { OrbitControls } from "@react-three/drei";
+import { OrbitControls, PerspectiveCamera, OrthographicCamera } from "@react-three/drei";
 import { useStore } from "../../store/useStore";
 import { getCursorForTool } from "../../core/modeMachine";
 
 export function Stage() {
   const { camera, gl, scene } = useThree();
   const controlsEnabled = useStore((s) => s.cameraControlsEnabled);
+  const cameraMode = useStore((s) => s.cameraMode);
   const activeTool = useStore((s) => s.activeTool);
   const setCameraGestureActive = useStore((s) => s.setCameraGestureActive);
   const [isSpaceDown, setIsSpaceDown] = useState(false);
@@ -59,7 +60,7 @@ export function Stage() {
         canvas.style.cursor = "grabbing";
         setCameraGestureActive(true);
       }
-      if (e.button === 2) {
+      if (e.button === 2 && controlsEnabled && cameraMode === "persp") {
         // Right mouse begins rotate gesture
         setIsRotateDragging(true);
         setCameraGestureActive(true);
@@ -95,7 +96,15 @@ export function Stage() {
       window.removeEventListener("pointerup", onPointerUp);
       canvas.removeEventListener("contextmenu", onContextMenu);
     };
-  }, [gl, isSpaceDown, isPanDragging]);
+  }, [
+    gl,
+    isSpaceDown,
+    isPanDragging,
+    controlsEnabled,
+    cameraMode,
+    setCameraGestureActive,
+    isRotateDragging,
+  ]);
 
   // Cursor comportamental por ferramenta (prioridade: dragging pan > space pan > cursor por ferramenta)
   useEffect(() => {
@@ -113,6 +122,11 @@ export function Stage() {
   }, [gl, activeTool, isSpaceDown, isPanDragging]);
   return (
     <>
+      {cameraMode === "persp" ? (
+        <PerspectiveCamera makeDefault position={[20, 20, 20]} fov={50} near={0.1} far={1000} />
+      ) : (
+        <OrthographicCamera makeDefault position={[20, 20, 20]} zoom={30} near={-1000} far={1000} />
+      )}
       <ambientLight intensity={0.7} />
       <directionalLight
         position={[10, 20, 10]}
@@ -132,9 +146,13 @@ export function Stage() {
         // Pan só quando Space estiver pressionado
         enablePan={controlsEnabled && isSpaceDown}
         enableZoom={controlsEnabled}
-        enableRotate={controlsEnabled}
+        enableRotate={controlsEnabled && cameraMode === "persp"}
         // Mapeamento: LEFT=PAN, RIGHT=ROTATE
-        mouseButtons={{ LEFT: THREE.MOUSE.PAN, MIDDLE: THREE.MOUSE.DOLLY, RIGHT: THREE.MOUSE.ROTATE }}
+        mouseButtons={{
+          LEFT: THREE.MOUSE.PAN,
+          MIDDLE: THREE.MOUSE.DOLLY,
+          RIGHT: THREE.MOUSE.ROTATE,
+        }}
       />
     </>
   );

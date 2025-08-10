@@ -68,9 +68,9 @@
 - [ ] Separar responsabilidades do `Stage` (setup renderer/câmera, luzes, controles) em subcomponentes
   - Arquivos: `src/systems/render/Stage.tsx`
   - Critérios: `Stage` enxuto; fácil troca de câmera (persp/ortho)
-- [ ] Implementar controles customizados de pan/zoom e modo ortográfico opcional
+- [x] Implementar controles customizados de pan/zoom e modo ortográfico opcional
   - Arquivos: `src/systems/render/Stage.tsx`
-  - Critérios: toggle persp/ortho; pan com Space; TODO removido
+  - Critérios: toggle persp/ortho; pan com Space; rotação desativada em ortho
 - [x] Padronizar `userData` em inglês (ex.: `idObjeto` -> `objectId`)
   - Arquivos: `src/systems/render/ObjectsLayer.tsx`
   - Critérios: consistência i18n no runtime
@@ -137,12 +137,17 @@
 
 #### 10) UI/HUD e Fluxo
 
-- [ ] Revisar HUDs (`Topbar`, `Toolbar`, `InspectorHud`, `CatalogHud`) e eventos para evitar conflitos com picking
+- [x] Revisar HUDs (`Topbar`, `Toolbar`, `InspectorHud`, `CatalogHud`) e eventos para evitar conflitos com picking
   - Arquivos: `src/ui/*`, `src/systems/tools/toolUtils.ts`
   - Critérios: `isHudEventTarget` confiável; sem cliques vazando
 - [ ] Reconciliação com `HudOverlay.tsx` removido (limpar referências ou recriar quando necessário)
   - Arquivos: grep por `HudOverlay`
   - Critérios: nenhum import quebrado; decisões registradas
+
+Novas tarefas:
+- [x] Adicionar botões de câmera na `Topbar` e posicionar acima da `BudgetBar`
+  - Arquivos: `src/ui/Topbar.tsx`, `src/ui/hud/Hud.tsx`
+  - Critérios: alternar `persp`/`ortho`; layout correto (Topbar acima de BudgetBar)
 
 - [x] Refino de seleção/picking no `Eyedropper` usando `userData.objectId` como fallback
   - Arquivos: `src/systems/tools/strategies/EyedropperStrategy.tsx`, `src/systems/render/ObjectsLayer.tsx`
