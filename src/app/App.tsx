@@ -15,13 +15,17 @@ import { createBulldozeStrategy } from "../systems/tools/strategies/BulldozeStra
 import { createEyedropperStrategy } from "../systems/tools/strategies/EyedropperStrategy";
 import { SelectedInspector } from "../ui/inworld/Inspector";
 import { InputController } from "../systems/controllers/InputController";
+import { Perf } from "r3f-perf";
 
 export function App() {
   return (
     <div style={{ width: "100vw", height: "100vh", position: "relative" }}>
-      <Canvas gl={{ antialias: true }} shadows dpr={[1, 2]}>
+      <Canvas gl={{ antialias: true }} shadows dpr={[1, 2]} linear={true}>
         <color attach="background" args={[0xf3f4f6]} />
         <Suspense fallback={null}>
+          {/* Debug: Performance monitor */}
+          <Perf position="top-left" style={{ zIndex: 1000, marginTop: 90 }} />
+
           {/* Mediator de input: único por Canvas/App */}
           <InputController />
           <StageLayer />

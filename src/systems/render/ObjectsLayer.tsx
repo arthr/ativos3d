@@ -54,25 +54,28 @@ export function ObjectsLayer() {
   );
 
   return (
-    <Instances limit={capacity} range={objects.length}>
+    <Instances limit={capacity} key={objects.length}>
       <boxGeometry args={[1, 1, 1]} />
-      <meshStandardMaterial vertexColors />
+      <meshStandardMaterial />
       {objects.map((obj) => {
         const item = idToItem.get(obj.defId);
         if (!item) return null;
+
         let sx = 1,
-          sz = 1,
-          sy = 1;
-        if (item.footprint && item.footprint.kind === "box") {
+          sy = 1,
+          sz = 1;
+        if (item.footprint?.kind === "box") {
           sx = item.footprint.w;
           sz = item.footprint.d;
           sy = item.footprint.h;
         }
+
         const isHovered = hoverId === obj.id;
         const isSelected = selectedIds.includes(obj.id);
-        const emissive = isHovered || isSelected ? "#38bdf8" : "#000";
-        const emissiveIntensity = isSelected ? 0.6 : isHovered ? 0.25 : 0;
-        const color = item.art?.color ?? "#64748b";
+
+        const base = item.art?.color ?? "#64748b";
+        const color = isHovered || isSelected ? "#38bdf8" : base;
+
         return (
           <Instance
             key={obj.id}
