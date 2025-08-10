@@ -1,5 +1,7 @@
 import Button from "../../components/Button";
 import { useStore } from "../../../store/useStore";
+import { MdOutlineViewInAr } from "react-icons/md";
+import { LuRotate3D } from "react-icons/lu";
 
 export function CameraModeToggle() {
   const cameraMode = useStore((s) => s.cameraMode);
@@ -12,7 +14,7 @@ export function CameraModeToggle() {
         onClick={() => setCameraMode("persp")}
         active={cameraMode === "persp"}
       >
-        Perspective
+        <LuRotate3D />
       </Button>
       <Button
         aria-label="Câmera ortográfica"
@@ -20,7 +22,7 @@ export function CameraModeToggle() {
         onClick={() => setCameraMode("ortho")}
         active={cameraMode === "ortho"}
       >
-        Orthographic
+        <MdOutlineViewInAr />
       </Button>
     </div>
   );
