@@ -7,4 +7,6 @@ export type Toast = {
   variant?: ToastVariant;
   durationMs?: number;
   createdAt: number;
+  entering?: boolean;
+  exiting?: boolean;
 };

@@ -8,7 +8,7 @@ import { useToastStore } from "./store";
  */
 export function ToastContainer() {
   const toasts = useToastStore((s) => s.toasts);
-  const remove = useToastStore((s) => s.remove);
+  const softRemove = useToastStore((s) => s.softRemove);
 
   function renderMessage(message: string | React.ReactNode) {
     if (message == null) return "Mensagem não definida";
@@ -28,46 +28,61 @@ export function ToastContainer() {
         right: 16,
         display: "flex",
         flexDirection: "column",
-        gap: 8,
+        gap: 0,
         pointerEvents: "none",
       }}
     >
-      {toasts.map((t) => (
-        <div
-          key={t.id}
-          style={{
-            pointerEvents: "auto",
-            minWidth: 260,
-            maxWidth: 360,
-            padding: 12,
-            borderRadius: 8,
-            background: variantBg(t.variant),
-            color: "#111827",
-            boxShadow: "0 8px 20px rgba(0,0,0,0.12)",
-          }}
-          role="status"
-          aria-live="polite"
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <strong style={{ flex: 1 }}>{t.title ?? labelFor(t.variant)}</strong>
-            <button
-              onClick={() => remove(t.id)}
-              style={{
-                background: "transparent",
-                border: 0,
-                color: "#374151",
-                cursor: "pointer",
-                fontSize: 16,
-              }}
-            >
-              ×
-            </button>
+      {toasts.map((t, i) => {
+        const depth = toasts.length - 1 - i; // 0: mais nova, maior: mais antiga
+        const baseOpacity = 1 - depth * 0.25;
+        const visibleOpacity = Math.max(0.5, baseOpacity);
+        const marginTop = i === 0 ? 0 : -12 * (depth + 0.5);
+        return (
+          <div
+            key={t.id}
+            style={{
+              pointerEvents: "auto",
+              minWidth: 260,
+              maxWidth: 360,
+              padding: 12,
+              borderRadius: 8,
+              background: variantBg(t.variant),
+              color: "#111827",
+              boxShadow: "0 8px 20px rgba(0,0,0,0.30)",
+              marginTop,
+              zIndex: 1000 + i,
+              transform: t.exiting
+                ? "translateX(16px)"
+                : t.entering
+                  ? "translateX(16px)"
+                  : "translateX(0)",
+              opacity: t.exiting ? 0 : t.entering ? 0 : visibleOpacity,
+              transition: "transform 200ms ease, opacity 200ms ease",
+            }}
+            role="status"
+            aria-live="polite"
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <strong style={{ flex: 1 }}>{t.title ?? labelFor(t.variant)}</strong>
+              <button
+                onClick={() => softRemove(t.id)}
+                style={{
+                  background: "transparent",
+                  border: 0,
+                  color: "#374151",
+                  cursor: "pointer",
+                  fontSize: 16,
+                }}
+              >
+                ×
+              </button>
+            </div>
+            <div style={{ marginTop: 4, fontSize: 14, color: "#1f2937" }}>
+              {renderMessage(t.message)}
+            </div>
           </div>
-          <div style={{ marginTop: 4, fontSize: 14, color: "#1f2937" }}>
-            {renderMessage(t.message)}
-          </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }
