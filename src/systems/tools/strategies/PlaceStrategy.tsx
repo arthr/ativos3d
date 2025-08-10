@@ -7,6 +7,9 @@ import { snapToGrid } from "../toolUtils";
 import { eventBus } from "../../../core/events";
 import { executeCommand } from "../../../core/commandStack";
 import { validatePlacement } from "../../../core/placement";
+import { SpatialIndex } from "../../../core/spatialIndex";
+import { aabbIntersects, footprintAABB3D, rotateFootprint3D } from "../../../core/geometry";
+import { CatalogItem3D, PlacedObject3D } from "../../../core/types";
 
 export function createPlaceStrategy(ctx: ToolContext): ToolStrategy {
   const state = {
@@ -21,6 +24,8 @@ export function createPlaceStrategy(ctx: ToolContext): ToolStrategy {
     },
     yaw: 0 as 0 | 90 | 180 | 270,
     cleanup: [] as Array<() => void>,
+    index: new SpatialIndex(1),
+    lastObjectsRef: null as PlacedObject3D[] | null,
   };
 
   const api: ToolStrategy = {
@@ -77,28 +82,67 @@ export function createPlaceStrategy(ctx: ToolContext): ToolStrategy {
         state.preview = null;
         return;
       }
-      const item: any = (catalog as any[]).find((i) => i.id === selectedCatalogId);
+      const catalogItems = catalog as unknown as CatalogItem3D[];
+      const item = catalogItems.find((i) => i.id === selectedCatalogId);
       if (!item) {
         state.preview = null;
         return;
       }
-      const fp = item.footprint || { w: 1, d: 1, h: 1 };
-      const baseW = fp.w ?? 1;
-      const baseD = fp.d ?? 1;
-      const baseH = fp.h ?? 1;
+      const fp = item.footprint;
+      let baseW = 1;
+      let baseD = 1;
+      let baseH = 1;
+      if (fp && fp.kind === "box") {
+        baseW = fp.w;
+        baseD = fp.d;
+        baseH = fp.h;
+      }
       const yaw = state.yaw;
       const rotW = yaw % 180 === 0 ? baseW : baseD;
       const rotD = yaw % 180 === 0 ? baseD : baseW;
       const pos = snapToGrid(new THREE.Vector3(gp.x, gp.y, gp.z), "floor");
-      const valid = validatePlacement(
-        { ...item, footprint: { w: rotW, d: rotD, h: baseH, kind: "box" } } as any,
-        { x: pos.x, y: 0, z: pos.z },
-        { x: 0, y: state.yaw, z: 0 },
-        objects,
-        [],
-        { width: lot.width, depth: lot.depth },
-        catalog as any,
-      ).ok;
+
+      // Reconstruir índice apenas quando o array de objetos mudar (referência)
+      if (state.lastObjectsRef !== objects) {
+        state.index.clear();
+        const idToItem = new Map<string, CatalogItem3D>();
+        for (const it of catalogItems) idToItem.set(it.id, it);
+        for (const obj of objects) {
+          const def = idToItem.get(obj.defId);
+          const ofp = def?.footprint;
+          if (!ofp) continue;
+          const rotated = rotateFootprint3D(ofp, obj.rot);
+          const aabb = footprintAABB3D(rotated, obj.pos);
+          state.index.insert(aabb);
+        }
+        state.lastObjectsRef = objects;
+      }
+
+      // Checagem rápida via índice espacial
+      const candidate = {
+        min: { x: pos.x, y: 0, z: pos.z },
+        max: { x: pos.x + rotW, y: baseH, z: pos.z + rotD },
+      };
+      let fastOk = true;
+      const neighbors = state.index.query(candidate);
+      for (const b of neighbors) {
+        if (aabbIntersects(candidate, b)) {
+          fastOk = false;
+          break;
+        }
+      }
+
+      const valid =
+        fastOk &&
+        validatePlacement(
+          { ...item, footprint: { w: rotW, d: rotD, h: baseH, kind: "box" } },
+          { x: pos.x, y: 0, z: pos.z },
+          { x: 0, y: state.yaw, z: 0 },
+          objects,
+          [],
+          { width: lot.width, depth: lot.depth },
+          catalogItems,
+        ).ok;
       state.preview = {
         pos,
         w: rotW,
@@ -107,7 +151,7 @@ export function createPlaceStrategy(ctx: ToolContext): ToolStrategy {
         color: item.art?.color ?? "#64748b",
         yawDeg: yaw,
         valid,
-      } as any;
+      };
     },
     renderPreview() {
       const p = state.preview;

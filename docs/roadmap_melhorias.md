@@ -12,6 +12,12 @@
 
 ### Tarefas Detalhadas
 
+#### Estratégias adotadas (P0)
+
+- **Validação em dois estágios**: checagem rápida via `SpatialIndex` (grid hashing) + confirmação com `validatePlacement`.
+- **Cache do índice**: reconstrução do `SpatialIndex` somente quando a referência de `objects` mudar.
+- **Command centralizado**: todas ações mutáveis usam `executeCommand`.
+
 #### 1) Controladores e Eventos
 
 - [ ] Extrair `InputController` do `Stage` para montagem em nível de app quando houver múltiplos stages
@@ -32,7 +38,7 @@
 
 #### 3) Command Pattern e Undo/Redo
 
-- [ ] Centralizar execução via `core/commandStack.executeCommand`
+- [x] Centralizar execução via `core/commandStack.executeCommand`
   - Arquivos: `src/core/commandStack.ts`, chamadas nas estratégias
   - Critérios: todas ações mutáveis passam por `executeCommand`
 - [ ] Limite e compressão de histórico (ex.: 100 comandos, coalescer drag)
@@ -62,18 +68,21 @@
 
 #### 6) Validação de Colocação (Placement)
 
-- [ ] Completar `validatePlacement` com AABB, clearance, needs_wall, slots e bounds reais do lote
+- [x] Completar `validatePlacement` com AABB básico e bounds do lote (MVP)
   - Arquivos: `src/core/placement.ts`, `src/core/geometry.ts`, `src/core/types.ts`
-  - Critérios: impedir interpenetração; mensagens de erro curtas; TODOs removidos
-- [ ] Integrar validação na estratégia `place` (preview com feedback `valid/invalid`)
+  - Critérios: impedir interpenetração; mensagens de erro curtas; TODOs removidos (parcial)
+- [x] Integrar validação na estratégia `place` (preview com feedback `valid/invalid`)
   - Arquivos: `src/systems/tools/strategies/PlaceStrategy.tsx`
   - Critérios: cor/outline no preview indicando validade
 
 #### 7) Índice Espacial e Performance
 
-- [ ] Implementar `SpatialIndex` (grid hashing ou BVH) para queries e colisão
+- [x] Implementar `SpatialIndex` (grid hashing) para queries e colisão
   - Arquivos: `src/core/spatialIndex.ts`
   - Critérios: `insert/query` eficientes; remover TODO de placeholder
+- [x] Integrar `SpatialIndex` ao `PlaceStrategy` para validação rápida
+  - Arquivos: `src/systems/tools/strategies/PlaceStrategy.tsx`
+  - Critérios: early-out em colisões; sem regressão de UX
 - [ ] Usar `@react-three/drei/Instances` para piso e avaliar instancing para objetos repetidos
   - Arquivos: `src/systems/render/FloorLayer.tsx`, `ObjectsLayer.tsx`
   - Critérios: menor custo de draw calls; sem regressão visual
@@ -110,7 +119,7 @@
 
 #### 11) Qualidade de Código e Build
 
-- [ ] Adicionar ESLint + Prettier + scripts e pre-commit
+- [x] Adicionar ESLint + Prettier + scripts
   - Arquivos: `package.json`, `.eslintrc`, `.prettierrc`
   - Critérios: lint sem erros; format consistente
 - [ ] `tsconfig` estrito (`strict: true`, `noImplicitAny`, `exactOptionalPropertyTypes`)
