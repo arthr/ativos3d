@@ -1,5 +1,5 @@
 import { useThree } from "@react-three/fiber";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "@react-three/drei";
 import { useStore } from "../../store/useStore";
@@ -8,7 +8,6 @@ import { getCursorForTool } from "../../core/modeMachine";
 export function Stage() {
   const { camera, gl, scene } = useThree();
   const controlsEnabled = useStore((s) => s.cameraControlsEnabled);
-  const controlsRef = useRef<any>(null);
   const activeTool = useStore((s) => s.activeTool);
   const setCameraGestureActive = useStore((s) => s.setCameraGestureActive);
   const [isSpaceDown, setIsSpaceDown] = useState(false);
@@ -28,16 +27,7 @@ export function Stage() {
     scene.background = new THREE.Color(0xf3f4f6);
   }, [camera, gl, scene]);
 
-  // Configurar mouse mapping: Right = rotate; Left = pan (habilitado/desabilitado via enablePan)
-  useEffect(() => {
-    const controls = controlsRef.current as any | null;
-    if (!controls) return;
-    controls.mouseButtons = {
-      LEFT: THREE.MOUSE.PAN,
-      MIDDLE: THREE.MOUSE.DOLLY,
-      RIGHT: THREE.MOUSE.ROTATE,
-    };
-  }, []);
+  // Mouse mapping configurado via prop em OrbitControls (LEFT=PAN, RIGHT=ROTATE)
 
   // Toggle pan com Space e feedback de cursor
   useEffect(() => {
@@ -135,7 +125,6 @@ export function Stage() {
       />
       {/* TODO: adicionar controles de pan/zoom (Orbit/MapControls custom) */}
       <OrbitControls
-        ref={controlsRef}
         makeDefault
         enableDamping
         dampingFactor={0.1}
@@ -144,6 +133,8 @@ export function Stage() {
         enablePan={controlsEnabled && isSpaceDown}
         enableZoom={controlsEnabled}
         enableRotate={controlsEnabled}
+        // Mapeamento: LEFT=PAN, RIGHT=ROTATE
+        mouseButtons={{ LEFT: THREE.MOUSE.PAN, MIDDLE: THREE.MOUSE.DOLLY, RIGHT: THREE.MOUSE.ROTATE }}
       />
     </>
   );

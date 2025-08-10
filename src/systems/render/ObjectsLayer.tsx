@@ -1,7 +1,8 @@
-import { useMemo, useCallback, useState } from "react";
+import { useMemo, useCallback } from "react";
 import { useStore } from "../../store/useStore";
 import { catalog } from "../../core/catalog";
 import { CatalogItem3D } from "../../core/types";
+import type { ThreeEvent } from "@react-three/fiber";
 
 export function ObjectsLayer() {
   const objects = useStore((s) => s.objects);
@@ -17,7 +18,7 @@ export function ObjectsLayer() {
   }, []);
 
   const handlePointerOver = useCallback(
-    (e: any) => {
+    (e: ThreeEvent<PointerEvent>) => {
       e.stopPropagation();
       const id = e.object?.userData?.objectId as string | undefined;
       setHover(id);
@@ -26,7 +27,7 @@ export function ObjectsLayer() {
   );
 
   const handlePointerOut = useCallback(
-    (e: any) => {
+    (e: ThreeEvent<PointerEvent>) => {
       e.stopPropagation();
       setHover(undefined);
     },
@@ -34,7 +35,7 @@ export function ObjectsLayer() {
   );
 
   const handleClick = useCallback(
-    (e: any) => {
+    (e: ThreeEvent<MouseEvent>) => {
       e.stopPropagation();
       const id = e.object?.userData?.objectId as string | undefined;
       if (id) setSelected([id]);

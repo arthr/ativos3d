@@ -1,6 +1,6 @@
 export type Unsubscribe = () => void;
 
-export class EventManager<EventMap extends Record<string, any>> {
+export class EventManager<EventMap extends Record<string, unknown>> {
   private listeners: { [K in keyof EventMap]?: Array<(payload: EventMap[K]) => void> } = {};
 
   on<K extends keyof EventMap>(event: K, listener: (payload: EventMap[K]) => void): Unsubscribe {

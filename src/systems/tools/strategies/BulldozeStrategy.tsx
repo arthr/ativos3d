@@ -21,9 +21,11 @@ export function createBulldozeStrategy(ctx: ToolContext): ToolStrategy {
         const ndc = new THREE.Vector2(x, y);
         raycaster.setFromCamera(ndc, ctx.camera);
         const hitList = raycaster.intersectObjects(ctx.scene.children, true);
-        const objHit = hitList.find((h) => (h.object as any)?.userData?.objectId);
+        const objHit = hitList.find(
+          (h) => (h.object as { userData?: { objectId?: string } })?.userData?.objectId,
+        );
         if (objHit) {
-          const objectId = (objHit.object as any).userData.objectId as string;
+          const objectId = (objHit.object as { userData?: { objectId?: string } }).userData?.objectId as string;
           state.hover = { kind: "object", id: objectId };
           return;
         }

@@ -22,7 +22,7 @@ export function CatalogHud() {
 					maxHeight: 260,
 					overflow: "auto",
 				}}>
-				{(catalog as any[]).map((item) => (
+                {(catalog as unknown as Array<{ id: string; name: string; price: number }>).map((item) => (
 					<button
 						key={item.id}
 						onClick={() => setSelectedCatalogId(item.id)}

@@ -5,7 +5,7 @@ import { snapToGrid } from "../toolUtils";
 import { eventBus } from "../../../core/events";
 import { executeCommand } from "../../../core/commandStack";
 import { aabbIntersects, footprintAABB3D, rotateFootprint3D } from "../../../core/geometry";
-import { CatalogItem3D } from "../../../core/types";
+import { CatalogItem3D, PlacedObject3D } from "../../../core/types";
 import { catalog } from "../../../core/catalog";
 import { buildObjectAabbIndex } from "../../../core/sceneIndex";
 
@@ -17,7 +17,7 @@ export function createMoveStrategy(ctx: ToolContext): ToolStrategy {
     lastPos: null as { x: number; y: number; z: number } | null,
     cleanup: [] as Array<() => void>,
     index: null as ReturnType<typeof buildObjectAabbIndex> | null,
-    lastObjectsRef: null as any,
+    lastObjectsRef: null as PlacedObject3D[] | null,
   };
 
   return {

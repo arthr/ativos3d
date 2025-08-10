@@ -32,7 +32,7 @@ export function createPlaceStrategy(ctx: ToolContext): ToolStrategy {
     onActivate() {
       const offKeyDown = eventBus.on("keyDown", ({ code, shift }) => {
         if (code.toLowerCase?.() === "keyr" || code === "KeyR") {
-          state.yaw = (((state.yaw ?? 0) + (shift ? 270 : 90)) % 360) as any;
+          state.yaw = (((state.yaw ?? 0) + (shift ? 270 : 90)) % 360) as 0 | 90 | 180 | 270;
         }
         if (code === "Escape") {
           useStore.setState({ selectedCatalogId: undefined });

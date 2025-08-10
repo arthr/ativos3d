@@ -4,11 +4,11 @@ import { catalog } from "../../core/catalog";
 
 export function InspectorHud() {
 	const selectedIds = useStore((s) => s.selectedIds);
-	const idToItem = useMemo(() => {
-		const map = new Map<string, any>();
-		for (const item of catalog as any[]) map.set(item.id, item);
-		return map;
-	}, []);
+  const idToItem = useMemo(() => {
+    const map = new Map<string, { id: string }>();
+    for (const item of (catalog as unknown as Array<{ id: string }>)) map.set(item.id, item);
+    return map;
+  }, []);
 
 	if (selectedIds.length === 0) return null;
 	const selectedId = selectedIds[0];

@@ -14,9 +14,12 @@ export function createEyedropperStrategy(ctx: ToolContext): ToolStrategy {
         const ndc = new THREE.Vector2(x, y);
         raycaster.setFromCamera(ndc, ctx.camera);
         const hits = raycaster.intersectObjects(ctx.scene.children, true);
-        const objHit = hits.find((h) => (h.object as any)?.userData?.defId || (h.object as any)?.userData?.objectId);
+        const objHit = hits.find(
+          (h) => (h.object as { userData?: { defId?: string; objectId?: string } })?.userData?.defId ||
+            (h.object as { userData?: { defId?: string; objectId?: string } })?.userData?.objectId,
+        );
         if (objHit) {
-          const u = (objHit.object as any).userData as { defId?: string; objectId?: string };
+          const u = (objHit.object as { userData?: { defId?: string; objectId?: string } }).userData ?? {};
           state.hoverDefId = u.defId ?? null;
         } else {
           state.hoverDefId = null;
