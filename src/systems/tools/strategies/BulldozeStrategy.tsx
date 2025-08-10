@@ -25,7 +25,8 @@ export function createBulldozeStrategy(ctx: ToolContext): ToolStrategy {
           (h) => (h.object as { userData?: { objectId?: string } })?.userData?.objectId,
         );
         if (objHit) {
-          const objectId = (objHit.object as { userData?: { objectId?: string } }).userData?.objectId as string;
+          const objectId = (objHit.object as { userData?: { objectId?: string } }).userData
+            ?.objectId as string;
           state.hover = { kind: "object", id: objectId };
           return;
         }

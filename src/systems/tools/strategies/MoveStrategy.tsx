@@ -119,7 +119,9 @@ export function createMoveStrategy(ctx: ToolContext): ToolStrategy {
       // candidate AABB for moved object (use its footprint)
       const moving = objects.find((o) => o.id === id);
       if (!moving) return;
-      const movingDef = (catalogItems.find((c) => c.id === moving.defId) as CatalogItem3D | undefined);
+      const movingDef = catalogItems.find((c) => c.id === moving.defId) as
+        | CatalogItem3D
+        | undefined;
       const mfp = movingDef?.footprint;
       if (!mfp) return;
       const movedAabb = footprintAABB3D(rotateFootprint3D(mfp, moving.rot), {

@@ -26,5 +26,3 @@ export function buildObjectAabbIndex(
   }
   return index;
 }
-
-
