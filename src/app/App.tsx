@@ -13,9 +13,6 @@ import { createWallStrategy } from "../systems/tools/strategies/WallStrategy";
 import { createFloorStrategy } from "../systems/tools/strategies/FloorStrategy";
 import { createBulldozeStrategy } from "../systems/tools/strategies/BulldozeStrategy";
 import { createEyedropperStrategy } from "../systems/tools/strategies/EyedropperStrategy";
-// TODO: adicionar estratégias para move, wall, floor, bulldoze, eyedropper
-import { useThree } from "@react-three/fiber";
-import { useMemo } from "react";
 
 export function App() {
   return (

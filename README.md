@@ -7,7 +7,7 @@ SPA para construir um cômodo em grade 3D (plano XZ), posicionar objetos do cat�
 - React Three Fiber (Three.js)
 - Zustand
 
-Dependências relevantes: usamos `@react-three/drei` (Hud/Html). Não usamos `OrbitControls` neste MVP.
+Dependências relevantes: usamos `@react-three/drei` (Hud/Html) e `OrbitControls` para pan/zoom/rotate.
 
 ## Decisões de Renderização
 - Câmera perspective com tilt isométrico leve: posição padrão `[20, 20, 20]`, apontando para `[0, 0, 0]`. //TODO: oferecer modo ortográfico alternativo
@@ -78,8 +78,7 @@ index.css
 - Mapa do repo: `docs/repo_map.md`
 
 ## Próximos Passos
-- Completar ferramentas (Move/Wall/Floor/Bulldoze/Eyedropper) //TODO
-- Pipeline de validação 3D (clearance, needs_wall, slots) //TODO
-- Evoluir `catalog.json` para footprints poly e slots completos //TODO
-- Export/import lote + thumbnail (`gl.domElement.toDataURL()`) //TODO
-- Adicionar lint/format (ESLint + Prettier) e scripts no `package.json` //TODO
+- Pipeline de validação 3D (clearance, needs_wall, slots)
+- Evoluir `catalog.json` para footprints poly e slots completos
+- Export/import lote + thumbnail (`gl.domElement.toDataURL()`)
+- Integração de índice espacial avançado (BVH) e otimizações de performance
