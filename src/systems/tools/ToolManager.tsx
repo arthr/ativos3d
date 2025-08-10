@@ -11,6 +11,7 @@ export function ToolManager({ strategies }: { strategies: Record<Tool, StrategyF
   const { camera, gl, scene } = useThree();
   const activeTool = useStore((s) => s.activeTool);
   const [current, setCurrent] = useState<ToolStrategy | null>(null);
+  const [tick, setTick] = useState(0);
   const cleanupRef = useRef<(() => void) | undefined>(undefined);
   const ctx = useMemo<ToolContext>(() => ({ camera, gl, scene }), [camera, gl, scene]);
 
@@ -35,7 +36,10 @@ export function ToolManager({ strategies }: { strategies: Record<Tool, StrategyF
 
   useFrame(() => {
     current?.onFrame?.();
+    // Forçar reconciliação para refletir mudanças em previews mutáveis por frame
+    setTick((t) => (t + 1) % 60);
   });
 
+  void tick; // manter dependência para re-render
   return current?.renderPreview() ?? null;
 }
