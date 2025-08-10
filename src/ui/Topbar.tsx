@@ -1,10 +1,7 @@
-import { useStore } from "../store/useStore";
 import CameraModeToggle from "./hud/Topbar/CameraModeToggle";
 import FileActions from "./hud/Topbar/FileActions";
 
 export function Topbar() {
-  const cameraMode = useStore((s) => s.cameraMode);
-  const setCameraMode = useStore((s) => s.setCameraMode);
   const barStyle: React.CSSProperties = {
     display: "flex",
     alignItems: "center",
@@ -14,16 +11,6 @@ export function Topbar() {
     background: "#ffffff",
     borderBottom: "1px solid #e5e5e5",
   };
-  const buttonStyle = (active: boolean): React.CSSProperties => ({
-    height: 32,
-    minWidth: 44,
-    padding: "0 10px",
-    borderRadius: 8,
-    border: "1px solid #e5e7eb",
-    background: active ? "#e0f2fe" : "#fff",
-    fontWeight: active ? 800 : 600,
-    textTransform: "capitalize",
-  });
   return (
     <div style={barStyle}>
       <div style={{ fontWeight: 800 }}>Ativos3D</div>
