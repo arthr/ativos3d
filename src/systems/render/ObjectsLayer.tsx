@@ -18,7 +18,7 @@ export function ObjectsLayer() {
   const handlePointerOver = useCallback(
     (e: any) => {
       e.stopPropagation();
-      const id = e.object?.userData?.idObjeto as string | undefined;
+      const id = e.object?.userData?.objectId as string | undefined;
       setHover(id);
     },
     [setHover],
@@ -35,7 +35,7 @@ export function ObjectsLayer() {
   const handleClick = useCallback(
     (e: any) => {
       e.stopPropagation();
-      const id = e.object?.userData?.idObjeto as string | undefined;
+      const id = e.object?.userData?.objectId as string | undefined;
       if (id) setSelected([id]);
     },
     [setSelected],
@@ -55,7 +55,7 @@ export function ObjectsLayer() {
         const isSelected = selectedIds.includes(obj.id);
         return (
           <mesh
-            userData={{ idObjeto: obj.id, defId: obj.defId }}
+            userData={{ objectId: obj.id, defId: obj.defId }}
             key={obj.id}
             position={[obj.pos.x + w / 2, obj.pos.y + h / 2, obj.pos.z + d / 2]}
             rotation={[0, (obj.rot.y * Math.PI) / 180, 0]}

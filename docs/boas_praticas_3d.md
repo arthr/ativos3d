@@ -22,7 +22,7 @@ Estas diretrizes devem orientar decisões técnicas e revisões de código. Mant
 - Texturas: boas resoluções/atlas; evitar PNGs gigantes; preferir KTX2/Basis.
 
 ## Integração com app de ativos
-- Mapeamento ID↔mesh: `mesh.userData.idObjeto` para rastreabilidade.
+- Mapeamento ID↔mesh: `mesh.userData.objectId` para rastreabilidade.
 - Estado: Zustand/Jotai/Recoil; cache de ativos; seleção múltipla.
 - Data layer: REST/GraphQL para consultas; WebSocket/SSE para telemetria/estado online.
 - Sincronização duas vias: clique no 3D atualiza painel; filtros/seleção no painel refletem na cena.
