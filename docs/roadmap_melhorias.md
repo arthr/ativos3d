@@ -20,7 +20,7 @@
 
 #### 1) Controladores e Eventos
 
-- [ ] Extrair `InputController` do `Stage` para montagem em nível de app (quando houver múltiplos stages)
+- [x] Extrair `InputController` do `Stage` para montagem em nível de app (quando houver múltiplos stages)
   - Arquivos: `src/systems/render/Stage.tsx`, `src/app/App.tsx`
   - Critérios: um único `InputController` ativo; nenhum leak de listeners; comentário TODO removido
 - [ ] Unificar publicação de eventos e estado: garantir que eventos do `eventBus` espelhem o `useStore.input`
@@ -56,7 +56,7 @@
 
 #### 4) Store (Zustand)
 
-- [ ] Remover `any`/casts indevidos nos componentes/estratégias
+- [x] Remover `any`/casts indevidos nos componentes/estratégias (críticos)
   - Arquivos: `src/systems/render/Stage.tsx`, `src/systems/render/ObjectsLayer.tsx`, `src/systems/tools/strategies/*`
   - Critérios: build sem `any` implícitos; tipagem de eventos/payloads
 - [ ] Fatiar estado em slices (camera, input, scene, ui)
@@ -121,6 +121,7 @@
 - [ ] Validar `catalog.json` com zod; normalizar footprints/slots
   - Arquivos: `src/core/catalog.ts`, `catalog.json`
   - Critérios: throw em schema inválido; tipos alinhados a `core/types.ts`
+  - Status: em andamento
 - [ ] Suporte a GLTF/GLB (Draco/Meshopt) e KTX2 para texturas
   - Arquivos: `src/systems/render/ObjectsLayer.tsx`, assets em `src/assets/models/`
   - Critérios: carregamento lazy; fallback para caixa quando sem modelo
