@@ -34,9 +34,11 @@ export function SelectedInspector() {
   const cz = selected.pos.z + d / 2;
 
   return (
-    <group position={[cx, cy, cz]} rotation={[0, (selected.rot.y * Math.PI) / 180, 0]}>
-      <Html center occlude distanceFactor={8} style={{ pointerEvents: "auto" }} transform>
+    <group position={[cx, cy, cz]}>
+      <Html center occlude distanceFactor={8} style={{ pointerEvents: "auto" }} transform sprite>
         <SelectedInspectorPanel
+          id={selected.id}
+          selected={selected}
           title={def?.name ?? selected.defId}
           price={def?.price}
           onClose={() => setSelected([])}

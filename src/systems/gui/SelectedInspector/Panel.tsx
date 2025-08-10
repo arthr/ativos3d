@@ -1,12 +1,25 @@
 import React from "react";
+import { PlacedObject3D } from "../../../core/types";
+import { catalog } from "../../../core/catalog";
 
 export type SelectedInspectorPanelProps = {
+  id: string;
+  selected: PlacedObject3D;
   title: string;
   price?: number;
   onClose: () => void;
 };
 
-export function SelectedInspectorPanel({ title, price, onClose }: SelectedInspectorPanelProps) {
+export function SelectedInspectorPanel({
+  id,
+  selected,
+  title,
+  price,
+  onClose,
+}: SelectedInspectorPanelProps) {
+  const { pos, rot } = selected;
+  const def = catalog.find((d) => d.id === selected.defId);
+
   return (
     <div
       data-hud="true"
@@ -43,6 +56,20 @@ export function SelectedInspectorPanel({ title, price, onClose }: SelectedInspec
       {typeof price === "number" && (
         <div style={{ fontSize: 11, color: "#475569", marginTop: 6 }}>R$ {price}</div>
       )}
+      <div style={{ fontSize: 11, color: "#475569", marginTop: 6 }}>
+        <div>
+          <div>ID: {id}</div>
+          <div>Tipo: {selected.defId}</div>
+          <div>
+            Posição: x: {pos.x}, y: {pos.y}, z: {pos.z}
+          </div>
+          <div>
+            Rotação: x: {rot.x}°, y: {rot.y}°, z: {rot.z}°
+          </div>
+          <div>Categoria: {def?.category}</div>
+          <div>Tags: {def?.tags?.join(", ")}</div>
+        </div>
+      </div>
     </div>
   );
 }
