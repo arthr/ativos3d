@@ -1,7 +1,7 @@
 import { Canvas } from "@react-three/fiber";
 import { Suspense } from "react";
-import { Stage } from "../systems/render/Stage";
-import { Grid } from "../systems/render/Grid";
+import { StageLayer } from "../systems/render/StageLayer";
+import { GridLayer } from "../systems/render/GridLayer";
 import { ObjectsLayer } from "../systems/render/ObjectsLayer";
 import { WallsLayer } from "../systems/render/WallsLayer";
 import { FloorLayer } from "../systems/render/FloorLayer";
@@ -24,8 +24,8 @@ export function App() {
         <Suspense fallback={null}>
           {/* Mediator de input: único por Canvas/App */}
           <InputController />
-          <Stage />
-          <Grid />
+          <StageLayer />
+          <GridLayer />
           <FloorLayer />
           <WallsLayer />
           <ObjectsLayer />

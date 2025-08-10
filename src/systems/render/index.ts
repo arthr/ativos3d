@@ -1,5 +1,5 @@
-export * from "./Stage";
-export * from "./Grid";
+export * from "./StageLayer";
+export * from "./GridLayer";
 export * from "./ObjectsLayer";
 export * from "./WallsLayer";
 export * from "./FloorLayer";

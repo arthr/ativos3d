@@ -5,7 +5,7 @@ import { OrbitControls, PerspectiveCamera, OrthographicCamera } from "@react-thr
 import { useStore } from "../../store/useStore";
 import { getCursorForTool } from "../../core/modeMachine";
 
-export function Stage() {
+export function StageLayer() {
   const { camera, gl, scene } = useThree();
   const controlsEnabled = useStore((s) => s.cameraControlsEnabled);
   const cameraMode = useStore((s) => s.cameraMode);

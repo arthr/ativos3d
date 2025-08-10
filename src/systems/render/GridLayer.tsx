@@ -1,10 +1,10 @@
 import { useStore } from "../../store/useStore";
-import { Grid as DreiGrid } from "@react-three/drei";
+import { Grid } from "@react-three/drei";
 
-export function Grid() {
+export function GridLayer() {
   const lot = useStore((s) => s.lot);
   return (
-    <DreiGrid
+    <Grid
       args={[lot.width, lot.depth]}
       cellSize={1}
       cellThickness={1}
