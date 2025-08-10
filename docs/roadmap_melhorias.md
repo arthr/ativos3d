@@ -20,7 +20,7 @@
 
 #### 1) Controladores e Eventos
 
-- [ ] Extrair `InputController` do `Stage` para montagem em nível de app quando houver múltiplos stages
+- [x] Extrair `InputController` do `Stage` para montagem em nível de app quando houver múltiplos stages
   - Arquivos: `src/systems/render/Stage.tsx`, `src/app/App.tsx`
   - Critérios: um único `InputController` ativo; nenhum leak de listeners; comentário TODO removido
 - [ ] Unificar publicação de eventos e estado: garantir que eventos do `eventBus` espelhem o `useStore.input`

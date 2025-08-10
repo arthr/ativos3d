@@ -26,6 +26,7 @@ export interface AppState {
   budget: BudgetState;
   mode: Mode;
   activeTool: Tool;
+  cameraMode: "persp" | "ortho";
   cameraControlsEnabled: boolean;
   cameraGestureActive: boolean;
   input: {
@@ -43,6 +44,7 @@ export interface AppState {
   selectedCatalogId?: string;
   setTool: (t: Tool) => void;
   setMode: (m: Mode) => void;
+  setCameraMode: (m: "persp" | "ortho") => void;
   setCameraControlsEnabled: (enabled: boolean) => void;
   setCameraGestureActive: (active: boolean) => void;
   setPointerNdc: (x: number, y: number) => void;
@@ -61,6 +63,7 @@ export const useStore = create<AppState>((set, get) => ({
   budget: { funds: 10000, spent: 0 },
   mode: "buy",
   activeTool: "place",
+  cameraMode: "persp",
   cameraControlsEnabled: true,
   cameraGestureActive: false,
   input: { pointerNdc: { x: 0, y: 0 }, groundPoint: null, keysDown: {} },
@@ -115,6 +118,7 @@ export const useStore = create<AppState>((set, get) => ({
       const fallbackTool = modeToTools[m][0];
       return { mode: m, activeTool: keepTool ? s.activeTool : fallbackTool };
     }),
+  setCameraMode: (m) => set({ cameraMode: m }),
   setCameraControlsEnabled: (enabled) => set({ cameraControlsEnabled: enabled }),
   setCameraGestureActive: (active) => set({ cameraGestureActive: active }),
   setPointerNdc: (x, y) => set((s) => ({ input: { ...s.input, pointerNdc: { x, y } } })),
