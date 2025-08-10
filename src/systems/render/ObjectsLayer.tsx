@@ -76,11 +76,16 @@ export function ObjectsLayer() {
         const base = item.art?.color ?? "#64748b";
         const color = isHovered || isSelected ? "#38bdf8" : base;
 
+        // Corrigir offset do centro conforme rotação Y (0/90/180/270)
+        const yawDeg = ((obj.rot.y % 360) + 360) % 360;
+        const halfX = (yawDeg % 180 === 0 ? sx : sz) / 2;
+        const halfZ = (yawDeg % 180 === 0 ? sz : sx) / 2;
+
         return (
           <Instance
             key={obj.id}
             userData={{ objectId: obj.id, defId: obj.defId }}
-            position={[obj.pos.x + sx / 2, obj.pos.y + sy / 2, obj.pos.z + sz / 2]}
+            position={[obj.pos.x + halfX, obj.pos.y + sy / 2, obj.pos.z + halfZ]}
             rotation={[0, (obj.rot.y * Math.PI) / 180, 0]}
             scale={[sx, sy, sz]}
             onPointerOver={handlePointerOver as any}
