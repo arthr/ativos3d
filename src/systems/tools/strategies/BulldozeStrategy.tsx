@@ -11,19 +11,30 @@ export function createBulldozeStrategy(ctx: ToolContext): ToolStrategy {
     hover: null as { kind: "object"; id: string } | { kind: "tile"; x: number; z: number } | null,
     cleanup: [] as Array<() => void>,
   };
+  const raycaster = new THREE.Raycaster();
   return {
     onActivate() {
-      const offPointer = eventBus.on("pointerNdc", () => {
+      const offPointer = eventBus.on("pointerNdc", ({ x, y }) => {
         const { activeTool, cameraGestureActive, input } = useStore.getState();
         if (activeTool !== "bulldoze" || cameraGestureActive) return;
-        const gp = input.groundPoint;
-        if (!gp) {
-          state.hover = null;
+        // Raycast primeiro para tentar encontrar objetos
+        const ndc = new THREE.Vector2(x, y);
+        raycaster.setFromCamera(ndc, ctx.camera);
+        const hitList = raycaster.intersectObjects(ctx.scene.children, true);
+        const objHit = hitList.find((h) => (h.object as any)?.userData?.objectId);
+        if (objHit) {
+          const objectId = (objHit.object as any).userData.objectId as string;
+          state.hover = { kind: "object", id: objectId };
           return;
         }
-        // raycast por objetos com userData.idObjeto não está disponível via Three aqui; manteremos tile hover pelo ground
-        const snapped = snapToGrid(new THREE.Vector3(gp.x, gp.y, gp.z), "floor");
-        state.hover = { kind: "tile", x: snapped.x, z: snapped.z };
+        // Caso não haja objeto, usar tile pelo ground
+        const gp = input.groundPoint;
+        if (gp) {
+          const snapped = snapToGrid(new THREE.Vector3(gp.x, gp.y, gp.z), "floor");
+          state.hover = { kind: "tile", x: snapped.x, z: snapped.z };
+        } else {
+          state.hover = null;
+        }
       });
       const offClick = eventBus.on("click", ({ button, hudTarget }) => {
         const { activeTool, cameraGestureActive } = useStore.getState();

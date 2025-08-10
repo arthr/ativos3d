@@ -5,12 +5,15 @@ import { ToolStrategy, ToolContext } from "./types";
 import { snapToGrid } from "../toolUtils";
 import { eventBus } from "../../../core/events";
 import { executeCommand } from "../../../core/commandStack";
+import { SpatialIndex } from "../../../core/spatialIndex";
+import { aabbIntersects, footprintAABB3D } from "../../../core/geometry";
 
 export function createWallStrategy(ctx: ToolContext): ToolStrategy {
   const state = {
     start: null as THREE.Vector3 | null,
     end: null as THREE.Vector3 | null,
     cleanup: [] as Array<() => void>,
+    index: new SpatialIndex(1),
   };
 
   function computeSegments(start: THREE.Vector3, end: THREE.Vector3) {
@@ -94,7 +97,7 @@ export function createWallStrategy(ctx: ToolContext): ToolStrategy {
       state.end = snapped;
     },
     renderPreview() {
-      const { lot, activeTool } = useStore.getState();
+      const { lot, activeTool, objects } = useStore.getState();
       if (activeTool !== "wall" || !state.start || !state.end) return null;
       const dx = state.end.x - state.start.x;
       const dz = state.end.z - state.start.z;
@@ -104,10 +107,34 @@ export function createWallStrategy(ctx: ToolContext): ToolStrategy {
       const cx = (state.start.x + state.end.x) / 2;
       const cz = (state.start.z + state.end.z) / 2;
       const previewHeight = Math.max(1, lot.height * 0.5);
+
+      // Pré-validação: garantir que a parede não intersecta AABB de objetos (largura ~0.1)
+      state.index.clear();
+      // Inserir AABB dos objetos no índice
+      for (const obj of objects) {
+        const w = 1; // fallback básico enquanto não houver footprint detalhado aqui
+        const d = 1;
+        const aabb = { min: { x: obj.pos.x, y: 0, z: obj.pos.z }, max: { x: obj.pos.x + w, y: 1, z: obj.pos.z + d } };
+        state.index.insert(aabb);
+      }
+      const wallAabb = {
+        min: { x: Math.min(state.start.x, state.end.x), y: 0, z: Math.min(state.start.z, state.end.z) },
+        max: { x: Math.max(state.start.x, state.end.x), y: previewHeight, z: Math.max(state.start.z, state.end.z) },
+      };
+      const neighbors = state.index.query(wallAabb);
+      let collision = false;
+      for (const b of neighbors) {
+        if (
+          !(wallAabb.max.x <= b.min.x || wallAabb.min.x >= b.max.x || wallAabb.max.z <= b.min.z || wallAabb.min.z >= b.max.z)
+        ) {
+          collision = true;
+          break;
+        }
+      }
       return (
         <mesh position={[cx, previewHeight / 2, cz]} rotation={[0, yaw, 0]}>
           <boxGeometry args={[Math.max(0.001, len), previewHeight, 0.05]} />
-          <meshStandardMaterial color="#38bdf8" transparent opacity={0.5} />
+          <meshStandardMaterial color={collision ? "#ef4444" : "#38bdf8"} transparent opacity={0.5} />
         </mesh>
       );
     },

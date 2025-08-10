@@ -14,8 +14,13 @@ export function createEyedropperStrategy(ctx: ToolContext): ToolStrategy {
         const ndc = new THREE.Vector2(x, y);
         raycaster.setFromCamera(ndc, ctx.camera);
         const hits = raycaster.intersectObjects(ctx.scene.children, true);
-        const objHit = hits.find((h) => (h.object as any)?.userData?.defId);
-        state.hoverDefId = objHit?.object?.userData?.defId ?? null;
+        const objHit = hits.find((h) => (h.object as any)?.userData?.defId || (h.object as any)?.userData?.objectId);
+        if (objHit) {
+          const u = (objHit.object as any).userData as { defId?: string; objectId?: string };
+          state.hoverDefId = u.defId ?? null;
+        } else {
+          state.hoverDefId = null;
+        }
       });
       const offClick = eventBus.on("click", ({ button, hudTarget }) => {
         const { activeTool, cameraGestureActive } = useStore.getState();
