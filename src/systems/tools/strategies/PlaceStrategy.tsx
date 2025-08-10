@@ -6,6 +6,7 @@ import { catalog } from "../../../core/catalog";
 import { snapToGrid } from "../toolUtils";
 import { eventBus } from "../../../core/events";
 import { executeCommand } from "../../../core/commandStack";
+import { withBudget } from "../../../core/budget";
 import { validatePlacement } from "../../../core/placement";
 import { aabbIntersects } from "../../../core/geometry";
 import { CatalogItem3D, PlacedObject3D } from "../../../core/types";
@@ -62,7 +63,11 @@ export function createPlaceStrategy(ctx: ToolContext): ToolStrategy {
             })),
           undo: () => useStore.setState((s) => ({ objects: s.objects.filter((o) => o.id !== id) })),
         };
-        executeCommand(cmd, useStore.getState().pushCommand);
+        const price =
+          (catalog as unknown as CatalogItem3D[]).find((i) => i.id === selectedCatalogId)?.price ??
+          0;
+        const decorated = withBudget(cmd, price);
+        executeCommand(decorated, useStore.getState().pushCommand);
       });
       state.cleanup.push(offKeyDown, offClick);
     },

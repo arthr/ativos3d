@@ -5,6 +5,7 @@ import { ToolStrategy, ToolContext } from "./types";
 import { snapToGrid } from "../toolUtils";
 import { eventBus } from "../../../core/events";
 import { executeCommand } from "../../../core/commandStack";
+import { withBudget } from "../../../core/budget";
 
 export function createFloorStrategy(ctx: ToolContext): ToolStrategy {
   const state = {
@@ -51,7 +52,9 @@ export function createFloorStrategy(ctx: ToolContext): ToolStrategy {
               return { floor: next };
             }),
         };
-        executeCommand(cmd, useStore.getState().pushCommand);
+        const price = 0;
+        const decorated = withBudget(cmd, price);
+        executeCommand(decorated, useStore.getState().pushCommand);
       });
       state.cleanup.push(offPointer, offClick);
     },
