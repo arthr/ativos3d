@@ -3,6 +3,7 @@ import BudgetBar from "./Budget/BudgetBar";
 import Toolbar from "./Toolbar/Toolbar";
 import CatalogContainer from "./Catalog/CatalogContainer";
 import Topbar from "./Topbar/Topbar";
+import { ToastContainer } from "./Toast/ToastContainer";
 
 export function HudRoot() {
   return (
@@ -42,6 +43,9 @@ export function HudRoot() {
       >
         <CatalogContainer />
       </div>
+
+      {/* Toasts globais */}
+      <ToastContainer />
     </div>
   );
 }

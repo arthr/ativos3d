@@ -5,7 +5,8 @@ import { isToolAllowedInMode, modeToTools } from "../core/modeMachine";
 // Tool agora vem de core/types
 
 export interface Command {
-  execute: () => void;
+  // execute pode retornar false para sinalizar falha e impedir push no histórico
+  execute: () => boolean | void;
   undo: () => void;
   description: string;
 }
