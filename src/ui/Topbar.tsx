@@ -1,5 +1,10 @@
 import { useStore } from "../store/useStore";
-import { exportLot, importLot } from "../core/serialization";
+import {
+  exportCurrentLotToDownload,
+  importLotFromFile,
+  exportThumbnailPng,
+} from "./services/fileActions";
+import Button from "./components/Button";
 
 export function Topbar() {
   const cameraMode = useStore((s) => s.cameraMode);
@@ -27,40 +32,33 @@ export function Topbar() {
     <div style={barStyle}>
       <div style={{ fontWeight: 800 }}>Ativos3D</div>
       <div style={{ display: "flex", gap: 8 }}>
-        <button onClick={() => setCameraMode("persp")} style={buttonStyle(cameraMode === "persp")}>
+        <Button
+          aria-label="Câmera perspectiva"
+          title="Câmera perspectiva"
+          onClick={() => setCameraMode("persp")}
+          active={cameraMode === "persp"}
+        >
           Perspective
-        </button>
-        <button onClick={() => setCameraMode("ortho")} style={buttonStyle(cameraMode === "ortho")}>
+        </Button>
+        <Button
+          aria-label="Câmera ortográfica"
+          title="Câmera ortográfica"
+          onClick={() => setCameraMode("ortho")}
+          active={cameraMode === "ortho"}
+        >
           Orthographic
-        </button>
+        </Button>
       </div>
       <div style={{ display: "flex", gap: 8 }}>
-        <button
-          onClick={() => {
-            const s = useStore.getState();
-            const lot = {
-              width: s.lot.width,
-              depth: s.lot.depth,
-              height: s.lot.height,
-              objects: s.objects,
-              walls: s.walls,
-              floor: s.floor,
-              budget: s.budget,
-              version: 1,
-            } as const;
-            const json = exportLot(lot, 1);
-            const blob = new Blob([json], { type: "application/json" });
-            const a = document.createElement("a");
-            a.href = URL.createObjectURL(blob);
-            a.download = "lot_export.json";
-            a.click();
-            URL.revokeObjectURL(a.href);
-          }}
-          style={buttonStyle(false)}
+        <Button
+          aria-label="Exportar lote"
+          title="Exportar lote"
+          onClick={exportCurrentLotToDownload}
         >
           Exportar
-        </button>
+        </Button>
         <label
+          title="Importar lote"
           style={{
             ...buttonStyle(false),
             display: "inline-flex",
@@ -77,18 +75,8 @@ export function Topbar() {
             onChange={async (e) => {
               const file = e.target.files?.[0];
               if (!file) return;
-              const text = await file.text();
               try {
-                const parsed = importLot<any>(text);
-                const lot = parsed.lot as any;
-                useStore.setState({
-                  lot: { width: lot.width, depth: lot.depth, height: lot.height },
-                  objects: lot.objects ?? [],
-                  walls: lot.walls ?? [],
-                  floor: lot.floor ?? [],
-                  budget: lot.budget ?? useStore.getState().budget,
-                  selectedIds: [],
-                });
+                await importLotFromFile(file);
               } catch (err) {
                 // eslint-disable-next-line no-alert
                 alert("Falha ao importar JSON: " + (err as Error).message);
@@ -98,20 +86,13 @@ export function Topbar() {
             }}
           />
         </label>
-        <button
-          onClick={() => {
-            const canvas = document.querySelector("canvas");
-            if (!canvas) return;
-            const dataUrl = (canvas as HTMLCanvasElement).toDataURL("image/png");
-            const a = document.createElement("a");
-            a.href = dataUrl;
-            a.download = "thumbnail.png";
-            a.click();
-          }}
-          style={buttonStyle(false)}
+        <Button
+          aria-label="Exportar thumbnail"
+          title="Exportar thumbnail"
+          onClick={exportThumbnailPng}
         >
           Thumbnail
-        </button>
+        </Button>
       </div>
     </div>
   );

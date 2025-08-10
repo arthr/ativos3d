@@ -153,6 +153,20 @@ Novas tarefas:
   - Critérios: painel aparece ao selecionar; fecha via botão; segue a posição do objeto; não interfere no picking
   - Melhorias: painel sempre olha para a câmera (billboard/sprite) e mantém legibilidade em ângulos altos
 
+Novas tarefas/concluídas:
+- [x] Criar primitivos de UI: `Panel`, `Button`, `ToolbarGroup`, tokens de estilo
+  - Arquivos: `src/ui/components/*`
+  - Impacto: consistência visual; remoção de estilos duplicados
+- [x] Extrair serviços de arquivo: export/import/thumbnail
+  - Arquivos: `src/ui/services/fileActions.ts`
+  - Impacto: SRP em `Topbar`; menor acoplamento a DOM/Blob
+- [x] Refatorar `Topbar` para usar componentes e services; adicionar aria/tooltip
+  - Arquivos: `src/ui/Topbar.tsx`
+- [x] Refatorar `Toolbar` com `ToolbarGroup` e `Button`; aria/tooltip
+  - Arquivos: `src/ui/Toolbar.tsx`
+- [x] Hooks de UI: `useCatalogIndex`, `useCurrencyBRL`; aplicar em `CatalogHud`
+  - Arquivos: `src/ui/hooks/*`, `src/ui/hud/CatalogHud.tsx`
+
 - [x] Refino de seleção/picking no `Eyedropper` usando `userData.objectId` como fallback
   - Arquivos: `src/systems/tools/strategies/EyedropperStrategy.tsx`, `src/systems/render/ObjectsLayer.tsx`
   - Critérios: seleção estável dos itens do catálogo
