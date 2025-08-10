@@ -35,6 +35,11 @@
 - [ ] Completar estratégias: `move`, `wall`, `floor`, `bulldoze`, `eyedropper`
   - Arquivos: `src/systems/tools/strategies/*`
   - Critérios: operações básicas funcionando; integração com undo/redo
+  
+  Novas tarefas:
+  - [ ] Otimizar reconstrução do índice no `MoveStrategy` para não ocorrer a cada frame (reutilizar cache quando `objects` não muda)
+    - Arquivos: `src/systems/tools/strategies/MoveStrategy.tsx`
+    - Critérios: manter suavidade do drag com cenas maiores
 
 #### 3) Command Pattern e Undo/Redo
 
@@ -62,7 +67,7 @@
 - [ ] Implementar controles customizados de pan/zoom e modo ortográfico opcional
   - Arquivos: `src/systems/render/Stage.tsx`
   - Critérios: toggle persp/ortho; pan com Space; TODO removido
-- [ ] Padronizar `userData` em inglês (ex.: `idObjeto` -> `objectId`)
+- [x] Padronizar `userData` em inglês (ex.: `idObjeto` -> `objectId`)
   - Arquivos: `src/systems/render/ObjectsLayer.tsx`
   - Critérios: consistência i18n no runtime
 
@@ -83,6 +88,17 @@
 - [x] Integrar `SpatialIndex` ao `PlaceStrategy` para validação rápida
   - Arquivos: `src/systems/tools/strategies/PlaceStrategy.tsx`
   - Critérios: early-out em colisões; sem regressão de UX
+- [x] Integrar `SpatialIndex` ao `MoveStrategy` para validar sobreposição durante drag
+  - Arquivos: `src/systems/tools/strategies/MoveStrategy.tsx`
+  - Critérios: impedir mover para posição inválida sem travar interação
+- [x] Pré-validação de colisão no preview de `Wall` (MVP com AABB unitários)
+  - Arquivos: `src/systems/tools/strategies/WallStrategy.tsx`
+  - Critérios: feedback visual (vermelho) ao intersectar
+
+  Novas tarefas:
+  - [ ] Usar footprints reais dos objetos na validação de colisão do preview de `Wall`
+    - Arquivos: `src/systems/tools/strategies/WallStrategy.tsx`, `src/core/geometry.ts`
+    - Critérios: reduzir falsos positivos/negativos
 - [ ] Usar `@react-three/drei/Instances` para piso e avaliar instancing para objetos repetidos
   - Arquivos: `src/systems/render/FloorLayer.tsx`, `ObjectsLayer.tsx`
   - Critérios: menor custo de draw calls; sem regressão visual
@@ -116,6 +132,13 @@
 - [ ] Reconciliação com `HudOverlay.tsx` removido (limpar referências ou recriar quando necessário)
   - Arquivos: grep por `HudOverlay`
   - Critérios: nenhum import quebrado; decisões registradas
+
+- [x] Refino de seleção/picking no `Eyedropper` usando `userData.objectId` como fallback
+  - Arquivos: `src/systems/tools/strategies/EyedropperStrategy.tsx`, `src/systems/render/ObjectsLayer.tsx`
+  - Critérios: seleção estável dos itens do catálogo
+- [x] Bulldoze com raycast dedicado em objetos (usa `userData.objectId`), fallback para tile via ground
+  - Arquivos: `src/systems/tools/strategies/BulldozeStrategy.tsx`
+  - Critérios: hover consistente em cenas densas
 
 #### 11) Qualidade de Código e Build
 
