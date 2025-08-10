@@ -4,6 +4,7 @@ import { useStore } from "../../../store/useStore";
 import { ToolStrategy, ToolContext } from "./types";
 import { snapToGrid } from "../toolUtils";
 import { eventBus } from "../../../core/events";
+import { executeCommand } from "../../../core/commandStack";
 
 export function createWallStrategy(ctx: ToolContext): ToolStrategy {
   const state = {
@@ -71,8 +72,7 @@ export function createWallStrategy(ctx: ToolContext): ToolStrategy {
                 walls: s.walls.slice(0, s.walls.length - segments.length),
               })),
           };
-          cmd.execute();
-          useStore.getState().pushCommand(cmd);
+          executeCommand(cmd, useStore.getState().pushCommand);
         }
         state.start = null;
         state.end = null;

@@ -3,6 +3,7 @@ import { useStore } from "../../../store/useStore";
 import { ToolStrategy, ToolContext } from "./types";
 import { snapToGrid } from "../toolUtils";
 import { eventBus } from "../../../core/events";
+import { executeCommand } from "../../../core/commandStack";
 
 export function createMoveStrategy(ctx: ToolContext): ToolStrategy {
   const state = {
@@ -45,8 +46,7 @@ export function createMoveStrategy(ctx: ToolContext): ToolStrategy {
                 ),
               })),
           };
-          cmd.execute();
-          useStore.getState().pushCommand(cmd);
+          executeCommand(cmd, useStore.getState().pushCommand);
         }
       });
       state.cleanup.push(offDown, offUp, offKey);

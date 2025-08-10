@@ -5,6 +5,8 @@ import { ToolStrategy, ToolContext } from "./types";
 import { catalog } from "../../../core/catalog";
 import { snapToGrid } from "../toolUtils";
 import { eventBus } from "../../../core/events";
+import { executeCommand } from "../../../core/commandStack";
+import { validatePlacement } from "../../../core/placement";
 
 export function createPlaceStrategy(ctx: ToolContext): ToolStrategy {
   const state = {
@@ -55,8 +57,7 @@ export function createPlaceStrategy(ctx: ToolContext): ToolStrategy {
             })),
           undo: () => useStore.setState((s) => ({ objects: s.objects.filter((o) => o.id !== id) })),
         };
-        cmd.execute();
-        useStore.getState().pushCommand(cmd);
+        executeCommand(cmd, useStore.getState().pushCommand);
       });
       state.cleanup.push(offKeyDown, offClick);
     },
@@ -89,39 +90,15 @@ export function createPlaceStrategy(ctx: ToolContext): ToolStrategy {
       const rotW = yaw % 180 === 0 ? baseW : baseD;
       const rotD = yaw % 180 === 0 ? baseD : baseW;
       const pos = snapToGrid(new THREE.Vector3(gp.x, gp.y, gp.z), "floor");
-      const aabb = {
-        min: { x: pos.x, y: 0, z: pos.z },
-        max: { x: pos.x + rotW, y: baseH, z: pos.z + rotD },
-      };
-      let valid = true;
-      if (aabb.min.x < 0 || aabb.min.z < 0 || aabb.max.x > lot.width || aabb.max.z > lot.depth) {
-        valid = false;
-      }
-      if (valid) {
-        const idToItem = new Map<string, any>();
-        for (const it of catalog as any[]) idToItem.set(it.id, it);
-        for (const obj of objects) {
-          const def = idToItem.get(obj.defId);
-          const ofp = def?.footprint || { w: 1, d: 1, h: 1 };
-          const oyaw = Math.round(obj.rot.y) % 360;
-          const ow = oyaw % 180 === 0 ? ofp.w ?? 1 : ofp.d ?? 1;
-          const od = oyaw % 180 === 0 ? ofp.d ?? 1 : ofp.w ?? 1;
-          const obb = {
-            min: { x: obj.pos.x, y: 0, z: obj.pos.z },
-            max: { x: obj.pos.x + ow, y: ofp.h ?? 1, z: obj.pos.z + od },
-          };
-          const intersects = !(
-            aabb.max.x <= obb.min.x ||
-            aabb.min.x >= obb.max.x ||
-            aabb.max.z <= obb.min.z ||
-            aabb.min.z >= obb.max.z
-          );
-          if (intersects) {
-            valid = false;
-            break;
-          }
-        }
-      }
+      const valid = validatePlacement(
+        { ...item, footprint: { w: rotW, d: rotD, h: baseH, kind: "box" } } as any,
+        { x: pos.x, y: 0, z: pos.z },
+        { x: 0, y: state.yaw, z: 0 },
+        objects,
+        [],
+        { width: lot.width, depth: lot.depth },
+        catalog as any,
+      ).ok;
       state.preview = {
         pos,
         w: rotW,

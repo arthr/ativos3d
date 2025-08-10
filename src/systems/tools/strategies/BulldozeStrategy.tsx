@@ -4,6 +4,7 @@ import { useStore } from "../../../store/useStore";
 import { ToolStrategy, ToolContext } from "./types";
 import { snapToGrid } from "../toolUtils";
 import { eventBus } from "../../../core/events";
+import { executeCommand } from "../../../core/commandStack";
 
 export function createBulldozeStrategy(ctx: ToolContext): ToolStrategy {
   const state = {
@@ -39,8 +40,7 @@ export function createBulldozeStrategy(ctx: ToolContext): ToolStrategy {
             undo: () =>
               snapshot && useStore.setState((s) => ({ objects: [...s.objects, snapshot] })),
           };
-          cmd.execute();
-          useStore.getState().pushCommand(cmd);
+          executeCommand(cmd, useStore.getState().pushCommand);
           return;
         }
         const x = h.x;
@@ -52,8 +52,7 @@ export function createBulldozeStrategy(ctx: ToolContext): ToolStrategy {
             useStore.setState((s) => ({ floor: s.floor.filter((t) => !(t.x === x && t.z === z)) })),
           undo: () => snapshot && useStore.setState((s) => ({ floor: [...s.floor, snapshot] })),
         };
-        cmd.execute();
-        useStore.getState().pushCommand(cmd);
+        executeCommand(cmd, useStore.getState().pushCommand);
       });
       state.cleanup.push(offPointer, offClick);
     },
