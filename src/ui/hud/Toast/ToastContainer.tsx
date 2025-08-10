@@ -1,9 +1,24 @@
 import React from "react";
 import { useToastStore } from "./store";
 
+/**
+ * Permite que t.message seja string (com HTML), ReactNode, ou subcomponentes.
+ * Se for string, renderiza com dangerouslySetInnerHTML.
+ * Se for ReactNode, renderiza normalmente.
+ */
 export function ToastContainer() {
   const toasts = useToastStore((s) => s.toasts);
   const remove = useToastStore((s) => s.remove);
+
+  function renderMessage(message: string | React.ReactNode) {
+    if (message == null) return "Mensagem não definida";
+    if (typeof message !== "string") return message;
+    // TODO: usar React.createElement para suportar subcomponentes (ex: <div>...</div>)
+    // TODO: usar React.Fragment para suportar múltiplos elementos (ex: <div>...</div>)
+    // TODO: usar React.cloneElement para suportar props (ex: <div {...props}>...</div> ou <div {...props} />)
+    return <span dangerouslySetInnerHTML={{ __html: message }} />;
+  }
+
   return (
     <div
       data-hud="true"
@@ -48,7 +63,9 @@ export function ToastContainer() {
               ×
             </button>
           </div>
-          <div style={{ marginTop: 4, fontSize: 14, color: "#1f2937" }}>{t.message}</div>
+          <div style={{ marginTop: 4, fontSize: 14, color: "#1f2937" }}>
+            {renderMessage(t.message)}
+          </div>
         </div>
       ))}
     </div>
