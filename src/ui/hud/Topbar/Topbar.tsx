@@ -1,5 +1,5 @@
-import CameraModeToggle from "./hud/Topbar/CameraModeToggle";
-import FileActions from "./hud/Topbar/FileActions";
+import CameraModeToggle from "./CameraModeToggle";
+import FileActions from "./FileActions";
 
 export function Topbar() {
   const barStyle: React.CSSProperties = {
@@ -19,3 +19,5 @@ export function Topbar() {
     </div>
   );
 }
+
+export default Topbar;

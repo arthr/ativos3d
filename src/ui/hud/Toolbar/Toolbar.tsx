@@ -1,6 +1,6 @@
-import { useStore } from "../store/useStore";
-import ToolbarGroup from "./components/ToolbarGroup";
-import Button from "./components/Button";
+import { useStore } from "../../../store/useStore";
+import ToolbarGroup from "../../components/ToolbarGroup";
+import Button from "../../components/Button";
 
 export function Toolbar() {
   const mode = useStore((s) => s.mode);
@@ -9,14 +9,8 @@ export function Toolbar() {
   const setTool = useStore((s) => s.setTool);
   const undoOnce = useStore((s) => s.undoOnce);
   const redoOnce = useStore((s) => s.redoOnce);
-  const buttonStyle = (active: boolean): React.CSSProperties => ({
-    height: 44,
-    minWidth: 44,
-    padding: "0 12px",
-  });
   return (
     <div style={{ display: "flex", gap: 12 }}>
-      {/* Modo */}
       <ToolbarGroup>
         {(["view", "build", "buy"] as const).map((m) => (
           <Button
@@ -31,7 +25,6 @@ export function Toolbar() {
         ))}
       </ToolbarGroup>
 
-      {/* Tools por modo */}
       {mode === "build" && (
         <ToolbarGroup>
           {(["wall", "floor"] as const).map((t) => (
@@ -63,7 +56,6 @@ export function Toolbar() {
         </ToolbarGroup>
       )}
 
-      {/* Undo/Redo */}
       <ToolbarGroup>
         <Button aria-label="Desfazer (Ctrl+Z)" title="Desfazer (Ctrl+Z)" onClick={undoOnce}>
           Undo
@@ -75,3 +67,5 @@ export function Toolbar() {
     </div>
   );
 }
+
+export default Toolbar;

@@ -1,4 +1,4 @@
-import { useStore } from "../store/useStore";
+import { useStore } from "../../../store/useStore";
 
 export function BudgetBar() {
   const budget = useStore((s) => s.budget);
@@ -19,3 +19,5 @@ export function BudgetBar() {
     </div>
   );
 }
+
+export default BudgetBar;

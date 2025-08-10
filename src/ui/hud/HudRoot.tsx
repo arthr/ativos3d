@@ -1,8 +1,8 @@
 import React from "react";
-import { BudgetBar } from "../BudgetBar";
-import { Toolbar } from "../Toolbar";
+import BudgetBar from "./Budget/BudgetBar";
+import Toolbar from "./Toolbar/Toolbar";
 import CatalogContainer from "./Catalog/CatalogContainer";
-import { Topbar } from "../Topbar";
+import Topbar from "./Topbar/Topbar";
 
 export function HudRoot() {
   return (
