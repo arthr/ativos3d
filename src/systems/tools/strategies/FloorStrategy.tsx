@@ -66,9 +66,23 @@ export function createFloorStrategy(ctx: ToolContext): ToolStrategy {
       if (activeTool !== "floor" || !state.hover) return null;
       const t = state.hover;
       return (
-        <mesh position={[t.x + 0.5, 0.01, t.z + 0.5]} rotation={[-Math.PI / 2, 0, 0]}>
+        <mesh
+          position={[t.x + 0.5, 0.01, t.z + 0.5]}
+          rotation={[-Math.PI / 2, 0, 0]}
+          renderOrder={1000}
+          castShadow={false}
+          receiveShadow={false}
+        >
           <planeGeometry args={[1, 1]} />
-          <meshBasicMaterial color="#38bdf8" transparent opacity={0.25} />
+          <meshBasicMaterial
+            color="#38bdf8"
+            transparent
+            opacity={0.25}
+            depthTest={false}
+            depthWrite={false}
+            polygonOffset
+            polygonOffsetFactor={-1}
+          />
         </mesh>
       );
     },

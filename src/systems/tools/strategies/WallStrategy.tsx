@@ -109,28 +109,71 @@ export function createWallStrategy(ctx: ToolContext): ToolStrategy {
       const cx = (state.start.x + state.end.x) / 2;
       const cz = (state.start.z + state.end.z) / 2;
       const previewHeight = Math.max(1, lot.height * 0.5);
+      const thickness = 0.1;
 
-      // Pré-validação: garantir que a parede não intersecta AABB de objetos (largura ~0.1)
+      // Pré-validação: garantir que a parede não intersecta AABB reais dos objetos (footprints rotacionados)
       const catalogItems = catalog as unknown as CatalogItem3D[];
       state.index = buildObjectAabbIndex(objects, catalogItems);
-      const wallAabb = {
-        min: { x: Math.min(state.start.x, state.end.x), y: 0, z: Math.min(state.start.z, state.end.z) },
-        max: { x: Math.max(state.start.x, state.end.x), y: previewHeight, z: Math.max(state.start.z, state.end.z) },
-      };
+      const wallAabb = useX
+        ? {
+            // Parede horizontal ao longo de X: faixa estreita em Z
+            min: {
+              x: Math.min(state.start.x, state.end.x),
+              y: 0,
+              z: Math.min(state.start.z, state.end.z) - thickness / 2,
+            },
+            max: {
+              x: Math.max(state.start.x, state.end.x),
+              y: previewHeight,
+              z: Math.max(state.start.z, state.end.z) + thickness / 2,
+            },
+          }
+        : {
+            // Parede vertical ao longo de Z: faixa estreita em X
+            min: {
+              x: Math.min(state.start.x, state.end.x) - thickness / 2,
+              y: 0,
+              z: Math.min(state.start.z, state.end.z),
+            },
+            max: {
+              x: Math.max(state.start.x, state.end.x) + thickness / 2,
+              y: previewHeight,
+              z: Math.max(state.start.z, state.end.z),
+            },
+          };
       const neighbors = state.index ? state.index.query(wallAabb) : [];
       let collision = false;
       for (const b of neighbors) {
         if (
-          !(wallAabb.max.x <= b.min.x || wallAabb.min.x >= b.max.x || wallAabb.max.z <= b.min.z || wallAabb.min.z >= b.max.z)
+          !(
+            wallAabb.max.x <= b.min.x ||
+            wallAabb.min.x >= b.max.x ||
+            wallAabb.max.z <= b.min.z ||
+            wallAabb.min.z >= b.max.z
+          )
         ) {
           collision = true;
           break;
         }
       }
       return (
-        <mesh position={[cx, previewHeight / 2, cz]} rotation={[0, yaw, 0]}>
-          <boxGeometry args={[Math.max(0.001, len), previewHeight, 0.05]} />
-          <meshStandardMaterial color={collision ? "#ef4444" : "#38bdf8"} transparent opacity={0.5} />
+        <mesh
+          position={[cx, previewHeight / 2, cz]}
+          rotation={[0, yaw, 0]}
+          renderOrder={1000}
+          castShadow={false}
+          receiveShadow={false}
+        >
+          <boxGeometry args={[Math.max(0.001, len), previewHeight, thickness]} />
+          <meshStandardMaterial
+            color={collision ? "#ef4444" : "#38bdf8"}
+            transparent
+            opacity={0.5}
+            depthTest={false}
+            depthWrite={false}
+            polygonOffset
+            polygonOffsetFactor={-1}
+          />
         </mesh>
       );
     },

@@ -147,9 +147,22 @@ export function createPlaceStrategy(ctx: ToolContext): ToolStrategy {
       const p = state.preview;
       if (!p) return null;
       return (
-        <mesh position={[p.pos.x + p.w / 2, p.h / 2, p.pos.z + p.d / 2]}>
+        <mesh
+          position={[p.pos.x + p.w / 2, p.h / 2, p.pos.z + p.d / 2]}
+          renderOrder={1000}
+          castShadow={false}
+          receiveShadow={false}
+        >
           <boxGeometry args={[p.w, p.h, p.d]} />
-          <meshStandardMaterial color={p.valid ? "#16a34a" : "#ef4444"} transparent opacity={0.5} />
+          <meshStandardMaterial
+            color={p.valid ? "#16a34a" : "#ef4444"}
+            transparent
+            opacity={0.5}
+            depthTest={false}
+            depthWrite={false}
+            polygonOffset
+            polygonOffsetFactor={-1}
+          />
         </mesh>
       );
     },
