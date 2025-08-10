@@ -1,10 +1,6 @@
 import { useStore } from "../store/useStore";
-import {
-  exportCurrentLotToDownload,
-  importLotFromFile,
-  exportThumbnailPng,
-} from "./services/fileActions";
-import Button from "./components/Button";
+import CameraModeToggle from "./hud/Topbar/CameraModeToggle";
+import FileActions from "./hud/Topbar/FileActions";
 
 export function Topbar() {
   const cameraMode = useStore((s) => s.cameraMode);
@@ -31,69 +27,8 @@ export function Topbar() {
   return (
     <div style={barStyle}>
       <div style={{ fontWeight: 800 }}>Ativos3D</div>
-      <div style={{ display: "flex", gap: 8 }}>
-        <Button
-          aria-label="Câmera perspectiva"
-          title="Câmera perspectiva"
-          onClick={() => setCameraMode("persp")}
-          active={cameraMode === "persp"}
-        >
-          Perspective
-        </Button>
-        <Button
-          aria-label="Câmera ortográfica"
-          title="Câmera ortográfica"
-          onClick={() => setCameraMode("ortho")}
-          active={cameraMode === "ortho"}
-        >
-          Orthographic
-        </Button>
-      </div>
-      <div style={{ display: "flex", gap: 8 }}>
-        <Button
-          aria-label="Exportar lote"
-          title="Exportar lote"
-          onClick={exportCurrentLotToDownload}
-        >
-          Exportar
-        </Button>
-        <label
-          title="Importar lote"
-          style={{
-            ...buttonStyle(false),
-            display: "inline-flex",
-            alignItems: "center",
-            justifyContent: "center",
-            cursor: "pointer",
-          }}
-        >
-          Importar
-          <input
-            type="file"
-            accept="application/json,.json"
-            style={{ display: "none" }}
-            onChange={async (e) => {
-              const file = e.target.files?.[0];
-              if (!file) return;
-              try {
-                await importLotFromFile(file);
-              } catch (err) {
-                // eslint-disable-next-line no-alert
-                alert("Falha ao importar JSON: " + (err as Error).message);
-              } finally {
-                e.currentTarget.value = "";
-              }
-            }}
-          />
-        </label>
-        <Button
-          aria-label="Exportar thumbnail"
-          title="Exportar thumbnail"
-          onClick={exportThumbnailPng}
-        >
-          Thumbnail
-        </Button>
-      </div>
+      <CameraModeToggle />
+      <FileActions />
     </div>
   );
 }

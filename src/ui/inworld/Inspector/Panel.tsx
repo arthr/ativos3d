@@ -1,6 +1,8 @@
 import React from "react";
 import { PlacedObject3D } from "../../../core/types";
 import { catalog } from "../../../core/catalog";
+import { Panel } from "../../components/Panel";
+import Button from "../../components/Button";
 
 export type SelectedInspectorPanelProps = {
   id: string;
@@ -21,17 +23,7 @@ export function SelectedInspectorPanel({
   const def = catalog.find((d) => d.id === selected.defId);
 
   return (
-    <div
-      data-hud="true"
-      style={{
-        background: "rgba(255,255,255,0.98)",
-        border: "1px solid #e5e7eb",
-        borderRadius: 8,
-        padding: 8,
-        boxShadow: "0 6px 20px rgba(0,0,0,0.15)",
-        minWidth: 160,
-      }}
-    >
+    <Panel data-hud="true" style={{ minWidth: 160 }}>
       <div
         style={{
           display: "flex",
@@ -41,17 +33,14 @@ export function SelectedInspectorPanel({
         }}
       >
         <div style={{ fontWeight: 800, fontSize: 12 }}>{title}</div>
-        <button
+        <Button
+          aria-label="Fechar"
+          title="Fechar"
           onClick={onClose}
-          style={{
-            border: "1px solid #e5e7eb",
-            borderRadius: 6,
-            padding: "2px 6px",
-            background: "#fff",
-          }}
+          style={{ height: 28, minWidth: 28, padding: "0 6px" }}
         >
           x
-        </button>
+        </Button>
       </div>
       {typeof price === "number" && (
         <div style={{ fontSize: 11, color: "#475569", marginTop: 6 }}>R$ {price}</div>
@@ -70,7 +59,7 @@ export function SelectedInspectorPanel({
           <div>Tags: {def?.tags?.join(", ")}</div>
         </div>
       </div>
-    </div>
+    </Panel>
   );
 }
 

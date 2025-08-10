@@ -5,7 +5,7 @@ import { Grid } from "../systems/render/Grid";
 import { ObjectsLayer } from "../systems/render/ObjectsLayer";
 import { WallsLayer } from "../systems/render/WallsLayer";
 import { FloorLayer } from "../systems/render/FloorLayer";
-import { Hud } from "../ui/hud";
+import { HudRoot } from "../ui/hud";
 import { ToolManager } from "../systems/tools/ToolManager";
 import { createPlaceStrategy } from "../systems/tools/strategies/PlaceStrategy";
 import { createMoveStrategy } from "../systems/tools/strategies/MoveStrategy";
@@ -13,7 +13,7 @@ import { createWallStrategy } from "../systems/tools/strategies/WallStrategy";
 import { createFloorStrategy } from "../systems/tools/strategies/FloorStrategy";
 import { createBulldozeStrategy } from "../systems/tools/strategies/BulldozeStrategy";
 import { createEyedropperStrategy } from "../systems/tools/strategies/EyedropperStrategy";
-import { SelectedInspector } from "../systems/gui/SelectedInspector";
+import { SelectedInspector } from "../ui/inworld/Inspector";
 import { InputController } from "../systems/controllers/InputController";
 
 export function App() {
@@ -42,7 +42,7 @@ export function App() {
           />
         </Suspense>
       </Canvas>
-      <Hud />
+      <HudRoot />
     </div>
   );
 }

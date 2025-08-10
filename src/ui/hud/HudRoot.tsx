@@ -1,12 +1,12 @@
 import React from "react";
 import { BudgetBar } from "../BudgetBar";
 import { Toolbar } from "../Toolbar";
-import { CatalogHud } from "./CatalogHud";
+import CatalogContainer from "./Catalog/CatalogContainer";
 // Removido InspectorHud do HUD tradicional; substituído por inspector flutuante (GUI) na cena
 // import { InspectorHud } from "./InspectorHud";
 import { Topbar } from "../Topbar";
 
-export function Hud() {
+export function HudRoot() {
   // Overlay DOM com componentes reais; containers apenas posicionam e liberam eventos
   return (
     <div
@@ -46,7 +46,7 @@ export function Hud() {
         data-hud="true"
         style={{ position: "absolute", bottom: 50, right: 8, width: 360, pointerEvents: "auto" }}
       >
-        <CatalogHud />
+        <CatalogContainer />
       </div>
 
       {/* Inspector HUD removido em favor do inspector flutuante na cena */}
@@ -54,4 +54,4 @@ export function Hud() {
   );
 }
 
-export default Hud;
+export default HudRoot;
