@@ -125,7 +125,13 @@ export const useStore = create<AppState>((set, get) => ({
   setGroundPoint: (gp) => set((s) => ({ input: { ...s.input, groundPoint: gp } })),
   setKeyDown: (code, down) =>
     set((s) => ({ input: { ...s.input, keysDown: { ...s.input.keysDown, [code]: down } } })),
-  pushCommand: (c) => set((s) => ({ undo: [...s.undo, c], redo: [] })),
+  pushCommand: (c) =>
+    set((s) => {
+      const MAX = 100;
+      const nextUndo = [...s.undo, c];
+      if (nextUndo.length > MAX) nextUndo.splice(0, nextUndo.length - MAX);
+      return { undo: nextUndo, redo: [] };
+    }),
   undoOnce: () => {
     const { undo, redo } = get();
     const cmd = undo[undo.length - 1];

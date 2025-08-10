@@ -13,6 +13,7 @@ import { createWallStrategy } from "../systems/tools/strategies/WallStrategy";
 import { createFloorStrategy } from "../systems/tools/strategies/FloorStrategy";
 import { createBulldozeStrategy } from "../systems/tools/strategies/BulldozeStrategy";
 import { createEyedropperStrategy } from "../systems/tools/strategies/EyedropperStrategy";
+import { InputController } from "../systems/controllers/InputController";
 
 export function App() {
   return (
@@ -20,6 +21,8 @@ export function App() {
       <Canvas gl={{ antialias: true }} shadows dpr={[1, 2]}>
         <color attach="background" args={[0xf3f4f6]} />
         <Suspense fallback={null}>
+          {/* Mediator de input: único por Canvas/App */}
+          <InputController />
           <Stage />
           <Grid />
           <FloorLayer />

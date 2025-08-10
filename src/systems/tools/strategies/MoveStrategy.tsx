@@ -12,6 +12,9 @@ import { buildObjectAabbIndex } from "../../../core/sceneIndex";
 export function createMoveStrategy(ctx: ToolContext): ToolStrategy {
   const state = {
     dragging: false,
+    movingObjectId: null as string | null,
+    startPos: null as { x: number; y: number; z: number } | null,
+    lastPos: null as { x: number; y: number; z: number } | null,
     cleanup: [] as Array<() => void>,
     index: null as ReturnType<typeof buildObjectAabbIndex> | null,
     lastObjectsRef: null as any,
@@ -23,10 +26,46 @@ export function createMoveStrategy(ctx: ToolContext): ToolStrategy {
         const { activeTool, cameraGestureActive, selectedIds } = useStore.getState();
         if (activeTool !== "move" || cameraGestureActive || hudTarget || button !== 0) return;
         if (!selectedIds.length) return;
+        const id = selectedIds[0];
+        const obj = useStore.getState().objects.find((o) => o.id === id);
+        if (!obj) return;
         state.dragging = true;
+        state.movingObjectId = id;
+        state.startPos = { x: obj.pos.x, y: obj.pos.y, z: obj.pos.z };
+        state.lastPos = { x: obj.pos.x, y: obj.pos.y, z: obj.pos.z };
       });
       const offUp = eventBus.on("pointerUp", () => {
+        if (state.dragging && state.movingObjectId && state.startPos && state.lastPos) {
+          const moved =
+            state.startPos.x !== state.lastPos.x ||
+            state.startPos.y !== state.lastPos.y ||
+            state.startPos.z !== state.lastPos.z;
+          if (moved) {
+            const id = state.movingObjectId;
+            const from = { ...state.startPos };
+            const to = { ...state.lastPos };
+            const cmd = {
+              description: "move-object",
+              execute: () =>
+                useStore.setState((s) => ({
+                  objects: s.objects.map((o) =>
+                    o.id === id ? { ...o, pos: { x: to.x, y: to.y, z: to.z } } : o,
+                  ),
+                })),
+              undo: () =>
+                useStore.setState((s) => ({
+                  objects: s.objects.map((o) =>
+                    o.id === id ? { ...o, pos: { x: from.x, y: from.y, z: from.z } } : o,
+                  ),
+                })),
+            };
+            executeCommand(cmd, useStore.getState().pushCommand);
+          }
+        }
         state.dragging = false;
+        state.movingObjectId = null;
+        state.startPos = null;
+        state.lastPos = null;
       });
       const offKey = eventBus.on("keyDown", ({ code, shift }) => {
         const { activeTool, selectedIds } = useStore.getState();
@@ -68,7 +107,7 @@ export function createMoveStrategy(ctx: ToolContext): ToolStrategy {
       const gp = input.groundPoint;
       if (!gp) return;
       const snapped = snapToGrid(new THREE.Vector3(gp.x, gp.y, gp.z), "floor");
-      const id = selectedIds[0];
+      const id = state.movingObjectId ?? selectedIds[0];
 
       // rebuild index when objects ref changes
       const catalogItems = catalog as unknown as CatalogItem3D[];
@@ -107,6 +146,7 @@ export function createMoveStrategy(ctx: ToolContext): ToolStrategy {
           o.id === id ? { ...o, pos: { x: snapped.x, y: 0, z: snapped.z } } : o,
         ),
       }));
+      state.lastPos = { x: snapped.x, y: 0, z: snapped.z };
     },
     renderPreview() {
       return null;

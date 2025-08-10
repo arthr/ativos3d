@@ -20,7 +20,7 @@
 
 #### 1) Controladores e Eventos
 
-- [x] Extrair `InputController` do `Stage` para montagem em nível de app quando houver múltiplos stages
+- [ ] Extrair `InputController` do `Stage` para montagem em nível de app (quando houver múltiplos stages)
   - Arquivos: `src/systems/render/Stage.tsx`, `src/app/App.tsx`
   - Critérios: um único `InputController` ativo; nenhum leak de listeners; comentário TODO removido
 - [ ] Unificar publicação de eventos e estado: garantir que eventos do `eventBus` espelhem o `useStore.input`
@@ -29,12 +29,12 @@
 
 #### 2) Padrão Strategy para Ferramentas
 
-- [ ] Padronizar interface `ToolStrategy` (ativação, cleanup, frame, preview) e garantir cleanup de todos os `eventBus.on`
+- [x] Padronizar interface `ToolStrategy` (ativação, cleanup, frame, preview) e garantir cleanup de todos os `eventBus.on`
   - Arquivos: `src/systems/tools/strategies/*.tsx`, `src/systems/tools/strategies/types.ts`, `src/systems/tools/ToolManager.tsx`
   - Critérios: trocar de ferramenta não mantém listeners; adicionar smoke test manual
-- [ ] Completar estratégias: `move`, `wall`, `floor`, `bulldoze`, `eyedropper`
+- [x] Completar estratégias: `move`, `wall`, `floor`, `bulldoze`, `eyedropper`
   - Arquivos: `src/systems/tools/strategies/*`
-  - Critérios: operações básicas funcionando; integração com undo/redo
+  - Critérios: operações básicas funcionando; integração com undo/redo em ações discretas (movimento contínuo será coalescido na seção 3)
   
   Novas tarefas:
   - [x] Otimizar reconstrução do índice no `MoveStrategy` para não ocorrer a cada frame (reutilizar cache quando `objects` não muda)
@@ -46,14 +46,18 @@
 - [x] Centralizar execução via `core/commandStack.executeCommand`
   - Arquivos: `src/core/commandStack.ts`, chamadas nas estratégias
   - Critérios: todas ações mutáveis passam por `executeCommand`
-- [ ] Limite e compressão de histórico (ex.: 100 comandos, coalescer drag)
+- [ ] Coalescer movimento (drag) em um único comando por interação (commit no `pointerUp`) e garantir undo/redo do deslocamento
+  - Arquivos: `src/systems/tools/strategies/MoveStrategy.tsx`, `src/store/useStore.ts`, `src/core/commandStack.ts`
+  - Critérios: 1 entrada no histórico por movimento; desfaz/refaz deslocamento completo; sem jank durante drag
+  - Status: implementado (MVP)
+- [x] Limite de histórico (ex.: 100 comandos)
   - Arquivos: `src/store/useStore.ts`
-  - Critérios: prevenção de OOM; UX suave durante drag
+  - Critérios: prevenção de OOM; histórico estável
 
 #### 4) Store (Zustand)
 
-- [ ] Ativar `tsconfig` mais estrito e remover `any`/casts indevidos
-  - Arquivos: `tsconfig.json`, uso em `Stage`, `ObjectsLayer`, estratégias
+- [ ] Remover `any`/casts indevidos nos componentes/estratégias
+  - Arquivos: `src/systems/render/Stage.tsx`, `src/systems/render/ObjectsLayer.tsx`, `src/systems/tools/strategies/*`
   - Critérios: build sem `any` implícitos; tipagem de eventos/payloads
 - [ ] Fatiar estado em slices (camera, input, scene, ui)
   - Arquivos: `src/store/useStore.ts`
@@ -151,9 +155,9 @@
 - [x] Adicionar ESLint + Prettier + scripts
   - Arquivos: `package.json`, `.eslintrc`, `.prettierrc`
   - Critérios: lint sem erros; format consistente
-- [ ] `tsconfig` estrito (`strict: true`, `noImplicitAny`, `exactOptionalPropertyTypes`)
+- [x] `tsconfig` estrito (`strict: true`, `noImplicitAny`, `exactOptionalPropertyTypes`)
   - Arquivos: `tsconfig.json`
-  - Critérios: build sem erros; remoção de `useRef<any>` e `e: any`
+  - Critérios: build sem erros com flags ativas
 
 #### 12) Testes
 
@@ -165,15 +169,17 @@
 
 ### Consolidado de TODOs Mapeados
 
-- `src/systems/render/Stage.tsx`: mover `InputController`; adicionar controles pan/zoom custom
+- `src/systems/render/Stage.tsx`: mover `InputController`; adicionar controles pan/zoom custom; tipar refs/handlers e remover `any`
 - `src/core/catalog.ts`: validar schema em runtime (zod)
-- `src/core/spatialIndex.ts`: implementar estrutura real e query eficiente
+- `src/systems/tools/strategies/WallStrategy.tsx`: usar footprints reais no preview de colisão
+- `src/systems/tools/strategies/MoveStrategy.tsx`: coalescer drag em comando único no `pointerUp` e garantir undo/redo
+- `src/store/useStore.ts`: limite do histórico (ex.: 100) e compressão quando aplicável
 - `src/core/placement.ts`: clearance, needs_wall, slots; lot bounds por argumento; buscar footprint por `defId`
 - `README.md`: completar ferramentas; pipeline de validação 3D; evoluir `catalog.json`; export/import + thumb; lint/format
 
 ### Prioridades (P0–P2)
 
-- **P0**: ESLint/Prettier, tsconfig estrito; cleanup Strategy/Command; `validatePlacement`; `SpatialIndex` básico; remover `any` críticos
+- **P0**: Mover `InputController` para `App`; coalescer movimento em comando e limitar histórico; remover `any` críticos; `validatePlacement` e `SpatialIndex` básicos já integrados
 - **P1**: Controles ortho/pan/zoom; zod no catálogo; serialização completa; HUDs estáveis; instancing piso
 - **P2**: GLTF/KTX2; culling/shadows toggles; testes e2e; instancing objetos; BVH/otimizações
 

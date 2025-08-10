@@ -4,7 +4,6 @@ import * as THREE from "three";
 import { OrbitControls } from "@react-three/drei";
 import { useStore } from "../../store/useStore";
 import { getCursorForTool } from "../../core/modeMachine";
-import { InputController } from "../controllers/InputController";
 
 export function Stage() {
   const { camera, gl, scene } = useThree();
@@ -124,9 +123,6 @@ export function Stage() {
   }, [gl, activeTool, isSpaceDown, isPanDragging]);
   return (
     <>
-      {/* Mediator de input: publica pointer/ground/keys no store */}
-      {/* TODO: mover para um lugar mais apropriado se a cena for dividida em múltiplos stages */}
-      <InputController />
       <ambientLight intensity={0.7} />
       <directionalLight
         position={[10, 20, 10]}
