@@ -37,7 +37,7 @@
   - Critérios: operações básicas funcionando; integração com undo/redo
   
   Novas tarefas:
-  - [ ] Otimizar reconstrução do índice no `MoveStrategy` para não ocorrer a cada frame (reutilizar cache quando `objects` não muda)
+  - [x] Otimizar reconstrução do índice no `MoveStrategy` para não ocorrer a cada frame (reutilizar cache quando `objects` não muda)
     - Arquivos: `src/systems/tools/strategies/MoveStrategy.tsx`
     - Critérios: manter suavidade do drag com cenas maiores
 
@@ -96,9 +96,15 @@
   - Critérios: feedback visual (vermelho) ao intersectar
 
   Novas tarefas:
-  - [ ] Usar footprints reais dos objetos na validação de colisão do preview de `Wall`
+  - [ ] Usar footprints reais dos objetos na validação de colisão do preview de `Wall` (parcial: índice centralizado criado)
     - Arquivos: `src/systems/tools/strategies/WallStrategy.tsx`, `src/core/geometry.ts`
     - Critérios: reduzir falsos positivos/negativos
+
+#### 13) SRP e Reutilização
+
+- [x] Extrair util compartilhado para índice espacial de objetos (`buildObjectAabbIndex`)
+  - Arquivos: `src/core/sceneIndex.ts`
+  - Critérios: Place/Move/Wall usando util; menos duplicação
 - [ ] Usar `@react-three/drei/Instances` para piso e avaliar instancing para objetos repetidos
   - Arquivos: `src/systems/render/FloorLayer.tsx`, `ObjectsLayer.tsx`
   - Critérios: menor custo de draw calls; sem regressão visual

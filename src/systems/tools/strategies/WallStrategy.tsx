@@ -5,15 +5,17 @@ import { ToolStrategy, ToolContext } from "./types";
 import { snapToGrid } from "../toolUtils";
 import { eventBus } from "../../../core/events";
 import { executeCommand } from "../../../core/commandStack";
-import { SpatialIndex } from "../../../core/spatialIndex";
-import { aabbIntersects, footprintAABB3D } from "../../../core/geometry";
+import { aabbIntersects, footprintAABB3D, rotateFootprint3D } from "../../../core/geometry";
+import { buildObjectAabbIndex } from "../../../core/sceneIndex";
+import { CatalogItem3D } from "../../../core/types";
+import { catalog } from "../../../core/catalog";
 
 export function createWallStrategy(ctx: ToolContext): ToolStrategy {
   const state = {
     start: null as THREE.Vector3 | null,
     end: null as THREE.Vector3 | null,
     cleanup: [] as Array<() => void>,
-    index: new SpatialIndex(1),
+    index: null as ReturnType<typeof buildObjectAabbIndex> | null,
   };
 
   function computeSegments(start: THREE.Vector3, end: THREE.Vector3) {
@@ -109,19 +111,13 @@ export function createWallStrategy(ctx: ToolContext): ToolStrategy {
       const previewHeight = Math.max(1, lot.height * 0.5);
 
       // Pré-validação: garantir que a parede não intersecta AABB de objetos (largura ~0.1)
-      state.index.clear();
-      // Inserir AABB dos objetos no índice
-      for (const obj of objects) {
-        const w = 1; // fallback básico enquanto não houver footprint detalhado aqui
-        const d = 1;
-        const aabb = { min: { x: obj.pos.x, y: 0, z: obj.pos.z }, max: { x: obj.pos.x + w, y: 1, z: obj.pos.z + d } };
-        state.index.insert(aabb);
-      }
+      const catalogItems = catalog as unknown as CatalogItem3D[];
+      state.index = buildObjectAabbIndex(objects, catalogItems);
       const wallAabb = {
         min: { x: Math.min(state.start.x, state.end.x), y: 0, z: Math.min(state.start.z, state.end.z) },
         max: { x: Math.max(state.start.x, state.end.x), y: previewHeight, z: Math.max(state.start.z, state.end.z) },
       };
-      const neighbors = state.index.query(wallAabb);
+      const neighbors = state.index ? state.index.query(wallAabb) : [];
       let collision = false;
       for (const b of neighbors) {
         if (

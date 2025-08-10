@@ -1,6 +1,7 @@
 import { useMemo, useCallback, useState } from "react";
 import { useStore } from "../../store/useStore";
 import { catalog } from "../../core/catalog";
+import { CatalogItem3D } from "../../core/types";
 
 export function ObjectsLayer() {
   const objects = useStore((s) => s.objects);
@@ -10,8 +11,8 @@ export function ObjectsLayer() {
   const selectedIds = useStore((s) => s.selectedIds);
 
   const idToItem = useMemo(() => {
-    const map = new Map<string, any>();
-    for (const item of catalog as any[]) map.set(item.id, item);
+    const map = new Map<string, CatalogItem3D>();
+    for (const item of (catalog as unknown as CatalogItem3D[])) map.set(item.id, item);
     return map;
   }, []);
 
@@ -44,12 +45,14 @@ export function ObjectsLayer() {
   return (
     <group>
       {objects.map((obj) => {
-        const item = idToItem.get(obj.defId) as any;
+        const item = idToItem.get(obj.defId);
         if (!item) return null;
-        const fp = item.footprint as any;
-        const w = fp?.w ?? 1;
-        const d = fp?.d ?? 1;
-        const h = fp?.h ?? 1;
+        let w = 1, d = 1, h = 1;
+        if (item.footprint && item.footprint.kind === "box") {
+          w = item.footprint.w;
+          d = item.footprint.d;
+          h = item.footprint.h;
+        }
         const color = item.art?.color ?? "#64748b";
         const isHovered = hoverId === obj.id;
         const isSelected = selectedIds.includes(obj.id);

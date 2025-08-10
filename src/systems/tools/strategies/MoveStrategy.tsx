@@ -4,17 +4,17 @@ import { ToolStrategy, ToolContext } from "./types";
 import { snapToGrid } from "../toolUtils";
 import { eventBus } from "../../../core/events";
 import { executeCommand } from "../../../core/commandStack";
-import { SpatialIndex } from "../../../core/spatialIndex";
 import { aabbIntersects, footprintAABB3D, rotateFootprint3D } from "../../../core/geometry";
 import { CatalogItem3D } from "../../../core/types";
 import { catalog } from "../../../core/catalog";
+import { buildObjectAabbIndex } from "../../../core/sceneIndex";
 
 export function createMoveStrategy(ctx: ToolContext): ToolStrategy {
   const state = {
     dragging: false,
     cleanup: [] as Array<() => void>,
-    index: new SpatialIndex(1),
-    lastObjectsVersion: 0,
+    index: null as ReturnType<typeof buildObjectAabbIndex> | null,
+    lastObjectsRef: null as any,
   };
 
   return {
@@ -72,22 +72,15 @@ export function createMoveStrategy(ctx: ToolContext): ToolStrategy {
 
       // rebuild index when objects ref changes
       const catalogItems = catalog as unknown as CatalogItem3D[];
-      const idToItem = new Map<string, CatalogItem3D>();
-      for (const it of catalogItems) idToItem.set(it.id, it);
-      state.index.clear();
-      for (const obj of objects) {
-        if (obj.id === id) continue; // ignore the moving one in index
-        const def = idToItem.get(obj.defId);
-        const ofp = def?.footprint;
-        if (!ofp) continue;
-        const rotated = rotateFootprint3D(ofp, obj.rot);
-        state.index.insert(footprintAABB3D(rotated, obj.pos));
+      if (state.lastObjectsRef !== objects) {
+        state.index = buildObjectAabbIndex(objects, catalogItems, { ignoreObjectId: id });
+        state.lastObjectsRef = objects;
       }
 
       // candidate AABB for moved object (use its footprint)
       const moving = objects.find((o) => o.id === id);
       if (!moving) return;
-      const movingDef = idToItem.get(moving.defId);
+      const movingDef = (catalogItems.find((c) => c.id === moving.defId) as CatalogItem3D | undefined);
       const mfp = movingDef?.footprint;
       if (!mfp) return;
       const movedAabb = footprintAABB3D(rotateFootprint3D(mfp, moving.rot), {
@@ -104,7 +97,7 @@ export function createMoveStrategy(ctx: ToolContext): ToolStrategy {
       )
         return;
       // collision check fast
-      const neighbors = state.index.query(movedAabb);
+      const neighbors = state.index ? state.index.query(movedAabb) : [];
       for (const b of neighbors) {
         if (aabbIntersects(movedAabb, b)) return;
       }

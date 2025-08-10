@@ -7,9 +7,9 @@ import { snapToGrid } from "../toolUtils";
 import { eventBus } from "../../../core/events";
 import { executeCommand } from "../../../core/commandStack";
 import { validatePlacement } from "../../../core/placement";
-import { SpatialIndex } from "../../../core/spatialIndex";
-import { aabbIntersects, footprintAABB3D, rotateFootprint3D } from "../../../core/geometry";
+import { aabbIntersects } from "../../../core/geometry";
 import { CatalogItem3D, PlacedObject3D } from "../../../core/types";
+import { buildObjectAabbIndex } from "../../../core/sceneIndex";
 
 export function createPlaceStrategy(ctx: ToolContext): ToolStrategy {
   const state = {
@@ -24,7 +24,7 @@ export function createPlaceStrategy(ctx: ToolContext): ToolStrategy {
     },
     yaw: 0 as 0 | 90 | 180 | 270,
     cleanup: [] as Array<() => void>,
-    index: new SpatialIndex(1),
+    index: null as ReturnType<typeof buildObjectAabbIndex> | null,
     lastObjectsRef: null as PlacedObject3D[] | null,
   };
 
@@ -104,17 +104,7 @@ export function createPlaceStrategy(ctx: ToolContext): ToolStrategy {
 
       // Reconstruir índice apenas quando o array de objetos mudar (referência)
       if (state.lastObjectsRef !== objects) {
-        state.index.clear();
-        const idToItem = new Map<string, CatalogItem3D>();
-        for (const it of catalogItems) idToItem.set(it.id, it);
-        for (const obj of objects) {
-          const def = idToItem.get(obj.defId);
-          const ofp = def?.footprint;
-          if (!ofp) continue;
-          const rotated = rotateFootprint3D(ofp, obj.rot);
-          const aabb = footprintAABB3D(rotated, obj.pos);
-          state.index.insert(aabb);
-        }
+        state.index = buildObjectAabbIndex(objects, catalogItems);
         state.lastObjectsRef = objects;
       }
 
@@ -124,7 +114,7 @@ export function createPlaceStrategy(ctx: ToolContext): ToolStrategy {
         max: { x: pos.x + rotW, y: baseH, z: pos.z + rotD },
       };
       let fastOk = true;
-      const neighbors = state.index.query(candidate);
+      const neighbors = state.index ? state.index.query(candidate) : [];
       for (const b of neighbors) {
         if (aabbIntersects(candidate, b)) {
           fastOk = false;

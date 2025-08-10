@@ -42,12 +42,14 @@ Dependências relevantes: usamos `@react-three/drei` (Hud/Html) e `OrbitControls
       FloorLayer.tsx
       ObjectsLayer.tsx
     /tools
-      PlaceObjectTool.tsx
-      MoveRotateTool.tsx
-      PaintFloorTool.tsx
-      WallTool.tsx
-      BulldozeTool.tsx
-      EyedropperTool.tsx
+      ToolManager.tsx
+      /strategies
+        PlaceStrategy.tsx
+        MoveStrategy.tsx
+        FloorStrategy.tsx
+        WallStrategy.tsx
+        BulldozeStrategy.tsx
+        EyedropperStrategy.tsx
   /ui
     /hud
       CatalogHud.tsx
