@@ -128,10 +128,10 @@
 
 #### 9) Serialização
 
-- [ ] Expandir `exportLot/importLot` para cobrir `Lot3D` completo e versionamento
+- [x] Expandir `exportLot/importLot` para cobrir `Lot3D` completo e versionamento
   - Arquivos: `src/core/serialization.ts`, `src/core/types.ts`
   - Critérios: round-trip fiel; version bump documentado
-- [ ] Botões de exportar/importar + thumbnail da cena
+- [x] Botões de exportar/importar + thumbnail da cena
   - Arquivos: `src/ui/*`, `src/app/*`
   - Critérios: JSON válido; imagem via `gl.domElement.toDataURL()`
 
@@ -151,6 +151,7 @@ Novas tarefas:
 - [x] Substituir `InspectorHud` por inspector flutuante (GUI) ancorado ao objeto selecionado com `Html`
   - Arquivos: `src/systems/render/SelectedInspectorGui.tsx`, `src/app/App.tsx`, `src/ui/hud/Hud.tsx`, `src/ui/hud/index.ts`
   - Critérios: painel aparece ao selecionar; fecha via botão; segue a posição do objeto; não interfere no picking
+  - Melhorias: painel sempre olha para a câmera (billboard/sprite) e mantém legibilidade em ângulos altos
 
 - [x] Refino de seleção/picking no `Eyedropper` usando `userData.objectId` como fallback
   - Arquivos: `src/systems/tools/strategies/EyedropperStrategy.tsx`, `src/systems/render/ObjectsLayer.tsx`
