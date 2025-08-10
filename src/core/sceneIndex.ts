@@ -1,4 +1,5 @@
-import { SpatialIndex } from "./spatialIndex";
+import type { SpatialQueryIndex } from "./spatial";
+import { createSpatialIndex } from "./spatial";
 import { CatalogItem3D, PlacedObject3D } from "./types";
 import { rotateFootprint3D, footprintAABB3D } from "./geometry";
 
@@ -11,9 +12,9 @@ export function buildObjectAabbIndex(
   objects: PlacedObject3D[],
   catalogItems: CatalogItem3D[],
   options: BuildIndexOptions = {},
-): SpatialIndex {
+): SpatialQueryIndex {
   const { ignoreObjectId, cellSize = 1 } = options;
-  const index = new SpatialIndex(cellSize);
+  const index = createSpatialIndex({ cellSize });
   const idToItem = new Map<string, CatalogItem3D>();
   for (const it of catalogItems) idToItem.set(it.id, it);
   for (const obj of objects) {
