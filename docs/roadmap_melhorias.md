@@ -148,6 +148,9 @@ Novas tarefas:
 - [x] Adicionar botões de câmera na `Topbar` e posicionar acima da `BudgetBar`
   - Arquivos: `src/ui/Topbar.tsx`, `src/ui/hud/Hud.tsx`
   - Critérios: alternar `persp`/`ortho`; layout correto (Topbar acima de BudgetBar)
+- [x] Substituir `InspectorHud` por inspector flutuante (GUI) ancorado ao objeto selecionado com `Html`
+  - Arquivos: `src/systems/render/SelectedInspectorGui.tsx`, `src/app/App.tsx`, `src/ui/hud/Hud.tsx`, `src/ui/hud/index.ts`
+  - Critérios: painel aparece ao selecionar; fecha via botão; segue a posição do objeto; não interfere no picking
 
 - [x] Refino de seleção/picking no `Eyedropper` usando `userData.objectId` como fallback
   - Arquivos: `src/systems/tools/strategies/EyedropperStrategy.tsx`, `src/systems/render/ObjectsLayer.tsx`

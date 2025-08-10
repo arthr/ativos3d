@@ -2,7 +2,8 @@ import React from "react";
 import { BudgetBar } from "../BudgetBar";
 import { Toolbar } from "../Toolbar";
 import { CatalogHud } from "./CatalogHud";
-import { InspectorHud } from "./InspectorHud";
+// Removido InspectorHud do HUD tradicional; substituído por inspector flutuante (GUI) na cena
+// import { InspectorHud } from "./InspectorHud";
 import { Topbar } from "../Topbar";
 
 export function Hud() {
@@ -48,13 +49,7 @@ export function Hud() {
         <CatalogHud />
       </div>
 
-      {/* Top-right inspector */}
-      <div
-        data-hud="true"
-        style={{ position: "absolute", top: 56, right: 8, width: 280, pointerEvents: "auto" }}
-      >
-        <InspectorHud />
-      </div>
+      {/* Inspector HUD removido em favor do inspector flutuante na cena */}
     </div>
   );
 }

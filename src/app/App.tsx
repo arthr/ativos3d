@@ -13,6 +13,7 @@ import { createWallStrategy } from "../systems/tools/strategies/WallStrategy";
 import { createFloorStrategy } from "../systems/tools/strategies/FloorStrategy";
 import { createBulldozeStrategy } from "../systems/tools/strategies/BulldozeStrategy";
 import { createEyedropperStrategy } from "../systems/tools/strategies/EyedropperStrategy";
+import { SelectedInspectorGui } from "../systems/render/SelectedInspectorGui";
 import { InputController } from "../systems/controllers/InputController";
 
 export function App() {
@@ -28,6 +29,7 @@ export function App() {
           <FloorLayer />
           <WallsLayer />
           <ObjectsLayer />
+          <SelectedInspectorGui />
           <ToolManager
             strategies={{
               place: (ctx) => createPlaceStrategy(ctx),
