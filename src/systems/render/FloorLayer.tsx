@@ -1,27 +1,24 @@
-import { useMemo } from "react";
+import { useEffect, useState } from "react";
 import { useStore } from "../../store/useStore";
-import * as THREE from "three";
+import { Instances, Instance } from "@react-three/drei";
 
 export function FloorLayer() {
   const floor = useStore((s) => s.floor);
-  const geom = useMemo(() => new THREE.PlaneGeometry(1, 1), []);
-  const mat = useMemo(
-    () => new THREE.MeshStandardMaterial({ color: "#e2e8f0", side: THREE.DoubleSide }),
-    [],
-  );
-  if (floor.length === 0) return null;
+  const [capacity, setCapacity] = useState(() => Math.max(floor.length, 1));
+  useEffect(() => {
+    if (floor.length > capacity) setCapacity(Math.max(floor.length, capacity * 2));
+  }, [floor.length, capacity]);
   return (
-    <instancedMesh args={[geom, mat, floor.length]} rotation={[-Math.PI / 2, 0, 0]}>
+    <Instances key={capacity} limit={capacity}>
+      <planeGeometry args={[1, 1]} />
+      <meshStandardMaterial color="#e2e8f0" />
       {floor.map((t, i) => (
-        <primitive
-          // R3F usa attach="instance{index}" para instancedMesh; tipagem não expõe string literal dinâmica
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          attach={`instance${i}` as any}
+        <Instance
           key={i}
-          object={new THREE.Object3D()}
           position={[t.x + 0.5, 0.001, t.z + 0.5]}
+          rotation={[-Math.PI / 2, 0, 0]}
         />
       ))}
-    </instancedMesh>
+    </Instances>
   );
 }
