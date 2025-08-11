@@ -3,7 +3,7 @@
    Pontos de acoplamento e regras concentradas podem se beneficiar de Chain of Responsibility, Factory/Registry, Decorator e abstrações por interface
 
 ## Recomendações priorizadas (com arquivos)
-   - [ ] 1) Chain of Responsibility para validação de colocação
+   - [x] 1) Chain of Responsibility para validação de colocação
      - Onde: `src/core/placement.ts`
      - Problema: função única valida vários aspectos; vai crescer (bounds, colisão, paredes, clearance)
      - Proposta: pipeline de validadores encadeados e composáveis
@@ -30,7 +30,7 @@
        ```
      - Impacto: simplifica evolução das regras e habilita testes unitários independentes por regra
 
-   - [ ] 2) Abstrair índice espacial por Strategy
+   - [x] 2) Abstrair índice espacial por Strategy
      - Onde: `src/core/spatialIndex.ts`, `src/core/sceneIndex.ts` e usos em Place/Move/Wall
      - Problema: implementação única (grid hashing) — difícil trocar por quadtree/octree sem tocar em várias áreas
      - Proposta: interface `SpatialQueryIndex` e fábricas para escolher implementação por cena/tamanho
@@ -52,7 +52,7 @@
        - Evoluir para begin/commit transiente no futuro para composições
      - Impacto: histórico limpo, menor acoplamento nas estratégias
 
-   - [ ] 4) Decorator para orçamento
+   - [x] 4) Decorator para orçamento
      - Onde: `src/store/useStore.ts` (budget) + comandos que alteram cena em Place/Bulldoze
      - Problema: atualização de `budget.spent` espalhada
      - Proposta: `withBudget(cmd, delta)` aplica/verifica orçamento no execute/undo
@@ -100,15 +100,14 @@
 
  - [ ] Pequenos ajustes táticos
    - [ ] `ToolContext` incluir `events`, `select` e `dispatch` mínimos; evitar expor store inteira
-   - [ ] Garantir cleanup padronizado de listeners em todas estratégias (já bem encaminhado)
+   - [x] Garantir cleanup padronizado de listeners em todas estratégias (já bem encaminhado)
    - [ ] `serialization.ts`: preparar version bump e migradores por Strategy
 
  ## Próximos passos sugeridos (ordem de entrega)
-   - [ ] Implementar Chain of Responsibility em `placement` e adaptar `PlaceStrategy`
-   - [ ] Introduzir `SpatialQueryIndex` (interface) e adaptar `buildObjectAabbIndex` para retornar a interface
-   - [ ] Criar `withBudget` e aplicar em `Place`/`Bulldoze`
+   - [ ] Evoluir Command “transacional”: `runAndRecord` e/ou `begin/commit` para drags compostos
    - [ ] Estender `ToolContext` (injetar `events` e exec de `Command`) e remover dependência de singletons
    - [ ] Opcional: `ToolRegistry` e lazy-load de estratégias
+   - [ ] `serialization` com migradores versionados
 
  ## Trechos do código atual relevantes
    - Strategy das ferramentas em `ToolManager`
@@ -188,8 +187,18 @@
      ```
 
  ## Status
-   Mapear padrões existentes e onde encaixar melhorias
-   Pronto para iniciar implementação do pipeline de validação
+   - [x] Chain of Responsibility em `placement` (com façade)
+   - [x] SpatialQueryIndex (Strategy + fábrica) e `sceneIndex` atualizado
+   - [x] `withBudget` aplicado em Place/Bulldoze com validação de saldo e toasts
+   - [x] Event bus refatorado para SRP com façade (`core/events/*`)
+   - [x] Camera Strategy + `useCameraGestures` em `StageLayer`
+   - [x] Correção de posicionamento em `ObjectsLayer` compatível com yaw 90°/270°
+   - [x] Sistema de Toast global (limite 5, animações entrada/saída)
+   - [x] Hover/press feedback em `Button`
+   - [ ] Command transacional (runAndRecord / begin-commit)
+   - [ ] DI em `ToolContext`
+   - [ ] ToolRegistry
+   - [ ] Migradores de `serialization`
 
  Em resumo
    Plano para: Chain of Responsibility em `placement`, Strategy para índice espacial, Decorator para orçamento, melhorias em Command, DI em `ToolContext`, e Factory/Registry
