@@ -27,8 +27,8 @@ export function withBudget(command: Command, delta: number): Command {
         if (funds < delta) {
           try {
             useToastStore.getState().push({
-              message: `Orçamento insuficiente!`,
-              title: "Sem fundos",
+              message: `Saldo insuficiente!`,
+              title: "Sem saldo",
               variant: "warning",
               durationMs: 3500,
             });
