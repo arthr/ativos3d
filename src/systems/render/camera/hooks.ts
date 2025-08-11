@@ -35,7 +35,9 @@ export function useCameraGestures(gl: THREE.WebGLRenderer, cameraMode: "persp" |
         setIsSpaceDown(false);
         if (isPanDragging) setIsPanDragging(false);
         setCameraGestureActive(isRotateDragging);
-        canvas.style.cursor = isRotateDragging ? "auto" : "auto";
+        canvas.style.cursor = isRotateDragging
+          ? "auto"
+          : getCursorForTool(activeTool) ?? "auto";
       }
     };
     const onPointerDown = (e: PointerEvent) => {
@@ -85,6 +87,7 @@ export function useCameraGestures(gl: THREE.WebGLRenderer, cameraMode: "persp" |
     cameraMode,
     setCameraGestureActive,
     isRotateDragging,
+    activeTool,
   ]);
 
   useEffect(() => {
