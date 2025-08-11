@@ -9,8 +9,8 @@ export function CameraModeToggle() {
   return (
     <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
       <Button
-        aria-label="Câmera perspectiva"
-        title="Câmera perspectiva"
+        aria-label="Câmera Perspectiva"
+        title="Câmera Perspectiva"
         onClick={() => setCameraMode("persp")}
         active={cameraMode === "persp"}
       >
@@ -18,8 +18,8 @@ export function CameraModeToggle() {
         Perspectiva
       </Button>
       <Button
-        aria-label="Câmera ortográfica"
-        title="Câmera ortográfica"
+        aria-label="Câmera Isométrica"
+        title="Câmera Isométrica"
         onClick={() => setCameraMode("ortho")}
         active={cameraMode === "ortho"}
       >
