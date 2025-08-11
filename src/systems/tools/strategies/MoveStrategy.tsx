@@ -23,8 +23,9 @@ export function createMoveStrategy(ctx: ToolContext): ToolStrategy {
   return {
     onActivate() {
       const offDown = eventBus.on("pointerDown", ({ button, hudTarget }) => {
-        const { activeTool, cameraGestureActive, selectedIds } = useStore.getState();
-        if (activeTool !== "move" || cameraGestureActive || hudTarget || button !== 0) return;
+        const { activeTool, camera, selectedIds } = useStore.getState();
+        if (activeTool !== "move" || camera.gestureActive || hudTarget || button !== 0)
+          return;
         if (!selectedIds.length) return;
         const id = selectedIds[0];
         const obj = useStore.getState().objects.find((o) => o.id === id);

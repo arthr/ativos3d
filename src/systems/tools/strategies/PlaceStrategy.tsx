@@ -41,8 +41,9 @@ export function createPlaceStrategy(ctx: ToolContext): ToolStrategy {
         }
       });
       const offClick = eventBus.on("click", ({ button, hudTarget }) => {
-        const { activeTool, cameraGestureActive, selectedCatalogId } = useStore.getState();
-        if (activeTool !== "place" || hudTarget || cameraGestureActive || button !== 0) return;
+        const { activeTool, camera, selectedCatalogId } = useStore.getState();
+        if (activeTool !== "place" || hudTarget || camera.gestureActive || button !== 0)
+          return;
         const p = state.preview;
         if (!p || !selectedCatalogId || !p.valid) return;
         const id = crypto.randomUUID();

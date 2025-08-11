@@ -9,8 +9,8 @@ export function createEyedropperStrategy(ctx: ToolContext): ToolStrategy {
   return {
     onActivate() {
       const offPointer = eventBus.on("pointerNdc", ({ x, y }) => {
-        const { activeTool, cameraGestureActive } = useStore.getState();
-        if (activeTool !== "eyedropper" || cameraGestureActive) return;
+        const { activeTool, camera } = useStore.getState();
+        if (activeTool !== "eyedropper" || camera.gestureActive) return;
         const ndc = new THREE.Vector2(x, y);
         raycaster.setFromCamera(ndc, ctx.camera);
         const hits = raycaster.intersectObjects(ctx.scene.children, true);
@@ -26,8 +26,9 @@ export function createEyedropperStrategy(ctx: ToolContext): ToolStrategy {
         }
       });
       const offClick = eventBus.on("click", ({ button, hudTarget }) => {
-        const { activeTool, cameraGestureActive } = useStore.getState();
-        if (activeTool !== "eyedropper" || cameraGestureActive || hudTarget || button !== 0) return;
+        const { activeTool, camera } = useStore.getState();
+        if (activeTool !== "eyedropper" || camera.gestureActive || hudTarget || button !== 0)
+          return;
         if (state.hoverDefId) {
           useStore.setState({ selectedCatalogId: state.hoverDefId, activeTool: "place" });
         }

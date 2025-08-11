@@ -55,9 +55,12 @@ export function createWallStrategy(ctx: ToolContext): ToolStrategy {
 
   return {
     onActivate() {
-      const offDown = eventBus.on("pointerDown", ({ button, hudTarget, ground }) => {
-        const { activeTool, cameraGestureActive } = useStore.getState();
-        if (activeTool !== "wall" || cameraGestureActive || hudTarget || button !== 0) return;
+      const offDown = eventBus.on(
+        "pointerDown",
+        ({ button, hudTarget, ground }) => {
+          const { activeTool, camera } = useStore.getState();
+          if (activeTool !== "wall" || camera.gestureActive || hudTarget || button !== 0)
+            return;
         if (!ground) return;
         const snapped = snapToGrid(new THREE.Vector3(ground.x, ground.y, ground.z), "round");
         state.start = snapped;
@@ -65,8 +68,9 @@ export function createWallStrategy(ctx: ToolContext): ToolStrategy {
       });
       const offUp = eventBus.on("pointerUp", ({ button }) => {
         if (button !== 0) return;
-        const { activeTool, cameraGestureActive } = useStore.getState();
-        if (activeTool !== "wall" || cameraGestureActive || !state.start || !state.end) return;
+        const { activeTool, camera } = useStore.getState();
+        if (activeTool !== "wall" || camera.gestureActive || !state.start || !state.end)
+          return;
         const segments = computeSegments(state.start, state.end);
         if (segments.length) {
           const cmd = {
@@ -91,8 +95,8 @@ export function createWallStrategy(ctx: ToolContext): ToolStrategy {
       state.end = null;
     },
     onFrame() {
-      const { activeTool, cameraGestureActive, input } = useStore.getState();
-      if (activeTool !== "wall" || cameraGestureActive || !state.start) return;
+      const { activeTool, camera, input } = useStore.getState();
+      if (activeTool !== "wall" || camera.gestureActive || !state.start) return;
       const gp = input.groundPoint;
       if (!gp) return;
       const snapped = snapToGrid(new THREE.Vector3(gp.x, gp.y, gp.z), "round");

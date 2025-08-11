@@ -8,9 +8,9 @@ import { eventBus } from "../../core/events";
 // Mediator/Observer: centraliza eventos de ponteiro/teclado e publica no store
 export function InputController() {
   const { camera, gl } = useThree();
-  const setPointerNdc = useStore((s) => s.setPointerNdc);
-  const setGroundPoint = useStore((s) => s.setGroundPoint);
-  const setKeyDown = useStore((s) => s.setKeyDown);
+  const setPointerNdc = useStore((s) => s.input.setPointerNdc);
+  const setGroundPoint = useStore((s) => s.input.setGroundPoint);
+  const setKeyDown = useStore((s) => s.input.setKeyDown);
   const raycaster = useMemo(() => new THREE.Raycaster(), []);
   const ndc = useRef(new THREE.Vector2(0, 0));
 
