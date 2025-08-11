@@ -35,7 +35,7 @@
 - [x] Completar estratégias: `move`, `wall`, `floor`, `bulldoze`, `eyedropper`
   - Arquivos: `src/systems/tools/strategies/*`
   - Critérios: operações básicas funcionando; integração com undo/redo em ações discretas (movimento contínuo será coalescido na seção 3)
-  
+
   Novas tarefas:
   - [x] Otimizar reconstrução do índice no `MoveStrategy` para não ocorrer a cada frame (reutilizar cache quando `objects` não muda)
     - Arquivos: `src/systems/tools/strategies/MoveStrategy.tsx`
@@ -145,6 +145,7 @@
   - Critérios: nenhum import quebrado; decisões registradas
 
 Novas tarefas:
+
 - [x] Adicionar botões de câmera na `Topbar` e posicionar acima da `BudgetBar`
   - Arquivos: `src/ui/Topbar.tsx`, `src/ui/hud/Hud.tsx`
   - Critérios: alternar `persp`/`ortho`; layout correto (Topbar acima de BudgetBar)
@@ -154,6 +155,7 @@ Novas tarefas:
   - Melhorias: painel sempre olha para a câmera (billboard/sprite) e mantém legibilidade em ângulos altos
 
 Novas tarefas/concluídas:
+
 - [x] Criar primitivos de UI: `Panel`, `Button`, `ToolbarGroup`, tokens de estilo
   - Arquivos: `src/ui/components/*`
   - Impacto: consistência visual; remoção de estilos duplicados
@@ -206,5 +208,3 @@ Novas tarefas/concluídas:
 - **P0**: Mover `InputController` para `App`; coalescer movimento em comando e limitar histórico; remover `any` críticos; `validatePlacement` e `SpatialIndex` básicos já integrados
 - **P1**: Controles ortho/pan/zoom; zod no catálogo; serialização completa; HUDs estáveis; instancing piso
 - **P2**: GLTF/KTX2; culling/shadows toggles; testes e2e; instancing objetos; BVH/otimizações
-
-
