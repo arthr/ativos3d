@@ -1,21 +1,18 @@
-import { useMemo, useCallback } from "react";
+import { useMemo, useCallback, useEffect } from "react";
 import { useStore } from "../../store/useStore";
 import { catalog } from "../../core/catalog";
 import { CatalogItem3D } from "../../core/types";
 import type { ThreeEvent } from "@react-three/fiber";
-import { useEffect, useState } from "react";
 import { Instances, Instance } from "@react-three/drei";
+import { useInstanceCapacity } from "./useInstanceCapacity";
 
 export function ObjectsLayer() {
   const objects = useStore((s) => s.objects);
   const lot = useStore((s) => s.lot);
-  const [capacity, setCapacity] = useState(() =>
-    Math.max(lot.width * lot.depth, objects.length, 1),
-  );
+  const [capacity, updateCapacity] = useInstanceCapacity(objects.length);
   useEffect(() => {
-    const target = Math.max(lot.width * lot.depth, objects.length, capacity);
-    if (target > capacity) setCapacity(Math.max(target, capacity * 2));
-  }, [objects.length, lot.width, lot.depth, capacity]);
+    updateCapacity(lot.width * lot.depth);
+  }, [lot.width, lot.depth, updateCapacity]);
   const setHover = useStore((s) => s.setHover);
   const setSelected = useStore((s) => s.setSelected);
   const hoverId = useStore((s) => s.hoverId);

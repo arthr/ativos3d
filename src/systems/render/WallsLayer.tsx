@@ -1,15 +1,12 @@
-import { useEffect, useState } from "react";
 import { useStore } from "../../store/useStore";
 import { Instances, Instance } from "@react-three/drei";
+import { useInstanceCapacity } from "./useInstanceCapacity";
 
 export function WallsLayer() {
   const walls = useStore((s) => s.walls);
   const height = useStore((s) => s.lot.height);
   const thickness = 0.1;
-  const [capacity, setCapacity] = useState(() => Math.max(walls.length, 1));
-  useEffect(() => {
-    if (walls.length > capacity) setCapacity(Math.max(walls.length, capacity * 2));
-  }, [walls.length, capacity]);
+  const [capacity] = useInstanceCapacity(walls.length);
   return (
     <Instances key={capacity} limit={capacity}>
       <boxGeometry args={[1, height, thickness]} />

@@ -1,13 +1,10 @@
-import { useEffect, useState } from "react";
 import { useStore } from "../../store/useStore";
 import { Instances, Instance } from "@react-three/drei";
+import { useInstanceCapacity } from "./useInstanceCapacity";
 
 export function FloorLayer() {
   const floor = useStore((s) => s.floor);
-  const [capacity, setCapacity] = useState(() => Math.max(floor.length, 1));
-  useEffect(() => {
-    if (floor.length > capacity) setCapacity(Math.max(floor.length, capacity * 2));
-  }, [floor.length, capacity]);
+  const [capacity] = useInstanceCapacity(floor.length);
   return (
     <Instances key={capacity} limit={capacity}>
       <planeGeometry args={[1, 1]} />
