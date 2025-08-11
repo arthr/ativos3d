@@ -7,12 +7,13 @@ import { WallsLayer } from "../systems/render/WallsLayer";
 import { FloorLayer } from "../systems/render/FloorLayer";
 import { HudRoot } from "../ui/hud";
 import { ToolManager } from "../systems/tools/ToolManager";
-import { createPlaceStrategy } from "../systems/tools/strategies/PlaceStrategy";
+import { PlaceStrategy } from "../systems/tools/strategies/PlaceStrategy";
 import { createMoveStrategy } from "../systems/tools/strategies/MoveStrategy";
 import { createWallStrategy } from "../systems/tools/strategies/WallStrategy";
 import { createFloorStrategy } from "../systems/tools/strategies/FloorStrategy";
 import { createBulldozeStrategy } from "../systems/tools/strategies/BulldozeStrategy";
 import { createEyedropperStrategy } from "../systems/tools/strategies/EyedropperStrategy";
+import { strategyComponentFactory } from "../systems/tools/strategies/strategyComponentFactory";
 import { SelectedInspector } from "../ui/inworld/Inspector";
 import { InputController } from "../systems/controllers/InputController";
 import { Perf } from "r3f-perf";
@@ -36,12 +37,12 @@ export function App() {
           <SelectedInspector />
           <ToolManager
             strategies={{
-              place: (ctx) => createPlaceStrategy(ctx),
-              move: (ctx) => createMoveStrategy(ctx),
-              wall: (ctx) => createWallStrategy(ctx),
-              floor: (ctx) => createFloorStrategy(ctx),
-              bulldoze: (ctx) => createBulldozeStrategy(ctx),
-              eyedropper: (ctx) => createEyedropperStrategy(ctx),
+              place: PlaceStrategy,
+              move: strategyComponentFactory(createMoveStrategy),
+              wall: strategyComponentFactory(createWallStrategy),
+              floor: strategyComponentFactory(createFloorStrategy),
+              bulldoze: strategyComponentFactory(createBulldozeStrategy),
+              eyedropper: strategyComponentFactory(createEyedropperStrategy),
             }}
           />
         </Suspense>

@@ -8,8 +8,10 @@ export type ToolContext = {
 };
 
 export interface ToolStrategy {
-  onActivate(ctx: ToolContext): void | (() => void);
+  onActivate(): void | (() => void);
   onDeactivate(): void;
   onFrame?(): void;
   renderPreview(): ReactNode | null;
 }
+
+export type StrategyComponent = (props: { ctx: ToolContext }) => ReactNode | null;
