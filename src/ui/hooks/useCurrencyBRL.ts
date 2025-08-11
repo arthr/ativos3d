@@ -5,7 +5,7 @@ export function useCurrencyBRL(): (value: number, modifier?: number) => string {
     maximumFractionDigits: 2,
   });
   return (value: number, modifier?: number) => {
-    if (modifier) {
+    if (modifier !== undefined) {
       return fmt.format(value * modifier);
     }
     return fmt.format(value);
