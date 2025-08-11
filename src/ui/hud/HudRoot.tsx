@@ -32,14 +32,14 @@ export function HudRoot() {
 
       <div
         data-hud="true"
-        style={{ position: "absolute", bottom: 50, left: 8, pointerEvents: "auto" }}
+        style={{ position: "absolute", bottom: 10, left: 8, pointerEvents: "auto" }}
       >
         <Toolbar />
       </div>
 
       <div
         data-hud="true"
-        style={{ position: "absolute", bottom: 50, right: 8, width: 250, pointerEvents: "auto" }}
+        style={{ position: "absolute", bottom: 10, right: 8, width: 250, pointerEvents: "auto" }}
       >
         <CatalogContainer />
       </div>
