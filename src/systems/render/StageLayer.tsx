@@ -8,8 +8,8 @@ import { useCameraGestures } from "./camera/hooks";
 
 export function StageLayer() {
   const { camera, gl, scene } = useThree();
-  const controlsEnabled = useStore((s) => s.cameraControlsEnabled);
-  const cameraMode = useStore((s) => s.cameraMode);
+  const controlsEnabled = useStore((s) => s.camera.controlsEnabled);
+  const cameraMode = useStore((s) => s.camera.mode);
 
   // Strategy: câmera por modo (memoizada para identidade estável)
   const strategy = useMemo(() => createCameraStrategy(cameraMode), [cameraMode]);

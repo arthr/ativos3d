@@ -4,8 +4,8 @@ import { MdOutlineViewInAr } from "react-icons/md";
 import { LuRotate3D } from "react-icons/lu";
 
 export function CameraModeToggle() {
-  const cameraMode = useStore((s) => s.cameraMode);
-  const setCameraMode = useStore((s) => s.setCameraMode);
+  const cameraMode = useStore((s) => s.camera.mode);
+  const setCameraMode = useStore((s) => s.camera.setMode);
   return (
     <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
       <Button

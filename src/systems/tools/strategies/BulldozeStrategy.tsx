@@ -18,8 +18,8 @@ export function createBulldozeStrategy(ctx: ToolContext): ToolStrategy {
   return {
     onActivate() {
       const offPointer = eventBus.on("pointerNdc", ({ x, y }) => {
-        const { activeTool, cameraGestureActive, input } = useStore.getState();
-        if (activeTool !== "bulldoze" || cameraGestureActive) return;
+        const { activeTool, camera, input } = useStore.getState();
+        if (activeTool !== "bulldoze" || camera.gestureActive) return;
         // Raycast primeiro para tentar encontrar objetos
         const ndc = new THREE.Vector2(x, y);
         raycaster.setFromCamera(ndc, ctx.camera);
@@ -43,8 +43,9 @@ export function createBulldozeStrategy(ctx: ToolContext): ToolStrategy {
         }
       });
       const offClick = eventBus.on("click", ({ button, hudTarget }) => {
-        const { activeTool, cameraGestureActive } = useStore.getState();
-        if (activeTool !== "bulldoze" || cameraGestureActive || hudTarget || button !== 0) return;
+        const { activeTool, camera } = useStore.getState();
+        if (activeTool !== "bulldoze" || camera.gestureActive || hudTarget || button !== 0)
+          return;
         const h = state.hover;
         if (!h) return;
         if (h.kind === "object") {

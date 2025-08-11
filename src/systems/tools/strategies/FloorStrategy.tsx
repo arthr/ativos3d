@@ -16,8 +16,8 @@ export function createFloorStrategy(ctx: ToolContext): ToolStrategy {
   return {
     onActivate() {
       const offPointer = eventBus.on("pointerNdc", ({ x, y }) => {
-        const { activeTool, cameraGestureActive, input } = useStore.getState();
-        if (activeTool !== "floor" || cameraGestureActive) return;
+        const { activeTool, camera, input } = useStore.getState();
+        if (activeTool !== "floor" || camera.gestureActive) return;
         const gp = input.groundPoint;
         if (!gp) {
           state.hover = null;
@@ -27,8 +27,9 @@ export function createFloorStrategy(ctx: ToolContext): ToolStrategy {
         state.hover = { x: snapped.x, z: snapped.z };
       });
       const offClick = eventBus.on("click", ({ button, hudTarget }) => {
-        const { activeTool, cameraGestureActive, selectedCatalogId } = useStore.getState();
-        if (activeTool !== "floor" || cameraGestureActive || hudTarget || button !== 0) return;
+        const { activeTool, camera, selectedCatalogId } = useStore.getState();
+        if (activeTool !== "floor" || camera.gestureActive || hudTarget || button !== 0)
+          return;
         const h = state.hover;
         if (!h) return;
         const tile = { x: h.x, z: h.z, tex: selectedCatalogId ?? "floor" };

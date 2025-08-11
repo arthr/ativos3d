@@ -1,6 +1,14 @@
 import { create } from "zustand";
-import { FloorTile3D, PlacedObject3D, WallSegment3D, Mode, Tool } from "../core/types";
+import {
+  FloorTile3D,
+  PlacedObject3D,
+  WallSegment3D,
+  Mode,
+  Tool,
+} from "../core/types";
 import { isToolAllowedInMode, modeToTools } from "../core/modeMachine";
+import { CameraSlice, createCameraSlice } from "./cameraSlice";
+import { InputSlice, createInputSlice } from "./inputSlice";
 
 // Tool agora vem de core/types
 
@@ -22,19 +30,11 @@ export interface BudgetState {
   spent: number;
 }
 
-export interface AppState {
+export interface AppState extends CameraSlice, InputSlice {
   lot: Lot3DState;
   budget: BudgetState;
   mode: Mode;
   activeTool: Tool;
-  cameraMode: "persp" | "ortho";
-  cameraControlsEnabled: boolean;
-  cameraGestureActive: boolean;
-  input: {
-    pointerNdc: { x: number; y: number };
-    groundPoint: { x: number; y: number; z: number } | null;
-    keysDown: Record<string, boolean>;
-  };
   undo: Command[];
   redo: Command[];
   objects: PlacedObject3D[];
@@ -45,12 +45,6 @@ export interface AppState {
   selectedCatalogId?: string;
   setTool: (t: Tool) => void;
   setMode: (m: Mode) => void;
-  setCameraMode: (m: "persp" | "ortho") => void;
-  setCameraControlsEnabled: (enabled: boolean) => void;
-  setCameraGestureActive: (active: boolean) => void;
-  setPointerNdc: (x: number, y: number) => void;
-  setGroundPoint: (gp: { x: number; y: number; z: number } | null) => void;
-  setKeyDown: (code: string, down: boolean) => void;
   pushCommand: (c: Command) => void;
   undoOnce: () => void;
   redoOnce: () => void;
@@ -59,15 +53,13 @@ export interface AppState {
   setSelectedCatalogId: (id?: string) => void;
 }
 
-export const useStore = create<AppState>((set, get) => ({
+export const useStore = create<AppState>()((set, get, api) => ({
+  ...createCameraSlice(set, get, api),
+  ...createInputSlice(set, get, api),
   lot: { width: 30, depth: 50, height: 3 },
   budget: { funds: 10000, spent: 0 },
   mode: "buy",
   activeTool: "place",
-  cameraMode: "persp",
-  cameraControlsEnabled: true,
-  cameraGestureActive: false,
-  input: { pointerNdc: { x: 0, y: 0 }, groundPoint: null, keysDown: {} },
   undo: [],
   redo: [],
   objects: [
@@ -111,7 +103,8 @@ export const useStore = create<AppState>((set, get) => ({
   walls: [],
   floor: [],
   selectedIds: [],
-  setTool: (t) => set({ activeTool: t, mode: t === "wall" || t === "floor" ? "build" : "buy" }),
+  setTool: (t) =>
+    set({ activeTool: t, mode: t === "wall" || t === "floor" ? "build" : "buy" }),
   setMode: (m) =>
     set((s) => {
       if (m === "view") return { mode: m };
@@ -119,13 +112,6 @@ export const useStore = create<AppState>((set, get) => ({
       const fallbackTool = modeToTools[m][0];
       return { mode: m, activeTool: keepTool ? s.activeTool : fallbackTool };
     }),
-  setCameraMode: (m) => set({ cameraMode: m }),
-  setCameraControlsEnabled: (enabled) => set({ cameraControlsEnabled: enabled }),
-  setCameraGestureActive: (active) => set({ cameraGestureActive: active }),
-  setPointerNdc: (x, y) => set((s) => ({ input: { ...s.input, pointerNdc: { x, y } } })),
-  setGroundPoint: (gp) => set((s) => ({ input: { ...s.input, groundPoint: gp } })),
-  setKeyDown: (code, down) =>
-    set((s) => ({ input: { ...s.input, keysDown: { ...s.input.keysDown, [code]: down } } })),
   pushCommand: (c) =>
     set((s) => {
       const MAX = 100;

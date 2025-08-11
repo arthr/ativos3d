@@ -11,8 +11,10 @@ export function useRendererSetup(gl: THREE.WebGLRenderer, scene: THREE.Scene) {
 }
 
 export function useCameraGestures(gl: THREE.WebGLRenderer, cameraMode: "persp" | "ortho") {
-  const controlsEnabled = useStore((s: AppState) => s.cameraControlsEnabled);
-  const setCameraGestureActive = useStore((s: AppState) => s.setCameraGestureActive);
+  const controlsEnabled = useStore((s: AppState) => s.camera.controlsEnabled);
+  const setCameraGestureActive = useStore(
+    (s: AppState) => s.camera.setGestureActive,
+  );
   const activeTool = useStore((s: AppState) => s.activeTool);
   const [isSpaceDown, setIsSpaceDown] = useState(false);
   const [isPanDragging, setIsPanDragging] = useState(false);
