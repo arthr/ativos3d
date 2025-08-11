@@ -57,6 +57,7 @@ pnpm dev
     catalog.ts          # valida e expõe o catálogo (zod)
     commandStack.ts     # execução de comandos (undo/redo)
     events.ts           # façade p/ event bus (manager/types/bus)
+    /events             # bus.ts, manager.ts, types.ts
     geometry.ts         # AABB/rotação/auxiliares
     modeMachine.ts      # modos ⇄ ferramentas e cursores
     placement.ts        # façade p/ pipeline de validação
@@ -64,7 +65,7 @@ pnpm dev
     sceneIndex.ts       # util p/ índice AABB de objetos (Strategy)
     serialization.ts    # export/import versionado
     spatialIndex.ts     # façade p/ spatial (Strategy + fábrica)
-    spatial/            # types, GridSpatialIndex, index
+    spatial/            # types.ts, GridSpatialIndex.ts, index.ts
     types.ts            # modelos de dados 3D
   /store
     useStore.ts         # Zustand + histórico/undo/redo
@@ -78,7 +79,7 @@ pnpm dev
       WallsLayer.tsx
       ObjectsLayer.tsx
       index.ts
-      /camera            # CameraStrategies + hooks
+      /camera            # CameraStrategies.tsx + hooks.ts
     /tools
       toolUtils.ts
       ToolManager.tsx
@@ -99,6 +100,7 @@ pnpm dev
       /Topbar/{Topbar.tsx, CameraModeToggle.tsx, FileActions.tsx}
       HudRoot.tsx       # inclui ToastContainer
       index.ts
+      /Toast/{store.ts, ToastContainer.tsx, types.ts}
     /inworld/Inspector  # Inspector flutuante (Html)
       {Panel.tsx, view.tsx, index.ts}
   index.css
