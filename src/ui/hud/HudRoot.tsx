@@ -39,7 +39,7 @@ export function HudRoot() {
 
       <div
         data-hud="true"
-        style={{ position: "absolute", bottom: 50, right: 8, width: 360, pointerEvents: "auto" }}
+        style={{ position: "absolute", bottom: 50, right: 8, width: 250, pointerEvents: "auto" }}
       >
         <CatalogContainer />
       </div>

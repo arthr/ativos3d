@@ -1,6 +1,7 @@
 import React from "react";
 import Panel from "../../components/Panel";
 import Button from "../../components/Button";
+import { UI_COLORS } from "../../components/tokens";
 
 export type CatalogItemView = { id: string; name: string; price: number };
 
@@ -28,10 +29,12 @@ export function CatalogPanel({ items, selectedId, onSelect }: CatalogPanelProps)
             key={item.id}
             onClick={() => onSelect(item.id)}
             active={selectedId === item.id}
-            style={{ textAlign: "left" }}
+            style={{ textAlign: "left", height: 38, padding: "0 10px" }}
           >
             <div style={{ fontWeight: 600, fontSize: 12 }}>{item.name}</div>
-            <div style={{ fontSize: 11, color: "#475569" }}>{item.price}</div>
+            <div style={{ fontWeight: 400, fontSize: 10, color: UI_COLORS.muted }}>
+              {item.price}
+            </div>
           </Button>
         ))}
       </div>

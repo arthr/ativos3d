@@ -7,14 +7,15 @@ export function CameraModeToggle() {
   const cameraMode = useStore((s) => s.cameraMode);
   const setCameraMode = useStore((s) => s.setCameraMode);
   return (
-    <div style={{ display: "flex", gap: 8 }}>
+    <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
       <Button
         aria-label="Câmera perspectiva"
         title="Câmera perspectiva"
         onClick={() => setCameraMode("persp")}
         active={cameraMode === "persp"}
       >
-        <LuRotate3D />
+        <LuRotate3D /> {/* TODO: add tooltip */}
+        Perspectiva
       </Button>
       <Button
         aria-label="Câmera ortográfica"
@@ -22,7 +23,8 @@ export function CameraModeToggle() {
         onClick={() => setCameraMode("ortho")}
         active={cameraMode === "ortho"}
       >
-        <MdOutlineViewInAr />
+        <MdOutlineViewInAr /> {/* TODO: add tooltip */}
+        Isométrica
       </Button>
     </div>
   );

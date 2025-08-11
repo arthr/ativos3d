@@ -1,3 +1,4 @@
+import { UI_COLORS, UI_RADII } from "../../components/tokens";
 import Button from "../../components/Button";
 import {
   exportCurrentLotToDownload,
@@ -18,13 +19,15 @@ export function FileActions() {
           alignItems: "center",
           justifyContent: "center",
           cursor: "pointer",
-          height: 32,
-          minWidth: 44,
+          height: 22,
+          minWidth: 24,
           padding: "0 10px",
-          border: "1px solid #e5e7eb",
-          borderRadius: 6,
-          background: "#fff",
+          fontSize: 10,
+          border: `1px solid ${UI_COLORS.border}`,
+          borderRadius: UI_RADII.sm,
+          background: UI_COLORS.surface,
           fontWeight: 600,
+          textTransform: "capitalize",
         }}
       >
         Importar
