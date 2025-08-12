@@ -19,8 +19,9 @@ export function usePlaceEvents(
       }
     });
     const offClick = eventBus.on("click", ({ button, hudTarget }) => {
-      const { activeTool, cameraGestureActive, selectedCatalogId } = useStore.getState();
-      if (activeTool !== "place" || hudTarget || cameraGestureActive || button !== 0) return;
+      const { activeTool, selectedCatalogId } = useStore.getState();
+      const { gestureActive } = useStore.getState().camera;
+      if (activeTool !== "place" || hudTarget || gestureActive || button !== 0) return;
       if (!preview || !selectedCatalogId || !preview.valid) return;
       createPlaceCommand(selectedCatalogId, preview.pos, yaw);
     });
@@ -30,4 +31,3 @@ export function usePlaceEvents(
     };
   }, [yaw, setYaw, preview]);
 }
-
