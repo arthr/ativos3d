@@ -12,11 +12,26 @@ export function ToastContainer() {
 
   function renderMessage(message: string | React.ReactNode) {
     if (message == null) return "Mensagem não definida";
-    if (typeof message !== "string") return message;
-    // TODO: usar React.createElement para suportar subcomponentes (ex: <div>...</div>)
-    // TODO: usar React.Fragment para suportar múltiplos elementos (ex: <div>...</div>)
-    // TODO: usar React.cloneElement para suportar props (ex: <div {...props}>...</div> ou <div {...props} />)
-    return <span dangerouslySetInnerHTML={{ __html: message }} />;
+
+    if (typeof message === "string") {
+      return <span dangerouslySetInnerHTML={{ __html: message }} />;
+    }
+
+    if (Array.isArray(message)) {
+      return (
+        <>
+          {message.map((child, idx) =>
+            React.isValidElement(child)
+              ? React.cloneElement(child, { key: idx })
+              : child
+          )}
+        </>
+      );
+    }
+
+    return React.isValidElement(message)
+      ? React.cloneElement(message)
+      : message;
   }
 
   return (
