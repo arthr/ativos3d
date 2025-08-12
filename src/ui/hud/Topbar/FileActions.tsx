@@ -36,7 +36,8 @@ export function FileActions() {
           accept="application/json,.json"
           style={{ display: "none" }}
           onChange={async (e) => {
-            const file = e.target.files?.[0];
+            const input = e.currentTarget;
+            const file = input.files?.[0];
             if (!file) return;
             try {
               await importLotFromFile(file);
@@ -44,7 +45,8 @@ export function FileActions() {
               // eslint-disable-next-line no-alert
               alert("Falha ao importar JSON: " + (err as Error).message);
             } finally {
-              e.currentTarget.value = "";
+              // Evita acessar SyntheticEvent após await: usamos a referência local do input
+              input.value = "";
             }
           }}
         />
