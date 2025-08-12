@@ -1,7 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
-import { ToolContext } from "./types";
-import type { ToolStrategy } from "./types";
+import { ToolContext, ToolStrategy } from "./types";
 
 export function strategyComponentFactory(create: (ctx: ToolContext) => ToolStrategy) {
   return function StrategyComponent({ ctx }: { ctx: ToolContext }) {
