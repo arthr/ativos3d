@@ -1,6 +1,22 @@
 # Repo Map
-/src/core -> tipos, geometry, placement, serialization
-/src/systems -> render (React Three Fiber), tools (Place/Move/Wall/Floor)
-/src/ui -> Toolbar, Catalog, Inspector, Budget
-/store -> Zustand + commandStack
-/docs -> mecânica, modelos, validação, repo_map (este)
+
+- /src/core
+  - events.ts (façade) e /events/{manager.ts,types.ts,bus.ts}
+  - placement.ts (façade) e /placement/{types.ts,validators.ts,pipeline.ts}
+  - spatialIndex.ts (façade) e /spatial/{types.ts,GridSpatialIndex.ts,index.ts}
+  - catalog.ts, geometry.ts, sceneIndex.ts, serialization.ts, budget.ts, types.ts
+- /src/systems
+  - /render: StageLayer.tsx (CameraStrategy + useCameraGestures), Objects/Walls/Floor/Grid
+    - /camera: CameraStrategies.tsx, hooks.ts
+  - /tools
+    - ToolManager.tsx, toolUtils.ts
+    - /strategies: Place/Move/Wall/Floor/Bulldoze/Eyedropper
+      - /place: preview.ts, events.ts, command.ts
+- /src/ui
+  - /hud: Topbar, Toolbar, Budget, Catalog, HudRoot (+ Toast)
+  - /hud/Toast: store.ts, ToastContainer.tsx, types.ts
+  - /components: Button (hover/press), Panel, ToolbarGroup, tokens
+- /store
+  - useStore.ts (slices camera/input), cameraSlice.ts, inputSlice.ts
+- /docs
+  - build_mechanics.md, data_models.md, validation_pipeline.md, roadmap_melhorias.md, repo_map.md

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ToolContext } from "./types";
-import { usePlacementPreview } from "./placePreview";
-import { usePlaceEvents } from "./placeEvents";
+import { usePlacementPreview } from "./place/preview";
+import { usePlaceEvents } from "./place/events";
 
 export function PlaceStrategy({ ctx }: { ctx: ToolContext }) {
   void ctx;

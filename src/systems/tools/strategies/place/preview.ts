@@ -1,13 +1,13 @@
 import { useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
-import { snapToGrid } from "../toolUtils";
-import { useStore } from "../../../store/useStore";
-import { catalog } from "../../../core/catalog";
-import { validatePlacement } from "../../../core/placement";
-import { aabbIntersects } from "../../../core/geometry";
-import { CatalogItem3D, PlacedObject3D } from "../../../core/types";
-import { buildObjectAabbIndex } from "../../../core/sceneIndex";
+import { snapToGrid } from "../../toolUtils";
+import { useStore } from "../../../../store/useStore";
+import { catalog } from "../../../../core/catalog";
+import { validatePlacement } from "../../../../core/placement";
+import { aabbIntersects } from "../../../../core/geometry";
+import { CatalogItem3D, PlacedObject3D } from "../../../../core/types";
+import { buildObjectAabbIndex } from "../../../../core/sceneIndex";
 
 export interface PlacementPreview {
   pos: THREE.Vector3;
@@ -97,4 +97,3 @@ export function usePlacementPreview(yaw: 0 | 90 | 180 | 270) {
 
   return preview;
 }
-

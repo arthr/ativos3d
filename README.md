@@ -85,12 +85,16 @@ pnpm dev
       ToolManager.tsx
       /strategies
         types.ts
-        PlaceStrategy.tsx
+        PlaceStrategy.tsx          # delega para submódulos em /strategies/place
         MoveStrategy.tsx
         WallStrategy.tsx
         FloorStrategy.tsx
         BulldozeStrategy.tsx
         EyedropperStrategy.tsx
+        /place                    # SRP: hooks e comandos reutilizáveis
+          preview.ts              # usePlacementPreview (validação + índice espacial)
+          events.ts               # usePlaceEvents (Keyboard/Click)
+          command.ts              # createPlaceCommand (Command + withBudget)
   /ui
     /components         # Button (hover/press), Panel, ToolbarGroup, tokens
     /hooks              # useCurrencyBRL

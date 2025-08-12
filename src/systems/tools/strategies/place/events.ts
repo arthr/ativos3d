@@ -1,8 +1,8 @@
 import { useEffect } from "react";
-import { eventBus } from "../../../core/events";
-import { useStore } from "../../../store/useStore";
-import { createPlaceCommand } from "./placeCommand";
-import type { PlacementPreview } from "./placePreview";
+import { eventBus } from "../../../../core/events";
+import { useStore } from "../../../../store/useStore";
+import { createPlaceCommand } from "./command";
+import type { PlacementPreview } from "./preview";
 
 export function usePlaceEvents(
   yaw: 0 | 90 | 180 | 270,
@@ -19,9 +19,8 @@ export function usePlaceEvents(
       }
     });
     const offClick = eventBus.on("click", ({ button, hudTarget }) => {
-      const { activeTool, selectedCatalogId } = useStore.getState();
-      const { gestureActive } = useStore.getState().camera;
-      if (activeTool !== "place" || hudTarget || gestureActive || button !== 0) return;
+      const { activeTool, selectedCatalogId, camera } = useStore.getState();
+      if (activeTool !== "place" || hudTarget || camera.gestureActive || button !== 0) return;
       if (!preview || !selectedCatalogId || !preview.valid) return;
       createPlaceCommand(selectedCatalogId, preview.pos, yaw);
     });
