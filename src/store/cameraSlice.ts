@@ -19,8 +19,6 @@ export const createCameraSlice: StateCreator<CameraSlice, [], [], CameraSlice> =
     setMode: (m) => set((s) => ({ camera: { ...s.camera, mode: m } })),
     setControlsEnabled: (enabled) =>
       set((s) => ({ camera: { ...s.camera, controlsEnabled: enabled } })),
-    setGestureActive: (active) =>
-      set((s) => ({ camera: { ...s.camera, gestureActive: active } })),
+    setGestureActive: (active) => set((s) => ({ camera: { ...s.camera, gestureActive: active } })),
   },
 });
-

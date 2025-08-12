@@ -6,12 +6,4 @@ export type ToolContext = {
   gl: THREE.WebGLRenderer;
   scene: THREE.Scene;
 };
-
-export interface ToolStrategy {
-  onActivate(): void | (() => void);
-  onDeactivate(): void;
-  onFrame?(): void;
-  renderPreview(): ReactNode | null;
-}
-
 export type StrategyComponent = (props: { ctx: ToolContext }) => ReactNode | null;

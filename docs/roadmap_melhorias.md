@@ -29,9 +29,9 @@
 
 #### 2) Padrão Strategy para Ferramentas
 
-- [x] Padronizar interface `ToolStrategy` (ativação, cleanup, frame, preview) e garantir cleanup de todos os `eventBus.on`
-  - Arquivos: `src/systems/tools/strategies/*.tsx`, `src/systems/tools/strategies/types.ts`, `src/systems/tools/ToolManager.tsx`
-  - Critérios: trocar de ferramenta não mantém listeners; adicionar smoke test manual
+- [x] Migrar estratégias para componentes React com hooks; remover `strategyComponentFactory`
+  - Arquivos: `src/systems/tools/strategies/*`, `src/app/App.tsx`, `src/core/events/useEventBus.ts`
+  - Critérios: todas as ferramentas usam componentes React e fazem cleanup automático
 - [x] Completar estratégias: `move`, `wall`, `floor`, `bulldoze`, `eyedropper`
   - Arquivos: `src/systems/tools/strategies/*`
   - Critérios: operações básicas funcionando; integração com undo/redo em ações discretas (movimento contínuo será coalescido na seção 3)

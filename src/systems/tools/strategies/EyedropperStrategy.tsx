@@ -1,47 +1,53 @@
-import { ToolStrategy, ToolContext } from "./types";
-import { useStore } from "../../../store/useStore";
-import { eventBus } from "../../../core/events";
+import { useCallback, useRef, useState } from "react";
 import * as THREE from "three";
+import { ToolContext } from "./types";
+import { useStore } from "../../../store/useStore";
+import { useEventBus } from "../../../core/events";
 
-export function createEyedropperStrategy(ctx: ToolContext): ToolStrategy {
-  const state = { cleanup: [] as Array<() => void>, hoverDefId: null as string | null };
-  const raycaster = new THREE.Raycaster();
-  return {
-    onActivate() {
-      const offPointer = eventBus.on("pointerNdc", ({ x, y }) => {
-        const { activeTool, camera } = useStore.getState();
-        if (activeTool !== "eyedropper" || camera.gestureActive) return;
-        const ndc = new THREE.Vector2(x, y);
-        raycaster.setFromCamera(ndc, ctx.camera);
-        const hits = raycaster.intersectObjects(ctx.scene.children, true);
-        const objHit = hits.find(
-          (h) => (h.object as { userData?: { defId?: string; objectId?: string } })?.userData?.defId ||
-            (h.object as { userData?: { defId?: string; objectId?: string } })?.userData?.objectId,
-        );
-        if (objHit) {
-          const u = (objHit.object as { userData?: { defId?: string; objectId?: string } }).userData ?? {};
-          state.hoverDefId = u.defId ?? null;
-        } else {
-          state.hoverDefId = null;
-        }
-      });
-      const offClick = eventBus.on("click", ({ button, hudTarget }) => {
-        const { activeTool, camera } = useStore.getState();
-        if (activeTool !== "eyedropper" || camera.gestureActive || hudTarget || button !== 0)
-          return;
-        if (state.hoverDefId) {
-          useStore.setState({ selectedCatalogId: state.hoverDefId, activeTool: "place" });
-        }
-      });
-      state.cleanup.push(offPointer, offClick);
+export function EyedropperStrategy({ ctx }: { ctx: ToolContext }) {
+  const raycasterRef = useRef(new THREE.Raycaster());
+  const hoverRef = useRef<string | null>(null);
+  const [, setHover] = useState<string | null>(null);
+
+  const setHoverState = useCallback((d: string | null) => {
+    hoverRef.current = d;
+    setHover(d);
+  }, []);
+
+  const handlePointer = useCallback(({ x, y }: { x: number; y: number }) => {
+    const { activeTool, camera } = useStore.getState();
+    if (activeTool !== "eyedropper" || camera.gestureActive) return;
+    const ndc = new THREE.Vector2(x, y);
+    raycasterRef.current.setFromCamera(ndc, ctx.camera);
+    const hits = raycasterRef.current.intersectObjects(ctx.scene.children, true);
+    const objHit = hits.find(
+      (h) =>
+        (h.object as { userData?: { defId?: string; objectId?: string } })?.userData?.defId ||
+        (h.object as { userData?: { defId?: string; objectId?: string } })?.userData?.objectId,
+    );
+    if (objHit) {
+      const u = (objHit.object as { userData?: { defId?: string; objectId?: string } }).userData ?? {};
+      setHoverState(u.defId ?? null);
+    } else {
+      setHoverState(null);
+    }
+  }, [ctx, setHoverState]);
+
+  const handleClick = useCallback(
+    ({ button, hudTarget }: { button: number; hudTarget: boolean }) => {
+      const { activeTool, camera } = useStore.getState();
+      if (activeTool !== "eyedropper" || camera.gestureActive || hudTarget || button !== 0) return;
+      if (hoverRef.current) {
+        useStore.setState({ selectedCatalogId: hoverRef.current, activeTool: "place" });
+      }
     },
-    onDeactivate() {
-      state.cleanup.forEach((fn) => fn());
-      state.cleanup = [];
-      state.hoverDefId = null;
-    },
-    renderPreview() {
-      return null;
-    },
-  } satisfies ToolStrategy;
+    [],
+  );
+
+  useEventBus("pointerNdc", handlePointer);
+  useEventBus("click", handleClick);
+
+  return null;
 }
+
+export default EyedropperStrategy;

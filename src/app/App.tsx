@@ -8,12 +8,11 @@ import { FloorLayer } from "../systems/render/FloorLayer";
 import { HudRoot } from "../ui/hud";
 import { ToolManager } from "../systems/tools/ToolManager";
 import { PlaceStrategy } from "../systems/tools/strategies/PlaceStrategy";
-import { createMoveStrategy } from "../systems/tools/strategies/MoveStrategy";
-import { createWallStrategy } from "../systems/tools/strategies/WallStrategy";
-import { createFloorStrategy } from "../systems/tools/strategies/FloorStrategy";
-import { createBulldozeStrategy } from "../systems/tools/strategies/BulldozeStrategy";
-import { createEyedropperStrategy } from "../systems/tools/strategies/EyedropperStrategy";
-import { strategyComponentFactory } from "../systems/tools/strategies/strategyComponentFactory";
+import { MoveStrategy } from "../systems/tools/strategies/MoveStrategy";
+import { WallStrategy } from "../systems/tools/strategies/WallStrategy";
+import { FloorStrategy } from "../systems/tools/strategies/FloorStrategy";
+import { BulldozeStrategy } from "../systems/tools/strategies/BulldozeStrategy";
+import { EyedropperStrategy } from "../systems/tools/strategies/EyedropperStrategy";
 import { SelectedInspector } from "../ui/inworld/Inspector";
 import { InputController } from "../systems/controllers/InputController";
 import { Perf } from "r3f-perf";
@@ -38,11 +37,11 @@ export function App() {
           <ToolManager
             strategies={{
               place: PlaceStrategy,
-              move: strategyComponentFactory(createMoveStrategy),
-              wall: strategyComponentFactory(createWallStrategy),
-              floor: strategyComponentFactory(createFloorStrategy),
-              bulldoze: strategyComponentFactory(createBulldozeStrategy),
-              eyedropper: strategyComponentFactory(createEyedropperStrategy),
+              move: MoveStrategy,
+              wall: WallStrategy,
+              floor: FloorStrategy,
+              bulldoze: BulldozeStrategy,
+              eyedropper: EyedropperStrategy,
             }}
           />
         </Suspense>
