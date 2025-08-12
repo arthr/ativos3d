@@ -1,4 +1,4 @@
-import { exportLot, importLot } from "../../core/serialization";
+import { exportLot, importLot, Lot3DSchema } from "../../core/serialization";
 import { useStore } from "../../store/useStore";
 
 export function exportCurrentLotToDownload(): void {
@@ -24,8 +24,8 @@ export function exportCurrentLotToDownload(): void {
 
 export async function importLotFromFile(file: File): Promise<void> {
   const text = await file.text();
-  const parsed = importLot<any>(text);
-  const lot = parsed.lot as any;
+  const parsed = importLot(text);
+  const lot = Lot3DSchema.parse(parsed.lot);
   useStore.setState({
     lot: { width: lot.width, depth: lot.depth, height: lot.height },
     objects: lot.objects ?? [],
