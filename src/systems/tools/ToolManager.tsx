@@ -1,45 +1,14 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { useThree, useFrame } from "@react-three/fiber";
+import { useMemo } from "react";
+import { useThree } from "@react-three/fiber";
 import { useStore } from "../../store/useStore";
 import { Tool } from "../../core/types";
-import { ToolStrategy, ToolContext } from "./strategies/types";
-// no direct event bus usage here
+import { StrategyComponent, ToolContext } from "./strategies/types";
 
-type StrategyFactory = (ctx: ToolContext) => ToolStrategy;
-
-export function ToolManager({ strategies }: { strategies: Record<Tool, StrategyFactory> }) {
+export function ToolManager({ strategies }: { strategies: Record<Tool, StrategyComponent> }) {
   const { camera, gl, scene } = useThree();
   const activeTool = useStore((s) => s.activeTool);
-  const [current, setCurrent] = useState<ToolStrategy | null>(null);
-  const [tick, setTick] = useState(0);
-  const cleanupRef = useRef<(() => void) | undefined>(undefined);
   const ctx = useMemo<ToolContext>(() => ({ camera, gl, scene }), [camera, gl, scene]);
-
-  useEffect(() => {
-    // On tool change, deactivate previous and activate new
-    if (cleanupRef.current) cleanupRef.current();
-    current?.onDeactivate?.();
-    const factory = strategies[activeTool];
-    if (!factory) {
-      setCurrent(null);
-      return;
-    }
-    const instance = factory(ctx);
-    const cleanup = instance.onActivate(ctx);
-    cleanupRef.current = typeof cleanup === "function" ? cleanup : undefined;
-    setCurrent(instance);
-    return () => {
-      if (cleanupRef.current) cleanupRef.current();
-      instance.onDeactivate?.();
-    };
-  }, [activeTool, ctx, strategies]);
-
-  useFrame(() => {
-    current?.onFrame?.();
-    // Forçar reconciliação para refletir mudanças em previews mutáveis por frame
-    setTick((t) => (t + 1) % 60);
-  });
-
-  void tick; // manter dependência para re-render
-  return current?.renderPreview() ?? null;
+  const Strategy = strategies[activeTool];
+  return Strategy ? <Strategy ctx={ctx} /> : null;
 }
+
