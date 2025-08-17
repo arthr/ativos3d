@@ -26,8 +26,9 @@ Perfeito! Vou elaborar um planejamento estruturado para reconstruir o projeto de
 - [ ] Testes unitários para EventBus
 
 #### **1.4 Sistema de Comandos**
-- [ ] Implementar Command Pattern base
-- [ ] Definir interface Command
+- [x] Implementar Command Pattern base
+- [x] Definir interface Command
+- [x] Modularizar comandos em arquivos separados por responsabilidade
 - [ ] Implementar CommandStack (undo/redo)
 - [ ] Testes unitários para CommandStack
 
