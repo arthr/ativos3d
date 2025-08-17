@@ -16,6 +16,8 @@ Perfeito! Vou elaborar um planejamento estruturado para reconstruir o projeto de
 - [x] Definir tipos de domínio (Entity, Component, etc.)
 - [x] Definir tipos de eventos
 - [x] Definir tipos de comandos
+- [x] Revisar e refatorar estrutura de tipos seguindo princípios de design
+- [x] Revisão final completa da pasta types - todos os princípios respeitados
 
 #### **1.3 Sistema de Eventos**
 - [x] Implementar EventBus base

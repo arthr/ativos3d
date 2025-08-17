@@ -1,4 +1,8 @@
 /**
+ * Tipos fundamentais para o sistema de entidades
+ */
+
+/**
  * Identificador único para entidades
  */
 export type EntityId = string;
@@ -19,68 +23,39 @@ export interface Entity {
 }
 
 /**
- * Cria uma nova entidade
+ * Tipo para função que cria entidades
  */
-export function createEntity(id: EntityId): Entity {
-    return {
-        id,
-        components: new Map(),
-    };
-}
+export type EntityFactory = (id: EntityId) => Entity;
 
 /**
- * Adiciona um componente a uma entidade
+ * Tipo para função que adiciona componentes
  */
-export function addComponent(entity: Entity, component: Component): Entity {
-    const newComponents = new Map(entity.components);
-    newComponents.set(component.type, component);
-
-    return {
-        ...entity,
-        components: newComponents,
-    };
-}
+export type ComponentAdder = (entity: Entity, component: Component) => Entity;
 
 /**
- * Remove um componente de uma entidade
+ * Tipo para função que remove componentes
  */
-export function removeComponent(entity: Entity, componentType: string): Entity {
-    const newComponents = new Map(entity.components);
-    newComponents.delete(componentType);
-
-    return {
-        ...entity,
-        components: newComponents,
-    };
-}
+export type ComponentRemover = (entity: Entity, componentType: string) => Entity;
 
 /**
- * Obtém um componente de uma entidade
+ * Tipo para função que obtém componentes
  */
-export function getComponent<T extends Component>(
+export type ComponentGetter = <T extends Component>(
     entity: Entity,
     componentType: string,
-): T | undefined {
-    return entity.components.get(componentType) as T | undefined;
-}
+) => T | undefined;
 
 /**
- * Verifica se uma entidade tem um componente
+ * Tipo para função que verifica componentes
  */
-export function hasComponent(entity: Entity, componentType: string): boolean {
-    return entity.components.has(componentType);
-}
+export type ComponentChecker = (entity: Entity, componentType: string) => boolean;
 
 /**
- * Obtém todos os tipos de componentes de uma entidade
+ * Tipo para função que obtém tipos de componentes
  */
-export function getComponentTypes(entity: Entity): string[] {
-    return Array.from(entity.components.keys());
-}
+export type ComponentTypeGetter = (entity: Entity) => string[];
 
 /**
- * Gera um ID único para entidade
+ * Tipo para função que gera IDs
  */
-export function generateEntityId(): EntityId {
-    return crypto.randomUUID();
-}
+export type IdGenerator = () => EntityId;

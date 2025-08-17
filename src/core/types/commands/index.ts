@@ -23,8 +23,3 @@ export type {
 
 // Comandos compostos
 export type { BatchCommand } from "./BatchCommand";
-
-// Factories
-export { ObjectCommandFactory } from "./factories/ObjectCommandFactory";
-export { ConstructionCommandFactory } from "./factories/ConstructionCommandFactory";
-export { BatchCommandFactory } from "./factories/BatchCommandFactory";

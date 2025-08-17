@@ -1,5 +1,5 @@
-import type { Command } from "../Command";
-import type { BatchCommand } from "../BatchCommand";
+import type { Command } from "../types/commands/Command";
+import type { BatchCommand } from "../types/commands/BatchCommand";
 
 /**
  * Factory para criar comandos compostos

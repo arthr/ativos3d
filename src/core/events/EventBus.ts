@@ -1,4 +1,4 @@
-import type { SystemEventMap, SystemEvent, EventListener, Unsubscribe } from "../types/Events";
+import type { SystemEventMap, EventListener, Unsubscribe } from "../types/Events";
 
 /**
  * Gerenciador de eventos do sistema

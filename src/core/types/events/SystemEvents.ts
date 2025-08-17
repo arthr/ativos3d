@@ -24,4 +24,10 @@ export interface SystemEvents {
         memoryUsage: number;
         renderTime: number;
     };
+
+    error: {
+        message: string;
+        code: string;
+        timestamp?: number;
+    };
 }
