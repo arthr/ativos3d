@@ -1,5 +1,5 @@
-import type { Vec3 } from "../Vec3";
-import type { Vec2, Modifiers } from "../Common";
+import type { Vec3, Vec2 } from "../geometry";
+import type { Modifiers } from "../input/Modifiers";
 
 /**
  * Eventos de input do sistema

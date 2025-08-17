@@ -47,7 +47,10 @@ Perfeito! Vou elaborar um planejamento estruturado para reconstruir o projeto de
 - [ ] Implementar ToolComponent
 
 #### **2.3 Sistema de Geometria**
-- [ ] Implementar cálculos de geometria 3D
+- [x] Implementar cálculos de geometria 3D
+- [x] Modularizar Vec3 em arquivos separados por responsabilidade
+- [x] Reorganizar diretório types seguindo princípios de design
+- [x] Mover Vec2 para pasta geometry e criar estrutura completa
 - [ ] Implementar sistema de AABB
 - [ ] Implementar sistema de colisão básico
 - [ ] Testes para geometria

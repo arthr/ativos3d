@@ -1,5 +1,5 @@
-import type { Vec3 } from "../Vec3";
-import type { SnapType } from "../Common";
+import type { Vec3 } from "../geometry/Vec3";
+import type { SnapType } from "../snap/SnapTypes";
 
 /**
  * Eventos de snap

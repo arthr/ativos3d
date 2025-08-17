@@ -1,5 +1,5 @@
 import type { Command } from "./Command";
-import type { Vec3 } from "../Vec3";
+import type { Vec3 } from "../geometry/Vec3";
 
 /**
  * Comando para colocar um objeto

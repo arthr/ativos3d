@@ -1,4 +1,4 @@
-import type { Vec3 } from "../Vec3";
+import type { Vec3 } from "../geometry/Vec3";
 import type { EntityId } from "../Entity";
 
 /**
