@@ -1,145 +1,106 @@
-### Ativos3D – MVP Builder 3D
+# Estrutura do Projeto Ativos3D
 
-Aplicação SPA para construir um cômodo em grade 3D (plano XZ), posicionar objetos do catálogo, pintar piso, traçar paredes, com validação básica de colocação e histórico de ações (undo/redo). Data‑driven em JSON (`catalog.json` e export/import de lote).
+## **Visão Geral**
 
-### Stack
-- **Base**: React 19 + TypeScript + Vite
-- **3D**: React Three Fiber (Three.js) + `@react-three/drei`
-- **Estado**: Zustand (undo/redo com Command Pattern)
-- **Utilidades**: Zod para validar `catalog.json`, `r3f-perf` para monitor de performance
+Esta é a nova estrutura do projeto Ativos3D, seguindo os princípios de Clean Architecture e Domain-Driven Design.
 
-### Como rodar
-```bash
-pnpm install
-pnpm dev
-# abrir http://localhost:5173
+## **Estrutura de Pastas**
+
+```
+src/
+├── core/                   # Fundação e tipos base
+│   ├── types/             # Tipos fundamentais (Vec3, Transform, etc.)
+│   ├── events/            # Sistema de eventos
+│   ├── commands/          # Sistema de comandos (undo/redo)
+│   └── geometry/          # Matemática e geometria 3D
+├── domain/                # Domínio de negócio
+│   ├── entities/          # Entidades principais (Object, Wall, Floor)
+│   ├── components/        # Componentes de entidades
+│   └── systems/           # Sistemas de domínio
+├── infrastructure/        # Infraestrutura técnica
+│   ├── render/            # Renderização 3D
+│   ├── input/             # Input e interação
+│   ├── physics/           # Física e colisão
+│   └── data/              # Dados e persistência
+├── application/           # Camada de aplicação
+│   ├── tools/             # Ferramentas de edição
+│   ├── validation/        # Validação de regras
+│   └── services/          # Serviços de aplicação
+├── presentation/          # Interface do usuário
+│   ├── ui/                # Componentes UI reutilizáveis
+│   ├── panels/            # Painéis de ferramentas
+│   └── hud/               # HUD 3D
+└── shared/                # Utilitários compartilhados
 ```
 
-### Funcionalidades (MVP)
-- **Ferramentas**: `place`, `move`, `wall`, `floor`, `bulldoze`, `eyedropper`
-  - Place: posiciona item do catálogo com preview e validação de colisão/bordas
-  - Move: arrasta item selecionado com validação em tempo real; rota com R
-  - Wall: desenha paredes ortogonais por arraste (preview com detecção simples de colisão)
-  - Floor: pinta um tile de piso por clique
-  - Bulldoze: remove objeto com raycast ou limpa tile do piso
-  - Eyedropper: coleta tipo do objeto sob o cursor e alterna para `place`
-- **HUD/UI**: Topbar (câmera e ações de arquivo), BudgetBar, Toolbar (modos e ferramentas), Catálogo (seletor de item), Inspector flutuante ancorado ao objeto selecionado
-- **Arquivos**: exporta/importa o lote em JSON e exporta thumbnail PNG do Canvas
-- **Validação**: Chain of Responsibility em `core/placement` (bounds/colisão), com índice espacial plugável (Strategy) para checagens rápidas
-- **Orçamento**: Decorator `withBudget` valida saldo (funds) e atualiza gasto (spent) com toasts de feedback
-- **Toasts**: sistema global (limite 5), animação de entrada/saída e sobreposição leve
+## **Como Navegar**
 
-### Controles e interação
-- **Câmera**: Perspective/Orthographic via Topbar; pan segurando Space; rotação com botão direito (apenas no modo perspectiva); zoom habilitado
-- **Ferramentas**:
-  - Clique esquerdo executa ação da ferramenta ativa
-  - Tecla R: rotaciona o item em `place`/`move` (Shift+R = −90°)
-  - ESC: cancela preview/seleção em `place`
-- **Undo/Redo**: botões na Toolbar. Atalhos de teclado globais para undo/redo ainda não foram mapeados no MVP
+### **Para Desenvolvedores Novos**
+1. Comece por `core/types/` para entender os tipos fundamentais
+2. Explore `domain/entities/` para ver as entidades principais
+3. Veja `application/tools/` para entender as ferramentas
+4. Examine `presentation/` para a interface
 
-### Decisões de renderização
-- Plano de trabalho: eixo XZ com Y para altura; 1 unidade = 1 tile
-- Iluminação: `ambientLight` + `directionalLight` (sombras ativas)
-- Color management: sRGB + ACESFilmic tone mapping (aplicado pela estratégia de câmera)
-- Grid: `drei/Grid` centralizado no lote
-- Instancing: `drei/Instances` para piso, paredes e objetos (caixas) no MVP
+### **Para Implementar Novas Funcionalidades**
+1. **Tipos**: Adicione em `core/types/`
+2. **Lógica de Negócio**: Implemente em `domain/`
+3. **Ferramentas**: Crie em `application/tools/`
+4. **Interface**: Adicione em `presentation/`
 
-### Estrutura de pastas (atual)
-```txt
-/src
-  /app
-    App.tsx
-    routes.tsx
-  /assets
-    /models
-    /textures
-  /core
-    catalog.ts          # valida e expõe o catálogo (zod)
-    commandStack.ts     # execução de comandos (undo/redo)
-    events.ts           # façade p/ event bus (manager/types/bus)
-    /events             # bus.ts, manager.ts, types.ts
-    geometry.ts         # AABB/rotação/auxiliares
-    modeMachine.ts      # modos ⇄ ferramentas e cursores
-    placement.ts        # façade p/ pipeline de validação
-    placement/          # types/validators/pipeline
-    sceneIndex.ts       # util p/ índice AABB de objetos (Strategy)
-    serialization.ts    # export/import versionado
-    spatialIndex.ts     # façade p/ spatial (Strategy + fábrica)
-    spatial/            # types.ts, GridSpatialIndex.ts, index.ts
-    types.ts            # modelos de dados 3D
-  /store
-    useStore.ts         # Zustand + histórico/undo/redo
-  /systems
-    /controllers
-      InputController.tsx
-    /render
-      StageLayer.tsx     # usa CameraStrategy + useCameraGestures
-      GridLayer.tsx
-      FloorLayer.tsx
-      WallsLayer.tsx
-      ObjectsLayer.tsx
-      index.ts
-      /camera            # CameraStrategies.tsx + hooks.ts
-    /tools
-      toolUtils.ts
-      ToolManager.tsx
-      /strategies
-        types.ts
-        PlaceStrategy.tsx          # delega para submódulos em /strategies/place
-        MoveStrategy.tsx
-        WallStrategy.tsx
-        FloorStrategy.tsx
-        BulldozeStrategy.tsx
-        EyedropperStrategy.tsx
-        /place                    # SRP: hooks e comandos reutilizáveis
-          preview.ts              # usePlacementPreview (validação + índice espacial)
-          events.ts               # usePlaceEvents (Keyboard/Click)
-          command.ts              # createPlaceCommand (Command + withBudget)
-  /ui
-    /components         # Button (hover/press), Panel, ToolbarGroup, tokens
-    /hooks              # useCurrencyBRL
-    /hud
-      /Budget/BudgetBar.tsx
-      /Catalog/{CatalogContainer.tsx, CatalogPanel.tsx}
-      /Topbar/{Topbar.tsx, CameraModeToggle.tsx, FileActions.tsx}
-      HudRoot.tsx       # inclui ToastContainer
-      index.ts
-      /Toast/{store.ts, ToastContainer.tsx, types.ts}
-    /inworld/Inspector  # Inspector flutuante (Html)
-      {Panel.tsx, view.tsx, index.ts}
-  index.css
-  main.tsx
+### **Para Testes**
+- **Unitários**: `tests/unit/`
+- **Integração**: `tests/integration/`
+- **E2E**: `tests/e2e/`
+
+## **Convenções**
+
+### **Nomenclatura**
+- **PascalCase**: Classes, interfaces, componentes React
+- **camelCase**: Funções, variáveis, métodos
+- **kebab-case**: Arquivos de configuração
+
+### **Organização**
+- Um arquivo por classe/interface principal
+- Testes junto com o código implementado
+- Documentação JSDoc para APIs públicas
+
+### **Dependências**
+- `core/` não depende de outras camadas
+- `domain/` depende apenas de `core/`
+- `infrastructure/` pode depender de `core/` e `domain/`
+- `application/` pode depender de todas as camadas anteriores
+- `presentation/` pode depender de todas as outras camadas
+
+## **Desenvolvimento**
+
+### **Para Adicionar Novos Tipos**
+```typescript
+// src/core/types/NewType.ts
+export interface NewType {
+  // definição
+}
 ```
 
-### Catálogo (`catalog.json`)
-- Validado em runtime com Zod em `core/catalog.ts`
-- Campos principais: `id`, `name`, `price`, `category`, `tags`, `variants?`, `footprint?` (box|poly), `slots?`, `art?`
-- MVP renderiza objetos como caixas dimensionadas pelo `footprint`. Texturas/modelos GLTF ainda são roadmap
+### **Para Adicionar Novas Entidades**
+```typescript
+// src/domain/entities/NewEntity.ts
+import { Entity } from '../../core/types/Entity';
 
-### Serialização e ações de arquivo
-- Exporta o lote atual como JSON versionado (`core/serialization.ts`)
-- Importa lote de um arquivo `.json`
-- Exporta thumbnail PNG do Canvas
-- UI: ver Topbar → Exportar/Importar/Thumbnail ou usar serviços em `ui/services/fileActions.ts`
-
-### Qualidade e scripts
-- TypeScript estrito (`strict: true`)
-- Lint/format:
-```bash
-pnpm lint
-pnpm format
+export class NewEntity implements Entity {
+  // implementação
+}
 ```
 
-### Documentação complementar
-- Mecânica: `docs/build_mechanics.md`
-- Modelos: `docs/data_models.md`
-- Pipeline de validação: `docs/validation_pipeline.md`
-- Boas práticas 3D/R3F: `docs/boas_praticas_3d.md`
-- Mapa do repositório: `docs/repo_map.md`
-- Roadmap: `docs/roadmap_melhorias.md`
+### **Para Adicionar Novas Ferramentas**
+```typescript
+// src/application/tools/NewTool.ts
+import { Tool } from '../../core/types/Tool';
 
-### Limitações e próximos passos
-- Validação: ainda não aplica `clearance`, `needs_wall` e `requires_slots` — ver roadmap
-- Render: objetos em GLTF/texturas (KTX2/Basis) ainda pendentes; piso não aplica texturas
-- Atalhos globais de teclado para troca de ferramenta/undo/redo não estão implementados
-- Command transacional (coalescimento mais robusto) e DI em `ToolContext` estão no roadmap
+export class NewTool implements Tool {
+  // implementação
+}
+```
+
+## **Legacy**
+
+O código antigo está preservado em `legacy/` para referência durante a migração.
