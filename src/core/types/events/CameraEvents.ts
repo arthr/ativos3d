@@ -1,4 +1,4 @@
-import type { CameraMode, CameraGesture } from "../camera/CameraTypes";
+import type { CameraMode, CameraGesture } from "@core/types";
 
 /**
  * Eventos de câmera

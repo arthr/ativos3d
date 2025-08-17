@@ -1,6 +1,6 @@
 /**
  * Ponto de entrada principal da aplicação Ativos3D
- * 
+ *
  * Este arquivo será o ponto de entrada quando a nova arquitetura estiver implementada.
  * Por enquanto, serve como placeholder para a estrutura futura.
  */

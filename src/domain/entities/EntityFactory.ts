@@ -9,7 +9,7 @@ import type {
     ComponentChecker,
     ComponentTypeGetter,
     IdGenerator,
-} from "../../core/types/Entity";
+} from "@core/types";
 
 /**
  * Implementações das funções de entidade

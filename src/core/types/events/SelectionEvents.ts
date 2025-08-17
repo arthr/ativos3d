@@ -1,4 +1,4 @@
-import type { EntityId } from "../Entity";
+import type { EntityId } from "@core/types";
 
 /**
  * Eventos de seleção

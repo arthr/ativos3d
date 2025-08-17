@@ -1,4 +1,4 @@
-import type { Command } from "./Command";
+import type { Command } from "@core/types";
 import type { Vec3 } from "@core/geometry";
 
 /**
