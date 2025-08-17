@@ -5,20 +5,20 @@ Perfeito! Vou elaborar um planejamento estruturado para reconstruir o projeto de
 ### **Fase 1: Fundação e Core (Base Sólida)**
 
 #### **1.1 Estrutura de Projeto e Configuração**
-- [ ] Configurar estrutura de pastas modular
-- [ ] Configurar TypeScript com tipos estritos
-- [ ] Configurar ESLint e Prettier
-- [ ] Configurar Vite com React + R3F
-- [ ] Configurar testes (Vitest + Testing Library)
+- [x] Configurar estrutura de pastas modular
+- [x] Configurar TypeScript com tipos estritos
+- [x] Configurar ESLint e Prettier
+- [x] Configurar Vite com React + R3F
+- [x] Configurar testes (Vitest + Testing Library)
 
 #### **1.2 Sistema de Tipos Base**
-- [ ] Definir tipos fundamentais (Vec3, Transform, etc.)
-- [ ] Definir tipos de domínio (Entity, Component, etc.)
-- [ ] Definir tipos de eventos
-- [ ] Definir tipos de comandos
+- [x] Definir tipos fundamentais (Vec3, Transform, etc.)
+- [x] Definir tipos de domínio (Entity, Component, etc.)
+- [x] Definir tipos de eventos
+- [x] Definir tipos de comandos
 
 #### **1.3 Sistema de Eventos**
-- [ ] Implementar EventBus base
+- [x] Implementar EventBus base
 - [ ] Definir tipos de eventos do sistema
 - [ ] Implementar sistema de assinatura/desassinatura
 - [ ] Testes unitários para EventBus
