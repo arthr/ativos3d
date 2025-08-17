@@ -35,10 +35,10 @@ Perfeito! Vou elaborar um planejamento estruturado para reconstruir o projeto de
 - [x] Implementar Command Pattern base
 - [x] Definir interface Command
 - [x] Modularizar comandos em arquivos separados por responsabilidade
-- [ ] Implementar CommandStack (undo/redo)
-  - [ ] Definir tipos para CommandStack
-  - [ ] Implementar CommandStack com undo/redo
-- [ ] Testes unitários para CommandStack
+- [x] Implementar CommandStack (undo/redo)
+  - [x] Definir tipos para CommandStack
+  - [x] Implementar CommandStack com undo/redo
+- [x] Testes unitários para CommandStack
 
 ### **Fase 2: Domínio e Entidades**
 
