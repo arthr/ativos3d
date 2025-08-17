@@ -1,4 +1,4 @@
-import type { Vec3 } from "../Vec3";
+import type { Vec3 } from "../../types/geometry/Vec3";
 
 /**
  * Operações básicas de Vec3
