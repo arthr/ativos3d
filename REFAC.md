@@ -43,7 +43,7 @@ Perfeito! Vou elaborar um planejamento estruturado para reconstruir o projeto de
 ### **Fase 2: Domínio e Entidades**
 
 #### **2.1 Sistema de Entidades**
-- [ ] Implementar Entity base
+- [x] Implementar Entity base
 - [ ] Implementar Component System
 - [ ] Implementar EntityManager
   - [ ] Definir tipos para EntityManager

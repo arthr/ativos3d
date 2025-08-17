@@ -5,4 +5,8 @@
  * seguindo os princípios de Domain-Driven Design.
  */
 
+// Exporta as funções utilitárias de entidade
 export * from "./EntityFactory";
+
+// Exporta a implementação base da Entity
+export { Entity } from "./Entity";
