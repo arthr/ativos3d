@@ -1,4 +1,5 @@
-import type { Vec3, Vec3Operations } from "@core/geometry";
+import type { Vec3 } from "@core/geometry";
+import { Vec3Operations } from "@core/geometry";
 
 /**
  * Operações matemáticas avançadas de Vec3
