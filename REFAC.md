@@ -28,8 +28,8 @@ Perfeito! Vou elaborar um planejamento estruturado para reconstruir o projeto de
 - [x] Definir tipos de eventos do sistema
 - [x] Revisar e refatorar eventos seguindo princípios de design
 - [x] Modularizar eventos em arquivos separados por responsabilidade
-- [ ] Implementar sistema de assinatura/desassinatura
-- [ ] Testes unitários para EventBus
+- [x] Implementar sistema de assinatura/desassinatura
+- [x] Testes unitários para EventBus
 
 #### **1.4 Sistema de Comandos**
 - [x] Implementar Command Pattern base
