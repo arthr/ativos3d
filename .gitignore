@@ -62,5 +62,5 @@ playwright/.cache/
 *.temp
 
 # Other
-MIGRATIONS.md
+MIGRATION.md
 
