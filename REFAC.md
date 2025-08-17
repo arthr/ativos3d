@@ -19,7 +19,9 @@ Perfeito! Vou elaborar um planejamento estruturado para reconstruir o projeto de
 
 #### **1.3 Sistema de Eventos**
 - [x] Implementar EventBus base
-- [ ] Definir tipos de eventos do sistema
+- [x] Definir tipos de eventos do sistema
+- [x] Revisar e refatorar eventos seguindo princípios de design
+- [x] Modularizar eventos em arquivos separados por responsabilidade
 - [ ] Implementar sistema de assinatura/desassinatura
 - [ ] Testes unitários para EventBus
 
