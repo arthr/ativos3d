@@ -1,6 +1,12 @@
 /**
- * Exportações de todas as implementações de geometria
+ * Módulo de Geometria
+ *
+ * Este módulo contém todas as implementações relacionadas à geometria 3D,
+ * incluindo tipos, factories, operações, matemática e utilitários.
  */
+
+// Tipos
+export * from "./types";
 
 // Factories
 export { Vec2Factory } from "./factories/Vec2Factory";

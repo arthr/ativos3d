@@ -1,5 +1,5 @@
 /**
- * Representa um vetor 2D com coordenadas x, y
+ * Tipo Vec2 - Vetor 2D
  */
 export interface Vec2 {
     readonly x: number;

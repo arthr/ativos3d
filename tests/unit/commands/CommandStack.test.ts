@@ -1,6 +1,5 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { CommandStack } from "../../../src/core/commands/CommandStack";
-import { TestCommand } from "../../../src/core/commands/TestCommand";
+import { CommandStack, TestCommand } from "../../../src/core/commands";
 import type { Command } from "../../../src/core/types/commands/Command";
 
 describe("CommandStack", () => {

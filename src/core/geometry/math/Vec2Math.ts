@@ -1,4 +1,4 @@
-import type { Vec2 } from "../../types/geometry/Vec2";
+import type { Vec2 } from "../types/Vec2";
 import { Vec2Operations } from "../operations/Vec2Operations";
 
 /**

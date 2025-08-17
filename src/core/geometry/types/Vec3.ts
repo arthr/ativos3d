@@ -1,5 +1,5 @@
 /**
- * Representa um vetor 3D com coordenadas x, y, z
+ * Tipo Vec3 - Vetor 3D
  */
 export interface Vec3 {
     readonly x: number;

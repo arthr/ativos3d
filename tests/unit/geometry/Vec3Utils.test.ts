@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { Vec3Utils } from "../../../src/core/geometry/utils/Vec3Utils";
 import { Vec3Factory } from "../../../src/core/geometry/factories/Vec3Factory";
-import type { Vec3 } from "../../../src/core/types/geometry/Vec3";
+import type { Vec3 } from "../../../src/core/geometry/types/Vec3";
 
 describe("Vec3Utils", () => {
     describe("toString", () => {

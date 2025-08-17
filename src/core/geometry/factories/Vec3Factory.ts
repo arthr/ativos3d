@@ -1,4 +1,4 @@
-import type { Vec3 } from "../../types/geometry/Vec3";
+import type { Vec3 } from "../types/Vec3";
 
 /**
  * Factory para criar Vec3

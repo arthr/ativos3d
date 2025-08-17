@@ -9,10 +9,13 @@ import type {
     ComponentChecker,
     ComponentTypeGetter,
     IdGenerator,
-} from "../types/Entity";
+} from "../../core/types/Entity";
 
 /**
  * Implementações das funções de entidade
+ *
+ * Este módulo contém as implementações das funções relacionadas a entidades,
+ * seguindo os princípios de Domain-Driven Design.
  */
 
 /**
