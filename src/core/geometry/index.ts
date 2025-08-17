@@ -9,17 +9,13 @@
 export * from "./types";
 
 // Factories
-export { Vec2Factory } from "./factories/Vec2Factory";
-export { Vec3Factory } from "./factories/Vec3Factory";
+export * from "./factories";
 
 // Operações
-export { Vec2Operations } from "./operations/Vec2Operations";
-export { Vec3Operations } from "./operations/Vec3Operations";
+export * from "./operations";
 
 // Matemática
-export { Vec2Math } from "./math/Vec2Math";
-export { Vec3Math } from "./math/Vec3Math";
+export * from "./math";
 
 // Utilitários
-export { Vec2Utils } from "./utils/Vec2Utils";
-export { Vec3Utils } from "./utils/Vec3Utils";
+export * from "./utils";

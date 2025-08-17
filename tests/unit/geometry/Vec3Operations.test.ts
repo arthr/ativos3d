@@ -1,7 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { Vec3Operations } from "../../../src/core/geometry/operations/Vec3Operations";
-import { Vec3Factory } from "../../../src/core/geometry/factories/Vec3Factory";
-import type { Vec3 } from "../../../src/core/geometry/types/Vec3";
+import { Vec3Operations } from "@core/geometry/operations/Vec3Operations";
+import { Vec3Factory } from "@core/geometry/factories/Vec3Factory";
 
 describe("Vec3Operations", () => {
     describe("add", () => {

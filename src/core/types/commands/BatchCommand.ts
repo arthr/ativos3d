@@ -1,4 +1,4 @@
-import type { Command } from "./Command";
+import type { Command } from "@core/types";
 
 /**
  * Comando composto (batch) para múltiplas operações

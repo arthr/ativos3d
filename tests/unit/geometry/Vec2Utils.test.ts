@@ -1,7 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { Vec2Utils } from "../../../src/core/geometry/utils/Vec2Utils";
-import { Vec2Factory } from "../../../src/core/geometry/factories/Vec2Factory";
-import type { Vec2 } from "../../../src/core/geometry/types/Vec2";
+import { Vec2Utils } from "@core/geometry/utils/Vec2Utils";
+import { Vec2Factory } from "@core/geometry/factories/Vec2Factory";
 
 describe("Vec2Utils", () => {
     describe("toString", () => {

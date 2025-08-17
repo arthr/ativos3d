@@ -1,4 +1,4 @@
-import type { Command } from "../types/commands/Command";
+import type { Command } from "@core/types";
 
 /**
  * Interface para o CommandStack
@@ -45,7 +45,7 @@ export interface ICommandStack {
     getRedoSize(): number;
 
     /**
-     * Retorna o comando atual (último executado)
+     * Obtém o comando atual (último executado)
      */
     getCurrentCommand(): Command | null;
 
@@ -184,10 +184,10 @@ export class CommandStack implements ICommandStack {
     }
 
     /**
-     * Retorna o comando atual (último executado)
+     * Obtém o comando atual (último executado)
      */
     getCurrentCommand(): Command | null {
-        return this.history.length > 0 ? this.history[this.history.length - 1] : null;
+        return this.history.length > 0 ? this.history[this.history.length - 1] || null : null;
     }
 
     /**

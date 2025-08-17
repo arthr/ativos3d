@@ -1,10 +1,10 @@
-import type { Vec3 } from "../geometry/types/Vec3";
+import type { Vec3 } from "@core/geometry";
 import type {
     CreateWallCommand,
     DeleteWallCommand,
     CreateFloorCommand,
     DeleteFloorCommand,
-} from "../types/commands/ConstructionCommands";
+} from "@core/types";
 
 /**
  * Factory para criar comandos de construção

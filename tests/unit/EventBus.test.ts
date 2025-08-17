@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import { EventBus } from "../../src/core/events/EventBus";
-import type { SystemEventMap } from "../../src/core/types/Events";
+import { EventBus } from "@core/events/EventBus";
+import { Vec2Factory } from "@core/geometry/factories/Vec2Factory";
+import { Vec3Factory } from "@core/geometry/factories/Vec3Factory";
 
 describe("EventBus", () => {
     let eventBus: EventBus;
@@ -12,7 +13,11 @@ describe("EventBus", () => {
     describe("Sistema de Assinatura/Desassinatura", () => {
         it("deve registrar um listener e retornar função de unsubscribe", () => {
             const listener = vi.fn();
-            const payload = { x: 1, y: 2, z: 3 };
+            const payload = {
+                worldPosition: Vec3Factory.create(1, 2, 3),
+                screenPosition: Vec2Factory.create(100, 200),
+                ndc: Vec2Factory.create(0.5, 0.5),
+            };
 
             const unsubscribe = eventBus.on("pointerMove", listener);
 
@@ -25,7 +30,11 @@ describe("EventBus", () => {
 
         it("deve remover listener quando unsubscribe é chamado", () => {
             const listener = vi.fn();
-            const payload = { x: 1, y: 2, z: 3 };
+            const payload = {
+                worldPosition: Vec3Factory.create(1, 2, 3),
+                screenPosition: Vec2Factory.create(100, 200),
+                ndc: Vec2Factory.create(0.5, 0.5),
+            };
 
             const unsubscribe = eventBus.on("pointerMove", listener);
             expect(eventBus.listenerCount("pointerMove")).toBe(1);
@@ -40,7 +49,11 @@ describe("EventBus", () => {
         it("deve registrar múltiplos listeners para o mesmo evento", () => {
             const listener1 = vi.fn();
             const listener2 = vi.fn();
-            const payload = { x: 1, y: 2, z: 3 };
+            const payload = {
+                worldPosition: Vec3Factory.create(1, 2, 3),
+                screenPosition: Vec2Factory.create(100, 200),
+                ndc: Vec2Factory.create(0.5, 0.5),
+            };
 
             eventBus.on("pointerMove", listener1);
             eventBus.on("pointerMove", listener2);
@@ -55,7 +68,11 @@ describe("EventBus", () => {
         it("deve remover apenas o listener específico quando unsubscribe é chamado", () => {
             const listener1 = vi.fn();
             const listener2 = vi.fn();
-            const payload = { x: 1, y: 2, z: 3 };
+            const payload = {
+                worldPosition: Vec3Factory.create(1, 2, 3),
+                screenPosition: Vec2Factory.create(100, 200),
+                ndc: Vec2Factory.create(0.5, 0.5),
+            };
 
             const unsubscribe1 = eventBus.on("pointerMove", listener1);
             eventBus.on("pointerMove", listener2);
@@ -72,7 +89,11 @@ describe("EventBus", () => {
 
         it("deve funcionar com once() - listener executado apenas uma vez", () => {
             const listener = vi.fn();
-            const payload = { x: 1, y: 2, z: 3 };
+            const payload = {
+                worldPosition: Vec3Factory.create(1, 2, 3),
+                screenPosition: Vec2Factory.create(100, 200),
+                ndc: Vec2Factory.create(0.5, 0.5),
+            };
 
             eventBus.once("pointerMove", listener);
             expect(eventBus.listenerCount("pointerMove")).toBe(1);
@@ -87,7 +108,11 @@ describe("EventBus", () => {
 
         it("deve remover listener específico com off()", () => {
             const listener = vi.fn();
-            const payload = { x: 1, y: 2, z: 3 };
+            const payload = {
+                worldPosition: Vec3Factory.create(1, 2, 3),
+                screenPosition: Vec2Factory.create(100, 200),
+                ndc: Vec2Factory.create(0.5, 0.5),
+            };
 
             eventBus.on("pointerMove", listener);
             expect(eventBus.listenerCount("pointerMove")).toBe(1);
@@ -120,7 +145,7 @@ describe("EventBus", () => {
 
             eventBus.on("pointerMove", listener);
             eventBus.on("keyDown", listener);
-            eventBus.on("objectSelected", listener);
+            eventBus.on("click", listener);
 
             expect(eventBus.getEventTypes().length).toBe(3);
 
@@ -157,11 +182,16 @@ describe("EventBus", () => {
             const failingListener = vi.fn().mockImplementation(() => {
                 throw new Error("Erro no listener");
             });
+            const payload = {
+                worldPosition: Vec3Factory.create(1, 2, 3),
+                screenPosition: Vec2Factory.create(100, 200),
+                ndc: Vec2Factory.create(0.5, 0.5),
+            };
 
             eventBus.on("error", errorListener);
             eventBus.on("pointerMove", failingListener);
 
-            eventBus.emit("pointerMove", { x: 1, y: 2, z: 3 });
+            eventBus.emit("pointerMove", payload);
 
             expect(errorListener).toHaveBeenCalledWith({
                 message: expect.stringContaining("Erro no listener do evento pointerMove"),
@@ -171,7 +201,11 @@ describe("EventBus", () => {
 
         it("deve emitir eventos com delay usando emitAsync", () => {
             const listener = vi.fn();
-            const payload = { x: 1, y: 2, z: 3 };
+            const payload = {
+                worldPosition: Vec3Factory.create(1, 2, 3),
+                screenPosition: Vec2Factory.create(100, 200),
+                ndc: Vec2Factory.create(0.5, 0.5),
+            };
 
             eventBus.on("pointerMove", listener);
 
@@ -189,7 +223,11 @@ describe("EventBus", () => {
 
         it("deve emitir eventos imediatamente quando delay é 0 ou negativo", () => {
             const listener = vi.fn();
-            const payload = { x: 1, y: 2, z: 3 };
+            const payload = {
+                worldPosition: Vec3Factory.create(1, 2, 3),
+                screenPosition: Vec2Factory.create(100, 200),
+                ndc: Vec2Factory.create(0.5, 0.5),
+            };
 
             eventBus.on("pointerMove", listener);
 
@@ -205,7 +243,11 @@ describe("EventBus", () => {
         it("deve manter listeners durante a execução se novos forem adicionados", () => {
             const listener1 = vi.fn();
             const listener2 = vi.fn();
-            const payload = { x: 1, y: 2, z: 3 };
+            const payload = {
+                worldPosition: Vec3Factory.create(1, 2, 3),
+                screenPosition: Vec2Factory.create(100, 200),
+                ndc: Vec2Factory.create(0.5, 0.5),
+            };
 
             eventBus.on("pointerMove", listener1);
 
@@ -226,7 +268,11 @@ describe("EventBus", () => {
         it("deve lidar com unsubscribe durante a execução", () => {
             const listener1 = vi.fn();
             const listener2 = vi.fn();
-            const payload = { x: 1, y: 2, z: 3 };
+            const payload = {
+                worldPosition: Vec3Factory.create(1, 2, 3),
+                screenPosition: Vec2Factory.create(100, 200),
+                ndc: Vec2Factory.create(0.5, 0.5),
+            };
 
             eventBus.on("pointerMove", listener1);
             const unsubscribe2 = eventBus.on("pointerMove", listener2);

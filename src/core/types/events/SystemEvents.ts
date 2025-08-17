@@ -1,5 +1,5 @@
-import type { SceneAction } from "../scene/SceneTypes";
-import type { MessageLevel } from "../ui/UITypes";
+import type { SceneAction } from "@core/types/scene/SceneTypes";
+import type { MessageLevel } from "@core/types/ui/UITypes";
 
 /**
  * Eventos de sistema

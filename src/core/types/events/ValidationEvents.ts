@@ -1,5 +1,5 @@
-import type { Vec3 } from "../geometry/Vec3";
-import type { EntityId } from "../Entity";
+import type { Vec3 } from "@core/geometry";
+import type { EntityId } from "@core/types/Entity";
 
 /**
  * Eventos de validação

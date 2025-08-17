@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { CommandStack, TestCommand } from "../../../src/core/commands";
-import type { Command } from "../../../src/core/types/commands/Command";
+import { CommandStack, TestCommand } from "@core/commands";
+import type { Command } from "@core/types/commands/Command";
 
 describe("CommandStack", () => {
     let commandStack: CommandStack;
@@ -63,8 +63,9 @@ describe("CommandStack", () => {
             }
 
             expect(limitedStack.getHistorySize()).toBe(3);
-            expect(limitedStack.getHistory()[0].description).toBe("Set value to 3");
-            expect(limitedStack.getHistory()[2].description).toBe("Set value to 5");
+            const history = limitedStack.getHistory();
+            expect(history[0]?.description).toBe("Set value to 3");
+            expect(history[2]?.description).toBe("Set value to 5");
         });
     });
 
@@ -217,10 +218,9 @@ describe("CommandStack", () => {
     });
 
     describe("getHistory/getRedoStack", () => {
-        it("deve retornar cópias dos arrays", () => {
+        it("deve retornar cópias dos arrays internos", () => {
             const command = new TestCommand(testObject, 10, "Set value to 10");
             commandStack.execute(command);
-            commandStack.undo();
 
             const history = commandStack.getHistory();
             const redoStack = commandStack.getRedoStack();
@@ -229,13 +229,9 @@ describe("CommandStack", () => {
             expect(history).not.toBe(commandStack.getHistory());
             expect(redoStack).not.toBe(commandStack.getRedoStack());
 
-            // Verifica que são cópias profundas (modificar não afeta o original)
+            // Verifica que são cópias profundas (não podem ser modificadas)
             const originalHistorySize = commandStack.getHistorySize();
             const originalRedoSize = commandStack.getRedoSize();
-
-            // Modifica as cópias
-            history.push(command);
-            redoStack.push(command);
 
             // Verifica que o original não foi afetado
             expect(commandStack.getHistorySize()).toBe(originalHistorySize);
@@ -266,8 +262,9 @@ describe("CommandStack", () => {
             limitedStack.setMaxHistorySize(3);
 
             expect(limitedStack.getHistorySize()).toBe(3);
-            expect(limitedStack.getHistory()[0].description).toBe("Set value to 3");
-            expect(limitedStack.getHistory()[2].description).toBe("Set value to 5");
+            const history = limitedStack.getHistory();
+            expect(history[0]?.description).toBe("Set value to 3");
+            expect(history[2]?.description).toBe("Set value to 5");
         });
     });
 

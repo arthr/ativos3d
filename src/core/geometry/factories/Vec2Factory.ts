@@ -1,4 +1,4 @@
-import type { Vec2 } from "../types/Vec2";
+import type { Vec2 } from "@core/geometry";
 
 /**
  * Factory para criar Vec2

@@ -1,7 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { Vec2Math } from "../../../src/core/geometry/math/Vec2Math";
-import { Vec2Factory } from "../../../src/core/geometry/factories/Vec2Factory";
-import type { Vec2 } from "../../../src/core/geometry/types/Vec2";
+import { Vec2Math } from "@core/geometry/math/Vec2Math";
+import { Vec2Factory } from "@core/geometry/factories/Vec2Factory";
 
 describe("Vec2Math", () => {
     describe("magnitude", () => {

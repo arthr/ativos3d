@@ -1,41 +1,32 @@
-import type { Command } from "../types/commands/Command";
+import type { Command } from "@core/types";
 
 /**
- * Comando de teste simples para validar o CommandStack
+ * Comando de teste para validação do CommandStack
  */
 export class TestCommand implements Command {
-    private value: number;
-    private originalValue: number;
+    private originalValue: number | null = null;
     private executed: boolean = false;
 
     constructor(
         private target: { value: number },
         private newValue: number,
         public readonly description: string = "Test Command",
-    ) {
-        this.value = target.value;
-        this.originalValue = target.value;
-    }
+    ) {}
 
     execute(): boolean {
         if (this.executed) {
             return false;
         }
 
-        try {
-            this.originalValue = this.target.value;
-            this.target.value = this.newValue;
-            this.executed = true;
-            return true;
-        } catch (error) {
-            console.error("Erro ao executar TestCommand:", error);
-            return false;
-        }
+        this.originalValue = this.target.value;
+        this.target.value = this.newValue;
+        this.executed = true;
+        return true;
     }
 
     undo(): void {
-        if (!this.executed) {
-            throw new Error("Comando não foi executado");
+        if (!this.executed || this.originalValue === null) {
+            return;
         }
 
         this.target.value = this.originalValue;

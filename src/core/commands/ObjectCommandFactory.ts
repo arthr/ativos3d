@@ -1,10 +1,10 @@
-import type { Vec3 } from "../geometry/types/Vec3";
+import type { Vec3 } from "@core/geometry";
 import type {
     PlaceObjectCommand,
     MoveObjectCommand,
     RotateObjectCommand,
     DeleteObjectCommand,
-} from "../types/commands/ObjectCommands";
+} from "@core/types";
 
 /**
  * Factory para criar comandos de objetos
