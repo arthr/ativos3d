@@ -19,6 +19,9 @@ Perfeito! Vou elaborar um planejamento estruturado para reconstruir o projeto de
 - [x] Revisar e refatorar estrutura de tipos seguindo princípios de design
 - [x] Revisão final completa da pasta types - todos os princípios respeitados
 - [x] Refatoração da pasta geometry - separação de tipos e implementações
+- [ ] Definir tipos de geometria avançada
+  - [ ] Implementar interface AABB (Axis-Aligned Bounding Box)
+  - [ ] Implementar interface Transform completa (posição, rotação, escala)
 
 #### **1.3 Sistema de Eventos**
 - [x] Implementar EventBus base
@@ -33,6 +36,8 @@ Perfeito! Vou elaborar um planejamento estruturado para reconstruir o projeto de
 - [x] Definir interface Command
 - [x] Modularizar comandos em arquivos separados por responsabilidade
 - [ ] Implementar CommandStack (undo/redo)
+  - [ ] Definir tipos para CommandStack
+  - [ ] Implementar CommandStack com undo/redo
 - [ ] Testes unitários para CommandStack
 
 ### **Fase 2: Domínio e Entidades**
@@ -41,13 +46,23 @@ Perfeito! Vou elaborar um planejamento estruturado para reconstruir o projeto de
 - [ ] Implementar Entity base
 - [ ] Implementar Component System
 - [ ] Implementar EntityManager
+  - [ ] Definir tipos para EntityManager
+  - [ ] Implementar EntityManager
 - [ ] Testes para Entity System
 
 #### **2.2 Tipos de Entidades**
 - [ ] Implementar TransformComponent
+  - [ ] Definir interface TransformComponent
+  - [ ] Implementar TransformComponent
 - [ ] Implementar RenderComponent
+  - [ ] Definir interface RenderComponent
+  - [ ] Implementar RenderComponent
 - [ ] Implementar PhysicsComponent
+  - [ ] Definir interface PhysicsComponent
+  - [ ] Implementar PhysicsComponent
 - [ ] Implementar ToolComponent
+  - [ ] Definir interface ToolComponent
+  - [ ] Implementar ToolComponent
 
 #### **2.3 Sistema de Geometria**
 - [x] Implementar cálculos de geometria 3D
@@ -55,7 +70,11 @@ Perfeito! Vou elaborar um planejamento estruturado para reconstruir o projeto de
 - [x] Reorganizar diretório types seguindo princípios de design
 - [x] Mover Vec2 para pasta geometry e criar estrutura completa
 - [ ] Implementar sistema de AABB
+  - [ ] Definir tipos para AABB
+  - [ ] Implementar sistema de AABB
 - [ ] Implementar sistema de colisão básico
+  - [ ] Definir tipos para detecção de colisão
+  - [ ] Implementar sistema de colisão básico
 - [ ] Testes para geometria
 
 ### **Fase 3: Renderização e Cena**
