@@ -10,3 +10,6 @@ export * from "./EntityFactory";
 
 // Exporta a implementação base da Entity
 export { Entity } from "./Entity";
+
+// Exporta o EntityManager
+export { EntityManager } from "./EntityManager";
