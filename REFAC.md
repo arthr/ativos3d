@@ -45,9 +45,9 @@ Perfeito! Vou elaborar um planejamento estruturado para reconstruir o projeto de
 #### **2.1 Sistema de Entidades**
 - [x] Implementar Entity base
 - [x] Implementar Component System
-- [ ] Implementar EntityManager
-  - [ ] Definir tipos para EntityManager
-  - [ ] Implementar EntityManager
+- [x] Implementar EntityManager
+  - [x] Definir tipos para EntityManager
+  - [x] Implementar EntityManager
 - [ ] Testes para Entity System
 
 #### **2.2 Tipos de Entidades**

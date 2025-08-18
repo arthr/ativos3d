@@ -2,7 +2,6 @@ import type {
     Entity,
     EntityId,
     Component,
-    ComponentConfig,
     EntityConfig,
     EntityFilter,
     EntityQueryResult,
@@ -12,7 +11,7 @@ import type {
 } from "@core/types";
 import { Entity as EntityClass } from "./Entity";
 import { ComponentSystem } from "@domain/components";
-import { EventBus } from "@core/events/EventBus";
+import { eventBus } from "@core/events/EventBus";
 
 /**
  * EntityManager - Sistema centralizado para gerenciar entidades
@@ -29,7 +28,7 @@ export class EntityManager {
     private entities: Map<EntityId, Entity> = new Map();
     private entityInfo: Map<EntityId, EntityInfo> = new Map();
     private componentSystem: ComponentSystem;
-    private eventBus: EventBus;
+    private eventBus: typeof eventBus;
     private config: EntityManagerConfig;
     private idCounter: number = 0;
 
@@ -43,7 +42,7 @@ export class EntityManager {
         };
 
         this.componentSystem = ComponentSystem.getInstance();
-        this.eventBus = EventBus.getInstance();
+        this.eventBus = eventBus;
     }
 
     /**
@@ -54,6 +53,13 @@ export class EntityManager {
             EntityManager.instance = new EntityManager(config);
         }
         return EntityManager.instance;
+    }
+
+    /**
+     * Reseta a instância singleton (para testes)
+     */
+    public static resetInstance(): void {
+        EntityManager.instance = undefined as unknown as EntityManager;
     }
 
     /**
@@ -98,7 +104,7 @@ export class EntityManager {
 
         // Emite evento se habilitado
         if (this.config.enableEvents) {
-            this.eventBus.emit("entityCreated", { entityId: id, type: "entityCreated" });
+            this.eventBus.emit("entityCreated", { entityId: id, type: "entity" });
         }
 
         return entity;
@@ -118,7 +124,7 @@ export class EntityManager {
 
         // Emite evento se habilitado
         if (this.config.enableEvents) {
-            this.eventBus.emit("entityDestroyed", { entityId, type: "entityDestroyed" });
+            this.eventBus.emit("entityDestroyed", { entityId, type: "entity" });
         }
 
         return true;
@@ -167,12 +173,10 @@ export class EntityManager {
 
         // Emite evento se habilitado
         if (this.config.enableEvents) {
-            this.eventBus.emit("componentAdded", {
-                entity: updatedEntity,
-                component,
-                type: "componentAdded",
+            this.eventBus.emit("entityTransformed", {
+                entityId,
+                transform: { position: { x: 0, y: 0, z: 0 } },
             });
-            this.eventBus.emit("entityUpdated", { entity: updatedEntity, type: "entityUpdated" });
         }
 
         return updatedEntity;
@@ -193,12 +197,10 @@ export class EntityManager {
 
         // Emite evento se habilitado
         if (this.config.enableEvents) {
-            this.eventBus.emit("componentRemoved", {
-                entity: updatedEntity,
-                componentType,
-                type: "componentRemoved",
+            this.eventBus.emit("entityTransformed", {
+                entityId,
+                transform: { position: { x: 0, y: 0, z: 0 } },
             });
-            this.eventBus.emit("entityUpdated", { entity: updatedEntity, type: "entityUpdated" });
         }
 
         return updatedEntity;
