@@ -1,13 +1,4 @@
-import type { Component } from "@core/types";
-
-/**
- * Resultado de validação
- */
-export interface ValidationResult {
-    isValid: boolean;
-    errors: string[];
-    warnings?: string[];
-}
+import type { Component, ValidationResult } from "@core/types";
 
 /**
  * Componente base que outros componentes podem estender

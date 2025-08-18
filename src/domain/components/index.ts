@@ -1,8 +1,6 @@
-// Exporta o Component System principal
-export { ComponentSystem } from "./ComponentSystem";
-
-// Exporta tipos do Component System
+// Exporta tipos centralizados do core
 export type {
+    Component,
     ComponentFactory,
     ComponentValidator,
     ComponentData,
@@ -10,12 +8,14 @@ export type {
     ValidationResult,
     EntityValidationResult,
     ComponentInfo,
-} from "./ComponentSystem";
+} from "@core/types";
+
+// Exporta o Component System principal
+export { ComponentSystem } from "./ComponentSystem";
 
 // Exporta componentes base
-export { BaseComponent } from "./base/BaseComponent";
-export type { ValidationResult as BaseValidationResult } from "./base/BaseComponent";
+export { BaseComponent } from "./BaseComponent";
 
 // Exporta componentes de exemplo
 export { TestComponent } from "./examples/TestComponent";
-export type { ComponentData as TestComponentData } from "./examples/TestComponent";
+export type { TestComponentData } from "./examples/TestComponent";

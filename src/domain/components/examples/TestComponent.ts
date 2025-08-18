@@ -1,4 +1,5 @@
-import { BaseComponent, type ValidationResult } from "../base/BaseComponent";
+import { BaseComponent } from "../BaseComponent";
+import type { ValidationResult, ComponentData as BaseComponentData } from "@core/types";
 import type { Vec3 } from "@core/geometry";
 
 /**
@@ -82,7 +83,7 @@ export class TestComponent extends BaseComponent {
     /**
      * Factory para criar TestComponent
      */
-    public static create(data: ComponentData): TestComponent {
+    public static create(data: TestComponentData): TestComponent {
         return new TestComponent(
             data.value || "",
             data.position,
@@ -93,9 +94,9 @@ export class TestComponent extends BaseComponent {
 }
 
 /**
- * Dados para criar um TestComponent
+ * Dados específicos para criar um TestComponent
  */
-export interface ComponentData {
+export interface TestComponentData extends BaseComponentData {
     value: string;
     position: Vec3;
     enabled?: boolean;

@@ -1,4 +1,14 @@
-import type { Component, EntityId } from "@core/types";
+import type {
+    EntityId,
+    Component,
+    ComponentFactory,
+    ComponentValidator,
+    ComponentData,
+    ComponentConfig,
+    ValidationResult,
+    EntityValidationResult,
+    ComponentInfo,
+} from "@core/types";
 import { Entity } from "@domain/entities";
 
 /**
@@ -182,64 +192,4 @@ export class ComponentSystem {
         // Componentes básicos serão registrados aqui
         // quando implementarmos os componentes específicos
     }
-}
-
-/**
- * Tipos para o Component System
- */
-
-/**
- * Factory para criar componentes
- */
-export type ComponentFactory = (data: ComponentData) => Component;
-
-/**
- * Validador para componentes
- */
-export type ComponentValidator = (component: Component) => ValidationResult;
-
-/**
- * Dados para criar um componente
- */
-export interface ComponentData {
-    [key: string]: any;
-}
-
-/**
- * Configuração para criar um componente
- */
-export interface ComponentConfig {
-    type: string;
-    data: ComponentData;
-}
-
-/**
- * Resultado de validação
- */
-export interface ValidationResult {
-    isValid: boolean;
-    errors: string[];
-    warnings?: string[];
-}
-
-/**
- * Resultado de validação de entidade
- */
-export interface EntityValidationResult {
-    entityId: EntityId;
-    isValid: boolean;
-    errors: string[];
-    warnings: string[];
-    componentCount: number;
-}
-
-/**
- * Informações sobre um tipo de componente
- */
-export interface ComponentInfo {
-    type: string;
-    hasFactory: boolean;
-    hasValidator: boolean;
-    factory: ComponentFactory;
-    validator: ComponentValidator | null;
 }

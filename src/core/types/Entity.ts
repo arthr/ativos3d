@@ -1,3 +1,5 @@
+import type { Component } from "./Component";
+
 /**
  * Tipos fundamentais para o sistema de entidades
  */
@@ -6,13 +8,6 @@
  * Identificador único para entidades
  */
 export type EntityId = string;
-
-/**
- * Interface base para componentes
- */
-export interface Component {
-    readonly type: string;
-}
 
 /**
  * Representa uma entidade no sistema
