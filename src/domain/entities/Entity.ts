@@ -96,7 +96,7 @@ export class Entity implements EntityInterface {
     /**
      * Verifica se duas entidades são iguais
      */
-    public equals(other: Entity): boolean {
+    public equals(other: EntityInterface): boolean {
         if (this.id !== other.id) return false;
         if (this.components.size !== other.components.size) return false;
 

@@ -15,6 +15,18 @@ export type EntityId = string;
 export interface Entity {
     readonly id: EntityId;
     readonly components: Map<string, Component>;
+    addComponent(component: Component): Entity;
+    removeComponent(componentType: string): Entity;
+    getComponent<T extends Component>(componentType: string): T | undefined;
+    hasComponent(componentType: string): boolean;
+    getComponentTypes(): string[];
+    getAllComponents(): Component[];
+    hasAllComponents(componentTypes: string[]): boolean;
+    hasAnyComponent(componentTypes: string[]): boolean;
+    getComponents<T extends Component>(componentTypes: string[]): T[];
+    clone(): Entity;
+    equals(other: Entity): boolean;
+    toString(): string;
 }
 
 /**

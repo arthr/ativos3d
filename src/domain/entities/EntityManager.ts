@@ -9,7 +9,7 @@ import type {
     EntityManagerConfig,
     EntityInfo,
 } from "@core/types";
-import { Entity as EntityClass } from "./Entity";
+import { Entity as EntityImplementation } from "./Entity";
 import { ComponentSystem } from "@domain/components";
 import { eventBus } from "@core/events/EventBus";
 
@@ -76,7 +76,7 @@ export class EntityManager {
             throw new Error(`Limite máximo de entidades atingido: ${this.config.maxEntities}`);
         }
 
-        let entity = EntityClass.create(id);
+        let entity = EntityImplementation.create(id);
 
         // Adiciona componentes se especificados
         if (config?.components) {
@@ -162,7 +162,7 @@ export class EntityManager {
      * Adiciona um componente a uma entidade
      */
     public addComponent(entityId: EntityId, component: Component): Entity | undefined {
-        const entity = this.entities.get(entityId) as EntityClass;
+        const entity = this.entities.get(entityId);
         if (!entity) {
             return undefined;
         }
@@ -184,7 +184,7 @@ export class EntityManager {
      * Remove um componente de uma entidade
      */
     public removeComponent(entityId: EntityId, componentType: string): Entity | undefined {
-        const entity = this.entities.get(entityId) as EntityClass;
+        const entity = this.entities.get(entityId);
         if (!entity) {
             return undefined;
         }
@@ -226,17 +226,14 @@ export class EntityManager {
                 }
 
                 // Filtro por tipos de componentes obrigatórios
-                if (
-                    filter.componentTypes &&
-                    !(entity as EntityClass).hasAllComponents(filter.componentTypes)
-                ) {
+                if (filter.componentTypes && !entity.hasAllComponents(filter.componentTypes)) {
                     return false;
                 }
 
                 // Filtro por tipos de componentes excluídos
                 if (
                     filter.excludeComponentTypes &&
-                    (entity as EntityClass).hasAnyComponent(filter.excludeComponentTypes)
+                    entity.hasAnyComponent(filter.excludeComponentTypes)
                 ) {
                     return false;
                 }
@@ -274,7 +271,7 @@ export class EntityManager {
         const componentTypes = new Set<string>();
 
         for (const entity of this.entities.values()) {
-            for (const componentType of (entity as EntityClass).getComponentTypes()) {
+            for (const componentType of entity.getComponentTypes()) {
                 componentTypes.add(componentType);
                 entitiesByComponentType.set(
                     componentType,
@@ -309,7 +306,7 @@ export class EntityManager {
         const entitiesToRemove: EntityId[] = [];
 
         for (const [id, entity] of this.entities) {
-            if ((entity as EntityClass).getComponentTypes().length === 0) {
+            if (entity.getComponentTypes().length === 0) {
                 entitiesToRemove.push(id);
             }
         }
@@ -344,8 +341,8 @@ export class EntityManager {
     private updateEntityInfo(entityId: EntityId, entity: Entity): void {
         const info = this.entityInfo.get(entityId);
         if (info) {
-            info.componentCount = (entity as EntityClass).getComponentTypes().length;
-            info.componentTypes = (entity as EntityClass).getComponentTypes();
+            info.componentCount = entity.getComponentTypes().length;
+            info.componentTypes = entity.getComponentTypes();
             info.lastModified = Date.now();
         }
     }
@@ -362,7 +359,7 @@ export class EntityManager {
             totalSize += 100; // ID + overhead
 
             // Tamanho dos componentes
-            totalSize += (entity as EntityClass).getComponentTypes().length * 50;
+            totalSize += entity.getComponentTypes().length * 50;
         }
 
         return totalSize;
