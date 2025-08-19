@@ -140,7 +140,7 @@ describe("EntityManager", () => {
             entityManager.addComponent(e2.id, new TestComponent());
 
             const e3 = entityManager.createEntity({ id: "entity3" });
-            entityManager.addComponent(e3.id, new TestComponent());
+            entityManager.addComponent(e3.id, new OtherComponent());
         });
 
         it("deve retornar todas as entidades", () => {
@@ -170,7 +170,7 @@ describe("EntityManager", () => {
             expect(result.count).toBe(2);
         });
 
-        it("deve filter por múltiplos tipos de componentes", () => {
+        it("deve filtrar por múltiplos tipos de componentes", () => {
             const result = entityManager.queryEntities({ componentTypes: ["test", "other"] });
             expect(result.entities).toHaveLength(1);
             expect(result.entities[0]?.id).toBe("entity1");
