@@ -48,12 +48,12 @@ Perfeito! Vou elaborar um planejamento estruturado para reconstruir o projeto de
 - [x] Implementar EntityManager
   - [x] Definir tipos para EntityManager
   - [x] Implementar EntityManager
-- [ ] Testes para Entity System
+- [x] Testes para Entity System
 
 #### **2.2 Tipos de Entidades**
-- [ ] Implementar TransformComponent
-  - [ ] Definir interface TransformComponent
-  - [ ] Implementar TransformComponent
+- [x] Implementar TransformComponent
+  - [x] Definir interface TransformComponent
+  - [x] Implementar TransformComponent
 - [ ] Implementar RenderComponent
   - [ ] Definir interface RenderComponent
   - [ ] Implementar RenderComponent

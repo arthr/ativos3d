@@ -10,6 +10,7 @@ import type {
     ComponentInfo,
 } from "@core/types";
 import { Entity } from "@domain/entities";
+import { TransformComponent } from "@domain/components";
 
 /**
  * Sistema de Componentes seguindo Domain-Driven Design
@@ -189,7 +190,16 @@ export class ComponentSystem {
      * Registra componentes padrão do sistema
      */
     private registerDefaultComponents(): void {
-        // Componentes básicos serão registrados aqui
-        // quando implementarmos os componentes específicos
+        // Registra TransformComponent
+        this.registerComponentFactory("TransformComponent", (data) => {
+            return TransformComponent.create(data);
+        });
+
+        this.registerComponentValidator("TransformComponent", (component) => {
+            if ("validate" in component && typeof component.validate === "function") {
+                return component.validate();
+            }
+            return { isValid: true, errors: [] };
+        });
     }
 }
