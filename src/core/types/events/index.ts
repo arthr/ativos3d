@@ -5,7 +5,7 @@
 export type { InputEvents } from "./InputEvents";
 export type { SelectionEvents } from "./SelectionEvents";
 export type { ToolEvents } from "./ToolEvents";
-export type { TransformEvents, EntityEvents } from "./EntityEvents";
+export type { EntityEvents } from "./EntityEvents";
 export type { BudgetEvents } from "./BudgetEvents";
 export type { SnapEvents } from "./SnapEvents";
 export type { ValidationEvents } from "./ValidationEvents";

@@ -1,24 +1,13 @@
-import type { Vec3 } from "@core/geometry";
-import type { EntityId } from "@core/types";
+import type { EntityId } from "../Entity";
+import type { Component } from "../Component";
 
 /**
- * Eventos de transformação de entidades
- */
-export interface TransformEvents {
-    entityTransformed: {
-        entityId: EntityId;
-        transform: {
-            position?: Vec3;
-            rotation?: Vec3;
-            scale?: Vec3;
-        };
-    };
-}
-
-/**
- * Eventos de criação/destruição de entidades
+ * Eventos de entidades
  */
 export interface EntityEvents {
     entityCreated: { entityId: EntityId; type: string };
     entityDestroyed: { entityId: EntityId; type: string };
+    componentAdded: { entityId: EntityId; component: Component };
+    componentRemoved: { entityId: EntityId; componentType: string };
+    entityUpdated: { entityId: EntityId };
 }

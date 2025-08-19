@@ -1,4 +1,4 @@
-import type { Entity, EntityId, Component, ComponentConfig } from "@core/types";
+import type { Entity, EntityId, ComponentConfig } from "@core/types";
 
 /**
  * Configuração para criar uma entidade
@@ -36,24 +36,6 @@ export interface EntityManagerStats {
     componentTypes: string[];
     memoryUsage: number | undefined;
 }
-
-/**
- * Eventos do EntityManager
- */
-export interface EntityManagerEvents {
-    entityCreated: { entity: Entity };
-    entityDestroyed: { entityId: EntityId };
-    componentAdded: { entity: Entity; component: Component };
-    componentRemoved: { entity: Entity; componentType: string };
-    entityUpdated: { entity: Entity };
-}
-
-/**
- * Callback para eventos do EntityManager
- */
-export type EntityManagerEventHandler<T extends keyof EntityManagerEvents> = (
-    event: EntityManagerEvents[T],
-) => void;
 
 /**
  * Configuração do EntityManager

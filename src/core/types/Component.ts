@@ -30,7 +30,7 @@ export type ComponentValidator = (component: Component) => ValidationResult;
  * Dados para criar um componente
  */
 export interface ComponentData {
-    [key: string]: any;
+    [key: string]: unknown;
 }
 
 /**
