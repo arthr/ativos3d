@@ -173,10 +173,8 @@ export class EntityManager {
 
         // Emite evento se habilitado
         if (this.config.enableEvents) {
-            this.eventBus.emit("entityTransformed", {
-                entityId,
-                transform: { position: { x: 0, y: 0, z: 0 } },
-            });
+            this.eventBus.emit("componentAdded", { entityId, component });
+            this.eventBus.emit("entityUpdated", { entityId });
         }
 
         return updatedEntity;
@@ -197,10 +195,8 @@ export class EntityManager {
 
         // Emite evento se habilitado
         if (this.config.enableEvents) {
-            this.eventBus.emit("entityTransformed", {
-                entityId,
-                transform: { position: { x: 0, y: 0, z: 0 } },
-            });
+            this.eventBus.emit("componentRemoved", { entityId, componentType });
+            this.eventBus.emit("entityUpdated", { entityId });
         }
 
         return updatedEntity;

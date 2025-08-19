@@ -8,7 +8,7 @@
 import type { InputEvents } from "./events/InputEvents";
 import type { SelectionEvents } from "./events/SelectionEvents";
 import type { ToolEvents } from "./events/ToolEvents";
-import type { TransformEvents, EntityEvents } from "./events/EntityEvents";
+import type { EntityEvents } from "./events/EntityEvents";
 import type { BudgetEvents } from "./events/BudgetEvents";
 import type { SnapEvents } from "./events/SnapEvents";
 import type { ValidationEvents } from "./events/ValidationEvents";
@@ -23,7 +23,6 @@ import type { SystemEvents } from "./events/SystemEvents";
 export type SystemEventMap = InputEvents &
     SelectionEvents &
     ToolEvents &
-    TransformEvents &
     EntityEvents &
     BudgetEvents &
     SnapEvents &

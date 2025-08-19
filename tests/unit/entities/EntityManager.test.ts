@@ -1,5 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { EntityManager } from "@domain/entities";
+import { eventBus } from "@core/events/EventBus";
+import type { Component } from "@core/types";
 
 describe("EntityManager", () => {
     let entityManager: EntityManager;
@@ -8,6 +10,7 @@ describe("EntityManager", () => {
         // Reset das instâncias singleton
         vi.resetModules();
         EntityManager.resetInstance();
+        eventBus.clearAll();
 
         // Obtém instâncias
         entityManager = EntityManager.getInstance();
@@ -191,6 +194,47 @@ describe("EntityManager", () => {
             const entity2 = entityManager.createEntity();
 
             expect(entity1.id).not.toBe(entity2.id);
+        });
+    });
+
+    describe("Eventos", () => {
+        class TestComponent implements Component {
+            constructor(public readonly type: string = "test") {}
+        }
+
+        it("emite componentAdded e entityUpdated ao adicionar componente", () => {
+            const entity = entityManager.createEntity({ id: "e1" });
+            const component = new TestComponent();
+            const addedSpy = vi.fn();
+            const updatedSpy = vi.fn();
+            const unsubAdded = eventBus.on("componentAdded", addedSpy);
+            const unsubUpdated = eventBus.on("entityUpdated", updatedSpy);
+
+            entityManager.addComponent(entity.id, component);
+
+            expect(addedSpy).toHaveBeenCalledWith({ entityId: entity.id, component });
+            expect(updatedSpy).toHaveBeenCalledWith({ entityId: entity.id });
+
+            unsubAdded();
+            unsubUpdated();
+        });
+
+        it("emite componentRemoved e entityUpdated ao remover componente", () => {
+            const entity = entityManager.createEntity({ id: "e2" });
+            const component = new TestComponent();
+            entityManager.addComponent(entity.id, component);
+            const removedSpy = vi.fn();
+            const updatedSpy = vi.fn();
+            const unsubRemoved = eventBus.on("componentRemoved", removedSpy);
+            const unsubUpdated = eventBus.on("entityUpdated", updatedSpy);
+
+            entityManager.removeComponent(entity.id, component.type);
+
+            expect(removedSpy).toHaveBeenCalledWith({ entityId: entity.id, componentType: component.type });
+            expect(updatedSpy).toHaveBeenCalledWith({ entityId: entity.id });
+
+            unsubRemoved();
+            unsubUpdated();
         });
     });
 });
