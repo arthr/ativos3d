@@ -162,12 +162,12 @@ export class EntityManager {
      * Adiciona um componente a uma entidade
      */
     public addComponent(entityId: EntityId, component: Component): Entity | undefined {
-        const entity = this.entities.get(entityId);
+        const entity = this.entities.get(entityId) as EntityClass;
         if (!entity) {
             return undefined;
         }
 
-        const updatedEntity = (entity as EntityClass).addComponent(component);
+        const updatedEntity = entity.addComponent(component);
         this.entities.set(entityId, updatedEntity);
         this.updateEntityInfo(entityId, updatedEntity);
 
@@ -184,12 +184,17 @@ export class EntityManager {
      * Remove um componente de uma entidade
      */
     public removeComponent(entityId: EntityId, componentType: string): Entity | undefined {
-        const entity = this.entities.get(entityId);
+        const entity = this.entities.get(entityId) as EntityClass;
         if (!entity) {
             return undefined;
         }
 
-        const updatedEntity = (entity as EntityClass).removeComponent(componentType);
+        // Verifica se a entidade possui o componente
+        if (!entity.hasComponent(componentType)) {
+            return entity;
+        }
+
+        const updatedEntity = entity.removeComponent(componentType);
         this.entities.set(entityId, updatedEntity);
         this.updateEntityInfo(entityId, updatedEntity);
 
