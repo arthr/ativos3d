@@ -42,7 +42,7 @@ export type SystemEvent = {
 /**
  * Listener de eventos
  */
-export type EventListener<T = unknown> = (payload: T) => void;
+export type EventListener<T = unknown> = (payload: T) => void; // eslint-disable-line no-unused-vars
 
 /**
  * Unsubscribe function
