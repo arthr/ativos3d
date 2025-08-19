@@ -41,7 +41,7 @@ export default [
             "react-hooks/exhaustive-deps": "warn",
 
             // Geral
-            "no-unused-vars": "warn",
+            "no-unused-vars": "off",
             "no-console": "warn",
             "no-debugger": "error",
             "prefer-const": "error",
