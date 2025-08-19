@@ -3,6 +3,14 @@ import { EntityManager } from "@domain/entities";
 import { eventBus } from "@core/events/EventBus";
 import type { Component } from "@core/types";
 
+class TestComponent implements Component {
+    constructor(public readonly type: string = "test") {}
+}
+
+class OtherComponent implements Component {
+    constructor(public readonly type: string = "other") {}
+}
+
 describe("EntityManager", () => {
     let entityManager: EntityManager;
 
@@ -78,12 +86,61 @@ describe("EntityManager", () => {
         });
     });
 
+    describe("Gerenciamento de Componentes", () => {
+        it("deve adicionar componente e atualizar estado", () => {
+            const entity = entityManager.createEntity({ id: "comp1" });
+            const component = new TestComponent();
+            const emitSpy = vi.spyOn(eventBus, "emit");
+
+            entityManager.addComponent(entity.id, component);
+
+            const updated = entityManager.getEntity(entity.id);
+            expect(updated?.hasComponent(component.type)).toBe(true);
+            expect(emitSpy).toHaveBeenCalledWith("componentAdded", {
+                entityId: entity.id,
+                component,
+            });
+            expect(emitSpy).toHaveBeenCalledWith("entityUpdated", {
+                entityId: entity.id,
+            });
+
+            emitSpy.mockRestore();
+        });
+
+        it("deve remover componente e atualizar estado", () => {
+            const entity = entityManager.createEntity({ id: "comp2" });
+            const component = new TestComponent();
+            entityManager.addComponent(entity.id, component);
+            const emitSpy = vi.spyOn(eventBus, "emit");
+
+            entityManager.removeComponent(entity.id, component.type);
+
+            const updated = entityManager.getEntity(entity.id);
+            expect(updated?.hasComponent(component.type)).toBe(false);
+            expect(emitSpy).toHaveBeenCalledWith("componentRemoved", {
+                entityId: entity.id,
+                componentType: component.type,
+            });
+            expect(emitSpy).toHaveBeenCalledWith("entityUpdated", {
+                entityId: entity.id,
+            });
+
+            emitSpy.mockRestore();
+        });
+    });
+
     describe("Consultas e Filtros", () => {
         beforeEach(() => {
             // Cria entidades de teste
-            entityManager.createEntity({ id: "entity1" });
-            entityManager.createEntity({ id: "entity2" });
-            entityManager.createEntity({ id: "entity3" });
+            const e1 = entityManager.createEntity({ id: "entity1" });
+            entityManager.addComponent(e1.id, new TestComponent());
+            entityManager.addComponent(e1.id, new OtherComponent());
+
+            const e2 = entityManager.createEntity({ id: "entity2" });
+            entityManager.addComponent(e2.id, new TestComponent());
+
+            const e3 = entityManager.createEntity({ id: "entity3" });
+            entityManager.addComponent(e3.id, new TestComponent());
         });
 
         it("deve retornar todas as entidades", () => {
@@ -104,6 +161,25 @@ describe("EntityManager", () => {
             expect(result.entities).toHaveLength(2);
             expect(result.entities.map((e) => e.id)).toContain("entity1");
             expect(result.entities.map((e) => e.id)).toContain("entity2");
+        });
+
+        it("deve filtra por tipos de componentes", () => {
+            const result = entityManager.queryEntities({ componentTypes: ["test"] });
+            expect(result.entities.map((e) => e.id)).toContain("entity1");
+            expect(result.entities.map((e) => e.id)).toContain("entity2");
+            expect(result.count).toBe(2);
+        });
+
+        it("deve filter por múltiplos tipos de componentes", () => {
+            const result = entityManager.queryEntities({ componentTypes: ["test", "other"] });
+            expect(result.entities).toHaveLength(1);
+            expect(result.entities[0]?.id).toBe("entity1");
+        });
+
+        it("deve excluir tipos de componentes específicos", () => {
+            const result = entityManager.queryEntities({ excludeComponentTypes: ["other"] });
+            expect(result.entities).toHaveLength(1);
+            expect(result.entities[0]?.id).toBe("entity2");
         });
     });
 
@@ -198,10 +274,6 @@ describe("EntityManager", () => {
     });
 
     describe("Eventos", () => {
-        class TestComponent implements Component {
-            constructor(public readonly type: string = "test") {}
-        }
-
         it("emite componentAdded e entityUpdated ao adicionar componente", () => {
             const entity = entityManager.createEntity({ id: "e1" });
             const component = new TestComponent();
@@ -230,7 +302,10 @@ describe("EntityManager", () => {
 
             entityManager.removeComponent(entity.id, component.type);
 
-            expect(removedSpy).toHaveBeenCalledWith({ entityId: entity.id, componentType: component.type });
+            expect(removedSpy).toHaveBeenCalledWith({
+                entityId: entity.id,
+                componentType: component.type,
+            });
             expect(updatedSpy).toHaveBeenCalledWith({ entityId: entity.id });
 
             unsubRemoved();
