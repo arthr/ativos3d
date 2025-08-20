@@ -57,9 +57,9 @@ Perfeito! Vou elaborar um planejamento estruturado para reconstruir o projeto de
 - [x] Implementar RenderComponent
   - [x] Definir interface RenderComponent
   - [x] Implementar RenderComponent
-- [ ] Implementar PhysicsComponent
-  - [ ] Definir interface PhysicsComponent
-  - [ ] Implementar PhysicsComponent
+- [x] Implementar PhysicsComponent
+  - [x] Definir interface PhysicsComponent
+  - [x] Implementar PhysicsComponent
 - [ ] Implementar ToolComponent
   - [ ] Definir interface ToolComponent
   - [ ] Implementar ToolComponent
