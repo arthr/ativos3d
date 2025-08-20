@@ -18,3 +18,9 @@ export type {
     PhysicsComponentData,
     DEFAULT_PHYSICS,
 } from "./PhysicsComponent";
+
+export type {
+    ToolComponent,
+    ToolComponentData,
+    DEFAULT_TOOL,
+} from "./ToolComponent";
