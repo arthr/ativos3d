@@ -33,69 +33,42 @@ export class TransformComponent extends BaseComponent implements ITransformCompo
      * Move a entidade para uma nova posição
      */
     public translate(delta: Vec3): TransformComponent {
-        const newPosition = Vec3Operations.add(this.position, delta);
-        return new TransformComponent({
-            position: newPosition,
-            rotation: this.rotation,
-            scale: this.scale,
-        });
+        return this.withChanges({ position: Vec3Operations.add(this.position, delta) });
     }
 
     /**
      * Define a posição absoluta
      */
     public setPosition(position: Vec3): TransformComponent {
-        return new TransformComponent({
-            position,
-            rotation: this.rotation,
-            scale: this.scale,
-        });
+        return this.withChanges({ position });
     }
 
     /**
      * Rotaciona a entidade
      */
     public rotate(delta: Vec3): TransformComponent {
-        const newRotation = Vec3Operations.add(this.rotation, delta);
-        return new TransformComponent({
-            position: this.position,
-            rotation: newRotation,
-            scale: this.scale,
-        });
+        return this.withChanges({ rotation: Vec3Operations.add(this.rotation, delta) });
     }
 
     /**
      * Define a rotação absoluta
      */
     public setRotation(rotation: Vec3): TransformComponent {
-        return new TransformComponent({
-            position: this.position,
-            rotation,
-            scale: this.scale,
-        });
+        return this.withChanges({ rotation });
     }
 
     /**
      * Escala a entidade
      */
     public scaleBy(factor: number): TransformComponent {
-        const newScale = Vec3Operations.multiply(this.scale, factor);
-        return new TransformComponent({
-            position: this.position,
-            rotation: this.rotation,
-            scale: newScale,
-        });
+        return this.withChanges({ scale: Vec3Operations.multiply(this.scale, factor) });
     }
 
     /**
      * Define a escala absoluta
      */
     public setScale(scale: Vec3): TransformComponent {
-        return new TransformComponent({
-            position: this.position,
-            rotation: this.rotation,
-            scale,
-        });
+        return this.withChanges({ scale });
     }
 
     /**
@@ -106,11 +79,7 @@ export class TransformComponent extends BaseComponent implements ITransformCompo
         rotation?: Vec3;
         scale?: Vec3;
     }): TransformComponent {
-        return new TransformComponent({
-            position: transform.position ?? this.position,
-            rotation: transform.rotation ?? this.rotation,
-            scale: transform.scale ?? this.scale,
-        });
+        return this.withChanges(transform);
     }
 
     /**
@@ -155,33 +124,10 @@ export class TransformComponent extends BaseComponent implements ITransformCompo
             errors.push("Escala inválida");
         }
 
-        // Verifica se a escala não é zero (causaria problemas de renderização)
-        if (this.scale.x === 0 || this.scale.y === 0 || this.scale.z === 0) {
-            errors.push("Escala não pode ser zero");
-        }
-
-        // Verifica se a escala é negativa
-        if (this.scale.x < 0 || this.scale.y < 0 || this.scale.z < 0) {
-            errors.push("Escala não pode ser negativa.");
-        }
-
-        // Verifica se a escala é muito pequena (pode causar problemas)
-        if (
-            Math.abs(this.scale.x) < 0.001 ||
-            Math.abs(this.scale.y) < 0.001 ||
-            Math.abs(this.scale.z) < 0.001
-        ) {
-            warnings.push("Escala muito pequena pode causar problemas de renderização");
-        }
-
-        // Verifica se a escala é muito grande (pode causar problemas)
-        if (
-            Math.abs(this.scale.x) > 1000 ||
-            Math.abs(this.scale.y) > 1000 ||
-            Math.abs(this.scale.z) > 1000
-        ) {
-            warnings.push("Escala muito grande pode causar problemas de performance");
-        }
+        // Validação específica de escala
+        const scaleValidation = this.validateScale();
+        errors.push(...scaleValidation.errors);
+        warnings.push(...scaleValidation.warnings);
 
         const result: ValidationResult = {
             isValid: errors.length === 0,
@@ -199,28 +145,18 @@ export class TransformComponent extends BaseComponent implements ITransformCompo
      * Cria uma cópia do componente
      */
     public override clone(): TransformComponent {
-        return new TransformComponent({
-            position: this.position,
-            rotation: this.rotation,
-            scale: this.scale,
-        });
+        return this.withChanges({});
     }
 
     /**
-     * Verifica se dois TransformComponents são guais
+     * Verifica se dois TransformComponents são iguais
      */
     public override equals(other: TransformComponent): boolean {
         return (
             super.equals(other) &&
-            this.position.x === other.position.x &&
-            this.position.y === other.position.y &&
-            this.position.z === other.position.z &&
-            this.rotation.x === other.rotation.x &&
-            this.rotation.y === other.rotation.y &&
-            this.rotation.z === other.rotation.z &&
-            this.scale.x === other.scale.x &&
-            this.scale.y === other.scale.y &&
-            this.scale.z === other.scale.z
+            this.areVec3Equal(this.position, other.position) &&
+            this.areVec3Equal(this.rotation, other.rotation) &&
+            this.areVec3Equal(this.scale, other.scale)
         );
     }
 
@@ -257,6 +193,59 @@ export class TransformComponent extends BaseComponent implements ITransformCompo
      */
     public static withScale(scale: Vec3): TransformComponent {
         return new TransformComponent({ scale });
+    }
+
+    /**
+     * Cria nova instância com mudanças específicas
+     */
+    private withChanges(changes: Partial<TransformComponentData>): TransformComponent {
+        return new TransformComponent({
+            position: changes.position ?? this.position,
+            rotation: changes.rotation ?? this.rotation,
+            scale: changes.scale ?? this.scale,
+        });
+    }
+
+    /**
+     * Validação específica de escala
+     */
+    private validateScale(): { errors: string[]; warnings: string[] } {
+        const errors: string[] = [];
+        const warnings: string[] = [];
+
+        const { x, y, z } = this.scale;
+
+        // Verifica se a escala não é zero
+        if (x === 0 || y === 0 || z === 0) {
+            errors.push("Escala não pode ser zero");
+        }
+
+        // Verifica se a escala é negativa
+        if (x < 0 || y < 0 || z < 0) {
+            errors.push("Escala não pode ser negativa.");
+        }
+
+        const minScale = 0.001;
+        const maxScale = 1000;
+
+        // Verifica se a escala é muito pequena
+        if (Math.abs(x) < minScale || Math.abs(y) < minScale || Math.abs(z) < minScale) {
+            warnings.push("Escala muito pequena pode causar problemas de renderização");
+        }
+
+        // Verifica se a escala é muito grande
+        if (Math.abs(x) > maxScale || Math.abs(y) > maxScale || Math.abs(z) > maxScale) {
+            warnings.push("Escala muito grande pode causar problemas de performance");
+        }
+
+        return { errors, warnings };
+    }
+
+    /**
+     * Verifica se dois Vec3 são iguais
+     */
+    private areVec3Equal(a: Vec3, b: Vec3): boolean {
+        return a.x === b.x && a.y === b.y && a.z === b.z;
     }
 
     /**
