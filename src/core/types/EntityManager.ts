@@ -1,4 +1,6 @@
 import type { Entity, EntityId, ComponentConfig } from "@core/types";
+import { ComponentSystem } from "@domain/components";
+import { eventBus } from "@core/events/EventBus";
 
 /**
  * Configuração para criar uma entidade
@@ -6,6 +8,14 @@ import type { Entity, EntityId, ComponentConfig } from "@core/types";
 export interface EntityConfig {
     id?: EntityId;
     components?: ComponentConfig[];
+}
+
+/**
+ * Dependências do EntityManager
+ */
+export interface EntityManagerDependencies {
+    componentSystem?: ComponentSystem;
+    eventBus?: typeof eventBus;
 }
 
 /**

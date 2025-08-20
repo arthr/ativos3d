@@ -8,6 +8,7 @@ import type {
     EntityManagerStats,
     EntityManagerConfig,
     EntityInfo,
+    EntityManagerDependencies,
 } from "@core/types";
 import { Entity as EntityImplementation } from "./Entity";
 import { ComponentSystem } from "@domain/components";
@@ -32,7 +33,10 @@ export class EntityManager {
     private config: EntityManagerConfig;
     private idCounter: number = 0;
 
-    private constructor(config: EntityManagerConfig = {}) {
+    private constructor(
+        config: EntityManagerConfig = {},
+        dependencies?: EntityManagerDependencies,
+    ) {
         this.config = {
             maxEntities: 10000,
             enableStatistics: true,
@@ -41,16 +45,19 @@ export class EntityManager {
             ...config,
         };
 
-        this.componentSystem = ComponentSystem.getInstance();
-        this.eventBus = eventBus;
+        this.componentSystem = dependencies?.componentSystem ?? ComponentSystem.getInstance();
+        this.eventBus = dependencies?.eventBus ?? eventBus;
     }
 
     /**
      * Obtém a instância singleton do EntityManager
      */
-    public static getInstance(config?: EntityManagerConfig): EntityManager {
+    public static getInstance(
+        config?: EntityManagerConfig,
+        dependencies?: EntityManagerDependencies,
+    ): EntityManager {
         if (!EntityManager.instance) {
-            EntityManager.instance = new EntityManager(config);
+            EntityManager.instance = new EntityManager(config, dependencies);
         }
         return EntityManager.instance;
     }
