@@ -25,3 +25,6 @@ export type { RenderComponentData, MaterialConfig } from "@core/types/components
 
 export { PhysicsComponent } from "./PhysicsComponent";
 export type { PhysicsComponentData } from "@core/types/components/PhysicsComponent";
+
+export { ToolComponent } from "./ToolComponent";
+export type { ToolComponentData } from "@core/types/components/ToolComponent";
