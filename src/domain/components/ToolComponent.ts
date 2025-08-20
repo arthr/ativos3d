@@ -5,7 +5,7 @@ import type {
 } from "@core/types/components/ToolComponent";
 import type { ToolType, ModeType } from "@core/types";
 import { BaseComponent } from "@domain/components";
-import { DEFAULT_TOOL } from "@core/types/components/ToolComponent";
+import { DEFAULT_TOOL, MODES, TOOLS } from "@core/types/components/ToolComponent";
 
 /**
  * Componente de estado de ferramenta
@@ -47,11 +47,11 @@ export class ToolComponent extends BaseComponent implements IToolComponent {
         const errors: string[] = [...baseValidation.errors];
         const warnings: string[] = [...(baseValidation.warnings || [])];
 
-        if (typeof this.tool !== "string" || this.tool.trim() === "") {
+        if (!this.isValidTool(this.tool)) {
             errors.push("Ferramenta inválida");
         }
 
-        if (typeof this.mode !== "string" || this.mode.trim() === "") {
+        if (!this.isValidMode(this.mode)) {
             errors.push("Modo inválido");
         }
 
@@ -83,5 +83,15 @@ export class ToolComponent extends BaseComponent implements IToolComponent {
             tool: changes.tool ?? this.tool,
             mode: changes.mode ?? this.mode,
         });
+    }
+
+    /** Verifica se a ferramenta é válida */
+    private isValidTool(tool: ToolType): boolean {
+        return TOOLS.includes(tool);
+    }
+
+    /** Verifica se o modo é válido */
+    private isValidMode(mode: ModeType): boolean {
+        return MODES.includes(mode);
     }
 }

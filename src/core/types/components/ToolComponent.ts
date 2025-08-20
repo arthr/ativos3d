@@ -50,3 +50,22 @@ export const DEFAULT_TOOL: Required<ToolComponentData> = {
     tool: "view",
     mode: "view",
 };
+
+/**
+ * Ferramentas disponíveis
+ */
+export const TOOLS: ToolType[] = [
+    "view",
+    "select",
+    "place",
+    "move",
+    "delete",
+    "wall",
+    "floor",
+    "eyedropper",
+];
+
+/**
+ * Modos disponíveis
+ */
+export const MODES: ModeType[] = ["view", "build", "buy"];
