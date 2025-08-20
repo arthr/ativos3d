@@ -12,3 +12,9 @@ export type {
     DEFAULT_RENDER,
     DEFAULT_MATERIAL,
 } from "./RenderComponent";
+
+export type {
+    PhysicsComponent,
+    PhysicsComponentData,
+    DEFAULT_PHYSICS,
+} from "./PhysicsComponent";

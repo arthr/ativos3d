@@ -10,7 +10,7 @@ import type {
     ComponentInfo,
 } from "@core/types";
 import { Entity } from "@domain/entities";
-import { TransformComponent, RenderComponent } from "@domain/components";
+import { TransformComponent, RenderComponent, PhysicsComponent } from "@domain/components";
 
 /**
  * Sistema de Componentes seguindo Domain-Driven Design
@@ -229,6 +229,11 @@ export class ComponentSystem {
             {
                 type: "RenderComponent",
                 factory: (data): RenderComponent => RenderComponent.create(data),
+                validator: (component): ValidationResult => component.validate(),
+            },
+            {
+                type: "PhysicsComponent",
+                factory: (data): PhysicsComponent => PhysicsComponent.create(data),
                 validator: (component): ValidationResult => component.validate(),
             },
         ]);

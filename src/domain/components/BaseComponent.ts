@@ -62,6 +62,6 @@ export abstract class BaseComponent implements Component {
      * Verifica se dois componentes são iguais
      */
     public equals(other: BaseComponent): boolean {
-        return this.type === other.type && this.createdAt.getTime() === other.createdAt.getTime();
+        return this.type === other.type;
     }
 }

@@ -22,3 +22,6 @@ export type { TransformComponentData } from "@core/types/components/TransformCom
 
 export { RenderComponent } from "./RenderComponent";
 export type { RenderComponentData, MaterialConfig } from "@core/types/components/RenderComponent";
+
+export { PhysicsComponent } from "./PhysicsComponent";
+export type { PhysicsComponentData } from "@core/types/components/PhysicsComponent";
