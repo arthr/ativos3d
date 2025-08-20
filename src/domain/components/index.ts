@@ -20,6 +20,9 @@ export { BaseComponent } from "./BaseComponent";
 export { TransformComponent } from "./TransformComponent";
 export type { TransformComponentData } from "@core/types/components/TransformComponent";
 
+export { RenderComponent } from "./RenderComponent";
+export type { RenderComponentData, MaterialConfig } from "@core/types/components/RenderComponent";
+
 // Exporta componentes de exemplo
 export { TestComponent } from "./examples/TestComponent";
 export type { TestComponentData } from "./examples/TestComponent";

@@ -54,9 +54,9 @@ Perfeito! Vou elaborar um planejamento estruturado para reconstruir o projeto de
 - [x] Implementar TransformComponent
   - [x] Definir interface TransformComponent
   - [x] Implementar TransformComponent
-- [ ] Implementar RenderComponent
-  - [ ] Definir interface RenderComponent
-  - [ ] Implementar RenderComponent
+- [x] Implementar RenderComponent
+  - [x] Definir interface RenderComponent
+  - [x] Implementar RenderComponent
 - [ ] Implementar PhysicsComponent
   - [ ] Definir interface PhysicsComponent
   - [ ] Implementar PhysicsComponent
