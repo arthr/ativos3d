@@ -69,7 +69,7 @@ describe("EntityManager", () => {
         });
 
         it("deve respeitar limite máximo de entidades", () => {
-            // Reseta a instância para garantir estado limpo
+            // Resetar instância para testar limite máximo de entidades (motivo: singleton)
             EntityManager.resetInstance();
             const customBus = new EventBus();
             const limitedManager = EntityManager.getInstance(
@@ -253,7 +253,7 @@ describe("EntityManager", () => {
         });
 
         it("deve não limpar entidades órfãs quando autoCleanup está desabilitado", () => {
-            // Reseta a instância para garantir estado limpo
+            // Resetar instância para testar autoCleanup (motivo: singleton)
             EntityManager.resetInstance();
             const customBus = new EventBus();
             const noCleanupManager = EntityManager.getInstance(

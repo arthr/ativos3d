@@ -25,7 +25,7 @@ import { eventBus } from "@core/events/EventBus";
  * - Manter estatísticas do sistema
  */
 export class EntityManager {
-    private static instance: EntityManager;
+    private static instance: EntityManager | null = null;
     private entities: Map<EntityId, Entity> = new Map();
     private entityInfo: Map<EntityId, EntityInfo> = new Map();
     private componentSystem: ComponentSystem;
@@ -66,7 +66,10 @@ export class EntityManager {
      * Reseta a instância singleton (para testes)
      */
     public static resetInstance(): void {
-        EntityManager.instance = undefined as unknown as EntityManager;
+        if (EntityManager.instance) {
+            EntityManager.instance.clear();
+        }
+        EntityManager.instance = null;
     }
 
     /**
