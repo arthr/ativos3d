@@ -75,6 +75,7 @@ export class EventBus {
             try {
                 listener(payload);
             } catch (error) {
+                if (eventType === "error") continue;
                 // Emite evento de erro
                 this.emit("error", {
                     message: `Erro no listener do evento ${eventType}: ${error}`,

@@ -199,6 +199,21 @@ describe("EventBus", () => {
             });
         });
 
+        it("não deve reemitir erro quando o listener de erro lança exceção", () => {
+            const failingErrorListener = vi.fn().mockImplementation(() => {
+                throw new Error("Erro no listener de erro");
+            });
+            const safeListener = vi.fn();
+            const payload = { message: "Falha", code: "TEST" };
+
+            eventBus.on("error", failingErrorListener);
+            eventBus.on("error", safeListener);
+
+            expect(() => eventBus.emit("error", payload)).not.toThrow();
+            expect(failingErrorListener).toHaveBeenCalledTimes(1);
+            expect(safeListener).toHaveBeenCalledWith(payload);
+        });
+
         it("deve emitir eventos com delay usando emitAsync", () => {
             const listener = vi.fn();
             const payload = {
