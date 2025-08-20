@@ -8,9 +8,9 @@ import type { Component, ValidationResult } from "@core/types";
 export abstract class BaseComponent implements Component {
     public readonly type: string;
     public readonly createdAt: Date;
-    public readonly metadata: Record<string, any>;
+    public readonly metadata: Record<string, unknown>;
 
-    constructor(type: string, metadata: Record<string, any> = {}) {
+    constructor(type: string, metadata: Record<string, unknown> = {}) {
         this.type = type;
         this.createdAt = new Date();
         this.metadata = {

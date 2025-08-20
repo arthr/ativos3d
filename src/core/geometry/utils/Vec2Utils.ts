@@ -41,8 +41,8 @@ export class Vec2Utils {
             vec !== null &&
             "x" in vec &&
             "y" in vec &&
-            typeof (vec as any).x === "number" &&
-            typeof (vec as any).y === "number"
+            typeof (vec as { x: number }).x === "number" &&
+            typeof (vec as { y: number }).y === "number"
         );
     }
 

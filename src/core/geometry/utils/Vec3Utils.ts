@@ -42,9 +42,9 @@ export class Vec3Utils {
             "x" in vec &&
             "y" in vec &&
             "z" in vec &&
-            typeof (vec as any).x === "number" &&
-            typeof (vec as any).y === "number" &&
-            typeof (vec as any).z === "number"
+            typeof (vec as { x: number }).x === "number" &&
+            typeof (vec as { y: number }).y === "number" &&
+            typeof (vec as { z: number }).z === "number"
         );
     }
 

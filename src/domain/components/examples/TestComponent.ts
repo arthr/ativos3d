@@ -14,7 +14,7 @@ export class TestComponent extends BaseComponent {
         value: string,
         position: Vec3,
         enabled: boolean = true,
-        metadata: Record<string, any> = {},
+        metadata: Record<string, unknown> = {},
     ) {
         super("test", metadata);
         this.value = value;
@@ -100,5 +100,5 @@ export interface TestComponentData extends BaseComponentData {
     value: string;
     position: Vec3;
     enabled?: boolean;
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
 }

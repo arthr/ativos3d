@@ -13,7 +13,7 @@ export class BatchCommandFactory {
             commands,
             description,
             timestamp: Date.now(),
-            execute: () => {
+            execute: (): boolean => {
                 for (const command of commands) {
                     if (!command.execute()) {
                         return false;
@@ -21,7 +21,7 @@ export class BatchCommandFactory {
                 }
                 return true;
             },
-            undo: () => {
+            undo: (): void => {
                 // Desfaz na ordem reversa
                 for (let i = commands.length - 1; i >= 0; i--) {
                     commands[i]?.undo();

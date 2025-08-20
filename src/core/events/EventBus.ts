@@ -36,7 +36,7 @@ export class EventBus {
         eventType: K,
         listener: EventListener<SystemEventMap[K]>,
     ): Unsubscribe {
-        const wrappedListener = (payload: SystemEventMap[K]) => {
+        const wrappedListener = (payload: SystemEventMap[K]): void => {
             listener(payload);
             unsubscribe();
         };
@@ -75,7 +75,6 @@ export class EventBus {
             try {
                 listener(payload);
             } catch (error) {
-                console.error(`Erro no listener do evento ${eventType}:`, error);
                 // Emite evento de erro
                 this.emit("error", {
                     message: `Erro no listener do evento ${eventType}: ${error}`,
