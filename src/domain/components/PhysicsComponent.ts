@@ -71,7 +71,10 @@ export class PhysicsComponent extends BaseComponent implements IPhysicsComponent
             this.velocity,
             Vec3Operations.multiply(this.acceleration, deltaTime),
         );
-        return this.withChanges({ velocity: newVelocity, acceleration: Vec3Factory.create(0, 0, 0) });
+        return this.withChanges({
+            velocity: newVelocity,
+            acceleration: Vec3Factory.create(0, 0, 0),
+        });
     }
 
     /**
@@ -101,11 +104,11 @@ export class PhysicsComponent extends BaseComponent implements IPhysicsComponent
             errors.push("Massa deve ser positiva e finita");
         }
 
-        if (!this.isValidVec3(this.velocity)) {
+        if (!Vec3Operations.isValid(this.velocity)) {
             errors.push("Velocidade inválida");
         }
 
-        if (!this.isValidVec3(this.acceleration)) {
+        if (!Vec3Operations.isValid(this.acceleration)) {
             errors.push("Aceleração inválida");
         }
 
@@ -130,8 +133,8 @@ export class PhysicsComponent extends BaseComponent implements IPhysicsComponent
         return (
             super.equals(other) &&
             this.mass === other.mass &&
-            this.areVec3Equal(this.velocity, other.velocity) &&
-            this.areVec3Equal(this.acceleration, other.acceleration) &&
+            Vec3Operations.equals(this.velocity, other.velocity) &&
+            Vec3Operations.equals(this.acceleration, other.acceleration) &&
             this.useGravity === other.useGravity
         );
     }
@@ -160,29 +163,5 @@ export class PhysicsComponent extends BaseComponent implements IPhysicsComponent
      */
     public static create(data: PhysicsComponentData = {}): PhysicsComponent {
         return new PhysicsComponent(data);
-    }
-
-    /**
-     * Verifica se dois Vec3 são iguais
-     */
-    private areVec3Equal(a: Vec3, b: Vec3): boolean {
-        return a.x === b.x && a.y === b.y && a.z === b.z;
-    }
-
-    /**
-     * Verifica se um Vec3 é válido
-     */
-    private isValidVec3(vec: Vec3): boolean {
-        return (
-            typeof vec.x === "number" &&
-            typeof vec.y === "number" &&
-            typeof vec.z === "number" &&
-            !isNaN(vec.x) &&
-            !isNaN(vec.y) &&
-            !isNaN(vec.z) &&
-            isFinite(vec.x) &&
-            isFinite(vec.y) &&
-            isFinite(vec.z)
-        );
     }
 }

@@ -5,6 +5,23 @@ import type { Vec3 } from "@core/geometry";
  */
 export class Vec3Operations {
     /**
+     * Verifica se um Vec3 é válido
+     */
+    static isValid(vec: Vec3): boolean {
+        return (
+            typeof vec.x === "number" &&
+            typeof vec.y === "number" &&
+            typeof vec.z === "number" &&
+            !isNaN(vec.x) &&
+            !isNaN(vec.y) &&
+            !isNaN(vec.z) &&
+            isFinite(vec.x) &&
+            isFinite(vec.y) &&
+            isFinite(vec.z)
+        );
+    }
+
+    /**
      * Adiciona dois vetores
      */
     static add(a: Vec3, b: Vec3): Vec3 {
