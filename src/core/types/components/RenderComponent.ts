@@ -139,8 +139,8 @@ export interface MaterialConfig {
  * Dados para criar um RenderComponent
  */
 export interface RenderComponentData {
-    modelUrl?: string;
-    textureUrl?: string;
+    modelUrl?: string | undefined;
+    textureUrl?: string | undefined;
     color?: string;
     visible?: boolean;
     lodLevel?: number;

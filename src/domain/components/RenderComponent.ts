@@ -234,8 +234,12 @@ export class RenderComponent extends BaseComponent implements IRenderComponent {
      */
     private withChanges(changes: Partial<RenderComponentData>): RenderComponent {
         const data: RenderComponentData = {
-            ...this,
-            ...changes,
+            modelUrl: changes.modelUrl ?? this.modelUrl,
+            textureUrl: changes.textureUrl ?? this.textureUrl,
+            color: changes.color ?? this.color,
+            visible: changes.visible ?? this.visible,
+            lodLevel: changes.lodLevel ?? this.lodLevel,
+            material: changes.material ?? this.material,
         };
 
         return new RenderComponent(data);
