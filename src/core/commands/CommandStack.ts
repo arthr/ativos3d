@@ -97,6 +97,7 @@ export class CommandStack implements ICommandStack {
 
             return false;
         } catch (error) {
+            // TODO: Handle error
             console.error("Erro ao executar comando:", error);
             return false;
         }
@@ -116,6 +117,7 @@ export class CommandStack implements ICommandStack {
             this.redoStack.push(command);
             return true;
         } catch (error) {
+            // TODO: Handle error
             console.error("Erro ao desfazer comando:", error);
             return false;
         }
@@ -142,6 +144,7 @@ export class CommandStack implements ICommandStack {
                 return false;
             }
         } catch (error) {
+            // TODO: Handle error
             console.error("Erro ao refazer comando:", error);
             return false;
         }
