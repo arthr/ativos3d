@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import { ComponentSystem, TestComponent } from "@domain/components";
+import { ComponentSystem, TransformComponent, RenderComponent } from "@domain/components";
 import { Entity } from "@domain/entities";
 import { Vec3Factory } from "@core/geometry";
 
@@ -8,7 +8,7 @@ describe("ComponentSystem", () => {
 
     beforeEach(() => {
         // Reset singleton instance
-        (ComponentSystem as any).instance = undefined;
+        ComponentSystem.resetInstance();
         componentSystem = ComponentSystem.getInstance();
     });
 
@@ -23,9 +23,7 @@ describe("ComponentSystem", () => {
 
     describe("Registro de Factories", () => {
         it("deve registrar uma factory de componente", () => {
-            const factory = vi
-                .fn()
-                .mockReturnValue(new TestComponent("test", Vec3Factory.create(0, 0, 0)));
+            const factory = vi.fn().mockReturnValue(new TransformComponent());
 
             componentSystem.registerComponentFactory("test", factory);
 
@@ -33,12 +31,8 @@ describe("ComponentSystem", () => {
         });
 
         it("deve registrar múltiplas factories", () => {
-            const factory1 = vi
-                .fn()
-                .mockReturnValue(new TestComponent("test1", Vec3Factory.create(0, 0, 0)));
-            const factory2 = vi
-                .fn()
-                .mockReturnValue(new TestComponent("test2", Vec3Factory.create(1, 1, 1)));
+            const factory1 = vi.fn().mockReturnValue(new TransformComponent());
+            const factory2 = vi.fn().mockReturnValue(new RenderComponent());
 
             componentSystem.registerComponentFactory("test1", factory1);
             componentSystem.registerComponentFactory("test2", factory2);
@@ -55,9 +49,7 @@ describe("ComponentSystem", () => {
             componentSystem.registerComponentValidator("test", validator);
 
             // Primeiro registra uma factory para que o componente seja reconhecido
-            const factory = vi
-                .fn()
-                .mockReturnValue(new TestComponent("test", Vec3Factory.create(0, 0, 0)));
+            const factory = vi.fn().mockReturnValue(new TransformComponent());
             componentSystem.registerComponentFactory("test", factory);
 
             const info = componentSystem.getComponentInfo("test");
@@ -65,9 +57,7 @@ describe("ComponentSystem", () => {
         });
 
         it("deve registrar factory e validador para o mesmo tipo", () => {
-            const factory = vi
-                .fn()
-                .mockReturnValue(new TestComponent("test", Vec3Factory.create(0, 0, 0)));
+            const factory = vi.fn().mockReturnValue(new TransformComponent());
             const validator = vi.fn().mockReturnValue({ isValid: true, errors: [] });
 
             componentSystem.registerComponentFactory("test", factory);
@@ -81,21 +71,18 @@ describe("ComponentSystem", () => {
 
     describe("Criação de Componentes", () => {
         it("deve criar um componente usando factory registrada", () => {
-            const testComponent = new TestComponent("test", Vec3Factory.create(0, 0, 0));
-            const factory = vi.fn().mockReturnValue(testComponent);
+            const transformComponent = new TransformComponent();
+            const factory = vi.fn().mockReturnValue(transformComponent);
 
-            componentSystem.registerComponentFactory("test", factory);
+            componentSystem.registerComponentFactory("TransformComponent", factory);
 
-            const createdComponent = componentSystem.createComponent<TestComponent>("test", {
-                value: "test",
-                position: Vec3Factory.create(0, 0, 0),
-            });
+            const createdComponent = componentSystem.createComponent<TransformComponent>(
+                "TransformComponent",
+                {},
+            );
 
-            expect(createdComponent).toBe(testComponent);
-            expect(factory).toHaveBeenCalledWith({
-                value: "test",
-                position: Vec3Factory.create(0, 0, 0),
-            });
+            expect(createdComponent).toBe(transformComponent);
+            expect(factory).toHaveBeenCalledWith({});
         });
 
         it("deve lançar erro ao criar componente sem factory", () => {
@@ -107,10 +94,10 @@ describe("ComponentSystem", () => {
 
     describe("Validação de Componentes", () => {
         it("deve validar componente usando validador registrado", () => {
-            const testComponent = new TestComponent("test", Vec3Factory.create(0, 0, 0));
+            const testComponent = new RenderComponent();
             const validator = vi.fn().mockReturnValue({ isValid: true, errors: [] });
 
-            componentSystem.registerComponentValidator("test", validator);
+            componentSystem.registerComponentValidator("RenderComponent", validator);
 
             const result = componentSystem.validateComponent(testComponent);
 
@@ -119,7 +106,7 @@ describe("ComponentSystem", () => {
         });
 
         it("deve retornar válido para componente sem validador", () => {
-            const testComponent = new TestComponent("test", Vec3Factory.create(0, 0, 0));
+            const testComponent = new TransformComponent();
 
             const result = componentSystem.validateComponent(testComponent);
 
@@ -128,8 +115,8 @@ describe("ComponentSystem", () => {
         });
 
         it("deve validar múltiplos componentes", () => {
-            const component1 = new TestComponent("test1", Vec3Factory.create(0, 0, 0));
-            const component2 = new TestComponent("test2", Vec3Factory.create(1, 1, 1));
+            const component1 = new TransformComponent();
+            const component2 = new RenderComponent();
 
             const results = componentSystem.validateComponents([component1, component2]);
 
@@ -141,70 +128,74 @@ describe("ComponentSystem", () => {
 
     describe("Gerenciamento de Entidades", () => {
         it("deve criar entidade com componentes", () => {
-            const testComponent = new TestComponent("test", Vec3Factory.create(0, 0, 0));
-            const factory = vi.fn().mockReturnValue(testComponent);
+            const transformComponent = new TransformComponent();
+            const factory = vi.fn().mockReturnValue(transformComponent);
 
-            componentSystem.registerComponentFactory("test", factory);
+            componentSystem.registerComponentFactory("TransformComponent", factory);
 
             const entity = componentSystem.createEntityWithComponents("test-entity", [
-                { type: "test", data: { value: "test", position: Vec3Factory.create(0, 0, 0) } },
+                { type: "TransformComponent", data: {} },
             ]);
 
             expect(entity.id).toBe("test-entity");
-            expect(entity.hasComponent("test")).toBe(true);
+            expect(entity.hasComponent("TransformComponent")).toBe(true);
         });
 
         it("deve adicionar componente a entidade", () => {
-            const testComponent = new TestComponent("test", Vec3Factory.create(0, 0, 0));
-            const factory = vi.fn().mockReturnValue(testComponent);
+            const transformComponent = new TransformComponent();
+            const factory = vi.fn().mockReturnValue(transformComponent);
             const entity = Entity.create("test-entity");
 
-            componentSystem.registerComponentFactory("test", factory);
+            componentSystem.registerComponentFactory("TransformComponent", factory);
 
-            const newEntity = componentSystem.addComponentToEntity(entity, "test", {
-                value: "test",
-                position: Vec3Factory.create(0, 0, 0),
-            });
+            const newEntity = componentSystem.addComponentToEntity(
+                entity,
+                "TransformComponent",
+                {},
+            );
 
             expect(newEntity).not.toBe(entity);
-            expect(newEntity.hasComponent("test")).toBe(true);
+            expect(newEntity.hasComponent("TransformComponent")).toBe(true);
         });
 
         it("deve remover componente de entidade", () => {
-            const entity = Entity.create("test-entity").addComponent(
-                new TestComponent("test", Vec3Factory.create(0, 0, 0)),
+            const entity = Entity.create("test-entity").addComponent(new TransformComponent());
+
+            const newEntity = componentSystem.removeComponentFromEntity(
+                entity,
+                "TransformComponent",
             );
 
-            const newEntity = componentSystem.removeComponentFromEntity(entity, "test");
-
             expect(newEntity).not.toBe(entity);
-            expect(newEntity.hasComponent("test")).toBe(false);
+            expect(newEntity.hasComponent("TransformComponent")).toBe(false);
         });
 
         it("deve obter componente de entidade com validação", () => {
-            const testComponent = new TestComponent("test", Vec3Factory.create(0, 0, 0));
-            const entity = Entity.create("test-entity").addComponent(testComponent);
+            const transformComponent = new TransformComponent();
+            const entity = Entity.create("test-entity").addComponent(transformComponent);
             const validator = vi.fn().mockReturnValue({ isValid: true, errors: [] });
 
-            componentSystem.registerComponentValidator("test", validator);
+            componentSystem.registerComponentValidator("TransformComponent", validator);
 
-            const retrievedComponent = componentSystem.getComponentFromEntity<TestComponent>(
+            const retrievedComponent = componentSystem.getComponentFromEntity<TransformComponent>(
                 entity,
-                "test",
+                "TransformComponent",
             );
 
-            expect(retrievedComponent).toBe(testComponent);
-            expect(validator).toHaveBeenCalledWith(testComponent);
+            expect(retrievedComponent).toBe(transformComponent);
+            expect(validator).toHaveBeenCalledWith(transformComponent);
         });
 
         it("deve validar entidade completa", () => {
             // Criar componentes com tipos diferentes para que ambos sejam mantidos
-            const component1 = new TestComponent("test1", Vec3Factory.create(0, 0, 0));
-            const component2 = new TestComponent("test2", Vec3Factory.create(1, 1, 1));
-
-            // Modificar o tipo dos componentes para que sejam únicos
-            (component1 as any).type = "test1";
-            (component2 as any).type = "test2";
+            const component1 = new TransformComponent({
+                position: Vec3Factory.create(0, 0, 0),
+                rotation: Vec3Factory.create(0, 0, 0),
+                scale: Vec3Factory.create(1, 1, 1),
+            });
+            const component2 = new RenderComponent({
+                color: "#000000",
+            });
 
             const entity = Entity.create("test-entity")
                 .addComponent(component1)
@@ -220,9 +211,7 @@ describe("ComponentSystem", () => {
 
     describe("Informações do Sistema", () => {
         it("deve verificar se tipo de componente é suportado", () => {
-            const factory = vi
-                .fn()
-                .mockReturnValue(new TestComponent("test", Vec3Factory.create(0, 0, 0)));
+            const factory = vi.fn().mockReturnValue(new TransformComponent());
 
             expect(componentSystem.isComponentTypeSupported("test")).toBe(false);
 
@@ -232,9 +221,7 @@ describe("ComponentSystem", () => {
         });
 
         it("deve obter tipos de componentes suportados", () => {
-            const factory = vi
-                .fn()
-                .mockReturnValue(new TestComponent("test", Vec3Factory.create(0, 0, 0)));
+            const factory = vi.fn().mockReturnValue(new TransformComponent());
 
             componentSystem.registerComponentFactory("test", factory);
 
@@ -244,9 +231,7 @@ describe("ComponentSystem", () => {
         });
 
         it("deve obter informações de componente", () => {
-            const factory = vi
-                .fn()
-                .mockReturnValue(new TestComponent("test", Vec3Factory.create(0, 0, 0)));
+            const factory = vi.fn().mockReturnValue(new TransformComponent());
             const validator = vi.fn().mockReturnValue({ isValid: true, errors: [] });
 
             componentSystem.registerComponentFactory("test", factory);
@@ -273,18 +258,20 @@ describe("ComponentSystem", () => {
 
     describe("Casos de Borda", () => {
         it("deve lidar com validação de componente inválido", () => {
-            const testComponent = new TestComponent("", Vec3Factory.create(0, 0, 0)); // Valor vazio
+            const testComponent = new RenderComponent({
+                color: "#000000",
+            });
             const validator = vi.fn().mockReturnValue({
                 isValid: false,
-                errors: ["Valor é obrigatório"],
+                errors: ["Nome do componente é obrigatório"],
             });
 
-            componentSystem.registerComponentValidator("test", validator);
+            componentSystem.registerComponentValidator("RenderComponent", validator);
 
             const result = componentSystem.validateComponent(testComponent);
 
             expect(result.isValid).toBe(false);
-            expect(result.errors).toContain("Valor é obrigatório");
+            expect(result.errors).toContain("Nome do componente é obrigatório");
         });
 
         it("deve lidar com entidade sem componentes", () => {
@@ -298,14 +285,14 @@ describe("ComponentSystem", () => {
         });
 
         it("deve lidar com warnings na validação", () => {
-            const testComponent = new TestComponent("test", Vec3Factory.create(0, 0, 0));
+            const testComponent = new TransformComponent();
             const validator = vi.fn().mockReturnValue({
                 isValid: true,
                 errors: [],
                 warnings: ["Componente com configuração não recomendada"],
             });
 
-            componentSystem.registerComponentValidator("test", validator);
+            componentSystem.registerComponentValidator("TransformComponent", validator);
 
             const result = componentSystem.validateComponent(testComponent);
 

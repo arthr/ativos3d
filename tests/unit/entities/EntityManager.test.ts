@@ -1,16 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { EntityManager } from "@domain/entities";
 import { EventBus } from "@core/events/EventBus";
-import { ComponentSystem } from "@domain/components";
-import type { Component } from "@core/types";
-
-class TestComponent implements Component {
-    constructor(public readonly type: string = "test") {}
-}
-
-class OtherComponent implements Component {
-    constructor(public readonly type: string = "other") {}
-}
+import { ComponentSystem, RenderComponent, TransformComponent } from "@domain/components";
 
 describe("EntityManager", () => {
     let entityManager: EntityManager;
@@ -108,7 +99,7 @@ describe("EntityManager", () => {
     describe("Gerenciamento de Componentes", () => {
         it("deve adicionar componente e atualizar estado", () => {
             const entity = entityManager.createEntity({ id: "comp1" });
-            const component = new TestComponent();
+            const component = new RenderComponent();
             const emitSpy = vi.spyOn(mockEventBus, "emit");
 
             entityManager.addComponent(entity.id, component);
@@ -128,7 +119,7 @@ describe("EntityManager", () => {
 
         it("deve remover componente e atualizar estado", () => {
             const entity = entityManager.createEntity({ id: "comp2" });
-            const component = new TestComponent();
+            const component = new RenderComponent();
             entityManager.addComponent(entity.id, component);
             const emitSpy = vi.spyOn(mockEventBus, "emit");
 
@@ -152,14 +143,14 @@ describe("EntityManager", () => {
         beforeEach(() => {
             // Cria entidades de teste
             const e1 = entityManager.createEntity({ id: "entity1" });
-            entityManager.addComponent(e1.id, new TestComponent());
-            entityManager.addComponent(e1.id, new OtherComponent());
+            entityManager.addComponent(e1.id, new RenderComponent());
+            entityManager.addComponent(e1.id, new TransformComponent());
 
             const e2 = entityManager.createEntity({ id: "entity2" });
-            entityManager.addComponent(e2.id, new TestComponent());
+            entityManager.addComponent(e2.id, new RenderComponent());
 
             const e3 = entityManager.createEntity({ id: "entity3" });
-            entityManager.addComponent(e3.id, new OtherComponent());
+            entityManager.addComponent(e3.id, new TransformComponent());
         });
 
         it("deve retornar todas as entidades", () => {
@@ -183,20 +174,24 @@ describe("EntityManager", () => {
         });
 
         it("deve filtra por tipos de componentes", () => {
-            const result = entityManager.queryEntities({ componentTypes: ["test"] });
+            const result = entityManager.queryEntities({ componentTypes: ["RenderComponent"] });
             expect(result.entities.map((e) => e.id)).toContain("entity1");
             expect(result.entities.map((e) => e.id)).toContain("entity2");
             expect(result.count).toBe(2);
         });
 
         it("deve filtrar por múltiplos tipos de componentes", () => {
-            const result = entityManager.queryEntities({ componentTypes: ["test", "other"] });
+            const result = entityManager.queryEntities({
+                componentTypes: ["RenderComponent", "TransformComponent"],
+            });
             expect(result.entities).toHaveLength(1);
             expect(result.entities[0]?.id).toBe("entity1");
         });
 
         it("deve excluir tipos de componentes específicos", () => {
-            const result = entityManager.queryEntities({ excludeComponentTypes: ["other"] });
+            const result = entityManager.queryEntities({
+                excludeComponentTypes: ["TransformComponent"],
+            });
             expect(result.entities).toHaveLength(1);
             expect(result.entities[0]?.id).toBe("entity2");
         });
@@ -302,7 +297,7 @@ describe("EntityManager", () => {
     describe("Eventos", () => {
         it("emite componentAdded e entityUpdated ao adicionar componente", () => {
             const entity = entityManager.createEntity({ id: "e1" });
-            const component = new TestComponent();
+            const component = new RenderComponent();
             const addedSpy = vi.fn();
             const updatedSpy = vi.fn();
             const unsubAdded = mockEventBus.on("componentAdded", addedSpy);
@@ -319,7 +314,7 @@ describe("EntityManager", () => {
 
         it("emite componentRemoved e entityUpdated ao remover componente", () => {
             const entity = entityManager.createEntity({ id: "e2" });
-            const component = new TestComponent();
+            const component = new RenderComponent();
             entityManager.addComponent(entity.id, component);
             const removedSpy = vi.fn();
             const updatedSpy = vi.fn();

@@ -1,33 +1,17 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { Entity } from "@domain/entities";
+import { TransformComponent, RenderComponent } from "@domain/components";
 import type { Component } from "@core/types";
-
-// Componentes de teste
-class TestComponent implements Component {
-    constructor(
-        public readonly type: string,
-        public readonly value: string,
-    ) {}
-}
-
-class TransformComponent implements Component {
-    constructor(
-        public readonly type: string = "transform",
-        public readonly x: number = 0,
-        public readonly y: number = 0,
-        public readonly z: number = 0,
-    ) {}
-}
 
 describe("Entity", () => {
     let entity: Entity;
-    let testComponent: TestComponent;
+    let renderComponent: RenderComponent;
     let transformComponent: TransformComponent;
 
     beforeEach(() => {
         entity = Entity.create("test-entity-1");
-        testComponent = new TestComponent("test", "value");
-        transformComponent = new TransformComponent("transform", 10, 20, 30);
+        renderComponent = new RenderComponent();
+        transformComponent = new TransformComponent();
     });
 
     describe("Criação", () => {
@@ -40,18 +24,18 @@ describe("Entity", () => {
         });
 
         it("deve criar uma entidade com componentes iniciais", () => {
-            const components = [testComponent, transformComponent];
+            const components = [renderComponent, transformComponent];
             const newEntity = Entity.createWithComponents("test-entity-3", components);
 
             expect(newEntity.id).toBe("test-entity-3");
             expect(newEntity.components.size).toBe(2);
-            expect(newEntity.hasComponent("test")).toBe(true);
-            expect(newEntity.hasComponent("transform")).toBe(true);
+            expect(newEntity.hasComponent("RenderComponent")).toBe(true);
+            expect(newEntity.hasComponent("TransformComponent")).toBe(true);
         });
 
         it("deve criar uma entidade com construtor", () => {
             const componentsMap = new Map();
-            componentsMap.set("test", testComponent);
+            componentsMap.set("test", renderComponent);
             const newEntity = new Entity("test-entity-4", componentsMap);
 
             expect(newEntity.id).toBe("test-entity-4");
@@ -61,32 +45,32 @@ describe("Entity", () => {
 
     describe("Gerenciamento de Componentes", () => {
         it("deve adicionar um componente", () => {
-            const newEntity = entity.addComponent(testComponent);
+            const newEntity = entity.addComponent(renderComponent);
 
             expect(newEntity).not.toBe(entity); // Imutabilidade
-            expect(newEntity.hasComponent("test")).toBe(true);
-            expect(entity.hasComponent("test")).toBe(false); // Original não modificado
+            expect(newEntity.hasComponent("RenderComponent")).toBe(true);
+            expect(entity.hasComponent("RenderComponent")).toBe(false); // Original não modificado
         });
 
         it("deve remover um componente", () => {
-            const entityWithComponent = entity.addComponent(testComponent);
-            const entityWithoutComponent = entityWithComponent.removeComponent("test");
+            const entityWithComponent = entity.addComponent(renderComponent);
+            const entityWithoutComponent = entityWithComponent.removeComponent("RenderComponent");
 
             expect(entityWithoutComponent).not.toBe(entityWithComponent);
-            expect(entityWithoutComponent.hasComponent("test")).toBe(false);
-            expect(entityWithComponent.hasComponent("test")).toBe(true); // Original não modificado
+            expect(entityWithoutComponent.hasComponent("RenderComponent")).toBe(false);
+            expect(entityWithComponent.hasComponent("RenderComponent")).toBe(true); // Original não modificado
         });
 
         it("deve obter um componente específico", () => {
-            const entityWithComponent = entity.addComponent(testComponent);
-            const retrievedComponent = entityWithComponent.getComponent<TestComponent>("test");
+            const entityWithComponent = entity.addComponent(renderComponent);
+            const retrievedComponent =
+                entityWithComponent.getComponent<RenderComponent>("RenderComponent");
 
-            expect(retrievedComponent).toBe(testComponent);
-            expect(retrievedComponent?.value).toBe("value");
+            expect(retrievedComponent).toBe(renderComponent);
         });
 
         it("deve retornar undefined para componente inexistente", () => {
-            const retrievedComponent = entity.getComponent<TestComponent>("inexistent");
+            const retrievedComponent = entity.getComponent<RenderComponent>("inexistent");
 
             expect(retrievedComponent).toBeUndefined();
         });
@@ -94,30 +78,30 @@ describe("Entity", () => {
         it("deve verificar se possui um componente", () => {
             expect(entity.hasComponent("test")).toBe(false);
 
-            const entityWithComponent = entity.addComponent(testComponent);
-            expect(entityWithComponent.hasComponent("test")).toBe(true);
+            const entityWithComponent = entity.addComponent(renderComponent);
+            expect(entityWithComponent.hasComponent("RenderComponent")).toBe(true);
         });
 
         it("deve obter todos os tipos de componentes", () => {
             const entityWithComponents = entity
-                .addComponent(testComponent)
+                .addComponent(renderComponent)
                 .addComponent(transformComponent);
 
             const componentTypes = entityWithComponents.getComponentTypes();
 
-            expect(componentTypes).toContain("test");
-            expect(componentTypes).toContain("transform");
+            expect(componentTypes).toContain("RenderComponent");
+            expect(componentTypes).toContain("TransformComponent");
             expect(componentTypes.length).toBe(2);
         });
 
         it("deve obter todos os componentes", () => {
             const entityWithComponents = entity
-                .addComponent(testComponent)
+                .addComponent(renderComponent)
                 .addComponent(transformComponent);
 
             const allComponents = entityWithComponents.getAllComponents();
 
-            expect(allComponents).toContain(testComponent);
+            expect(allComponents).toContain(renderComponent);
             expect(allComponents).toContain(transformComponent);
             expect(allComponents.length).toBe(2);
         });
@@ -126,38 +110,50 @@ describe("Entity", () => {
     describe("Verificações de Componentes", () => {
         it("deve verificar se possui todos os componentes especificados", () => {
             const entityWithComponents = entity
-                .addComponent(testComponent)
+                .addComponent(renderComponent)
                 .addComponent(transformComponent);
 
-            expect(entityWithComponents.hasAllComponents(["test", "transform"])).toBe(true);
-            expect(entityWithComponents.hasAllComponents(["test", "inexistent"])).toBe(false);
+            expect(
+                entityWithComponents.hasAllComponents(["RenderComponent", "TransformComponent"]),
+            ).toBe(true);
+            expect(entityWithComponents.hasAllComponents(["RenderComponent", "inexistent"])).toBe(
+                false,
+            );
         });
 
         it("deve verificar se possui pelo menos um dos componentes especificados", () => {
-            const entityWithComponent = entity.addComponent(testComponent);
+            const entityWithComponent = entity.addComponent(renderComponent);
 
-            expect(entityWithComponent.hasAnyComponent(["test", "transform"])).toBe(true);
+            expect(
+                entityWithComponent.hasAnyComponent(["RenderComponent", "TransformComponent"]),
+            ).toBe(true);
             expect(entityWithComponent.hasAnyComponent(["inexistent1", "inexistent2"])).toBe(false);
         });
 
         it("deve obter múltiplos componentes", () => {
             const entityWithComponents = entity
-                .addComponent(testComponent)
+                .addComponent(renderComponent)
                 .addComponent(transformComponent);
 
-            const components = entityWithComponents.getComponents<Component>(["test", "transform"]);
+            const components = entityWithComponents.getComponents<Component>([
+                "RenderComponent",
+                "TransformComponent",
+            ]);
 
-            expect(components).toContain(testComponent);
+            expect(components).toContain(renderComponent);
             expect(components).toContain(transformComponent);
             expect(components.length).toBe(2);
         });
 
         it("deve filtrar componentes inexistentes ao obter múltiplos", () => {
-            const entityWithComponent = entity.addComponent(testComponent);
+            const entityWithComponent = entity.addComponent(renderComponent);
 
-            const components = entityWithComponent.getComponents<Component>(["test", "inexistent"]);
+            const components = entityWithComponent.getComponents<Component>([
+                "RenderComponent",
+                "inexistent",
+            ]);
 
-            expect(components).toContain(testComponent);
+            expect(components).toContain(renderComponent);
             expect(components.length).toBe(1);
         });
     });
@@ -165,7 +161,7 @@ describe("Entity", () => {
     describe("Imutabilidade", () => {
         it("deve manter imutabilidade ao adicionar componentes", () => {
             const originalEntity = entity;
-            const entityWithComponent = entity.addComponent(testComponent);
+            const entityWithComponent = entity.addComponent(renderComponent);
 
             expect(entityWithComponent).not.toBe(originalEntity);
             expect(originalEntity.components.size).toBe(0);
@@ -173,8 +169,8 @@ describe("Entity", () => {
         });
 
         it("deve manter imutabilidade ao remover componentes", () => {
-            const entityWithComponent = entity.addComponent(testComponent);
-            const entityWithoutComponent = entityWithComponent.removeComponent("test");
+            const entityWithComponent = entity.addComponent(renderComponent);
+            const entityWithoutComponent = entityWithComponent.removeComponent("RenderComponent");
 
             expect(entityWithoutComponent).not.toBe(entityWithComponent);
             expect(entityWithComponent.components.size).toBe(1);
@@ -182,41 +178,41 @@ describe("Entity", () => {
         });
 
         it("deve criar cópia profunda dos componentes", () => {
-            const entityWithComponent = entity.addComponent(testComponent);
+            const entityWithComponent = entity.addComponent(renderComponent);
             const clonedEntity = entityWithComponent.clone();
 
             expect(clonedEntity).not.toBe(entityWithComponent);
             expect(clonedEntity.components).not.toBe(entityWithComponent.components);
-            expect(clonedEntity.hasComponent("test")).toBe(true);
+            expect(clonedEntity.hasComponent("RenderComponent")).toBe(true);
         });
     });
 
     describe("Comparação", () => {
         it("deve verificar igualdade entre entidades", () => {
-            const entity1 = Entity.createWithComponents("test-id", [testComponent]);
-            const entity2 = Entity.createWithComponents("test-id", [testComponent]);
+            const entity1 = Entity.createWithComponents("test-id", [renderComponent]);
+            const entity2 = Entity.createWithComponents("test-id", [renderComponent]);
 
             expect(entity1.equals(entity2)).toBe(true);
         });
 
         it("deve detectar diferenças de ID", () => {
-            const entity1 = Entity.createWithComponents("id-1", [testComponent]);
-            const entity2 = Entity.createWithComponents("id-2", [testComponent]);
+            const entity1 = Entity.createWithComponents("id-1", [renderComponent]);
+            const entity2 = Entity.createWithComponents("id-2", [renderComponent]);
 
             expect(entity1.equals(entity2)).toBe(false);
         });
 
         it("deve detectar diferenças de componentes", () => {
-            const entity1 = Entity.createWithComponents("test-id", [testComponent]);
+            const entity1 = Entity.createWithComponents("test-id", [renderComponent]);
             const entity2 = Entity.createWithComponents("test-id", [transformComponent]);
 
             expect(entity1.equals(entity2)).toBe(false);
         });
 
         it("deve detectar diferenças no número de componentes", () => {
-            const entity1 = Entity.createWithComponents("test-id", [testComponent]);
+            const entity1 = Entity.createWithComponents("test-id", [renderComponent]);
             const entity2 = Entity.createWithComponents("test-id", [
-                testComponent,
+                renderComponent,
                 transformComponent,
             ]);
 
@@ -227,12 +223,14 @@ describe("Entity", () => {
     describe("Utilitários", () => {
         it("deve converter para string", () => {
             const entityWithComponents = entity
-                .addComponent(testComponent)
+                .addComponent(renderComponent)
                 .addComponent(transformComponent);
 
             const stringRepresentation = entityWithComponents.toString();
 
-            expect(stringRepresentation).toBe("Entity(test-entity-1)[test, transform]");
+            expect(stringRepresentation).toBe(
+                "Entity(test-entity-1)[RenderComponent, TransformComponent]",
+            );
         });
 
         it("deve converter entidade vazia para string", () => {
@@ -243,15 +241,15 @@ describe("Entity", () => {
 
         it("deve clonar entidade corretamente", () => {
             const entityWithComponents = entity
-                .addComponent(testComponent)
+                .addComponent(renderComponent)
                 .addComponent(transformComponent);
 
             const clonedEntity = entityWithComponents.clone();
 
             expect(clonedEntity).not.toBe(entityWithComponents);
             expect(clonedEntity.id).toBe(entityWithComponents.id);
-            expect(clonedEntity.hasComponent("test")).toBe(true);
-            expect(clonedEntity.hasComponent("transform")).toBe(true);
+            expect(clonedEntity.hasComponent("RenderComponent")).toBe(true);
+            expect(clonedEntity.hasComponent("TransformComponent")).toBe(true);
         });
     });
 
@@ -264,12 +262,16 @@ describe("Entity", () => {
         });
 
         it("deve lidar com adição de componente duplicado", () => {
-            const newComponent = new TestComponent("test", "new-value");
-            const entityWithComponent = entity.addComponent(testComponent);
+            const newComponent = new RenderComponent();
+            const entityWithComponent = entity.addComponent(renderComponent);
             const entityWithNewComponent = entityWithComponent.addComponent(newComponent);
 
-            expect(entityWithNewComponent.getComponent<TestComponent>("test")).toBe(newComponent);
-            expect(entityWithComponent.getComponent<TestComponent>("test")).toBe(testComponent);
+            expect(entityWithNewComponent.getComponent<RenderComponent>("RenderComponent")).toBe(
+                newComponent,
+            );
+            expect(entityWithComponent.getComponent<RenderComponent>("RenderComponent")).toBe(
+                renderComponent,
+            );
         });
 
         it("deve lidar com arrays vazios de tipos de componentes", () => {

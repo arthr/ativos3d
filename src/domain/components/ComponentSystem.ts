@@ -10,7 +10,7 @@ import type {
     ComponentInfo,
 } from "@core/types";
 import { Entity } from "@domain/entities";
-import { TransformComponent } from "@domain/components";
+import { TransformComponent, RenderComponent } from "@domain/components";
 
 /**
  * Sistema de Componentes seguindo Domain-Driven Design
@@ -19,7 +19,7 @@ import { TransformComponent } from "@domain/components";
  * de forma centralizada e consistente.
  */
 export class ComponentSystem {
-    private static instance: ComponentSystem;
+    private static instance: ComponentSystem | null = null;
     private componentFactories: Map<string, ComponentFactory> = new Map();
     private componentValidators: Map<string, ComponentValidator> = new Map();
 
@@ -38,6 +38,17 @@ export class ComponentSystem {
     }
 
     /**
+     * Reseta a instância singleton (para testes)
+     */
+    public static resetInstance(): void {
+        if (ComponentSystem.instance) {
+            ComponentSystem.instance.componentFactories.clear();
+            ComponentSystem.instance.componentValidators.clear();
+        }
+        ComponentSystem.instance = null;
+    }
+
+    /**
      * Registra uma factory para criar componentes de um tipo específico
      */
     public registerComponentFactory(componentType: string, factory: ComponentFactory): void {
@@ -49,6 +60,25 @@ export class ComponentSystem {
      */
     public registerComponentValidator(componentType: string, validator: ComponentValidator): void {
         this.componentValidators.set(componentType, validator);
+    }
+
+    /**
+     * Registra multiplos componentes
+     *
+     * @param components { type: string; factory: ComponentFactory; validator: (component: Component) => ValidationResult }[]
+     * @returns void
+     */
+    private registerComponents(
+        components: {
+            type: string;
+            factory: ComponentFactory;
+            validator: ComponentValidator;
+        }[],
+    ): void {
+        for (const component of components) {
+            this.registerComponentFactory(component.type, component.factory);
+            this.registerComponentValidator(component.type, component.validator);
+        }
     }
 
     /**
@@ -190,16 +220,17 @@ export class ComponentSystem {
      * Registra componentes padrão do sistema
      */
     private registerDefaultComponents(): void {
-        // Registra TransformComponent
-        this.registerComponentFactory("TransformComponent", (data) => {
-            return TransformComponent.create(data);
-        });
-
-        this.registerComponentValidator("TransformComponent", (component) => {
-            if ("validate" in component && typeof component.validate === "function") {
-                return component.validate();
-            }
-            return { isValid: true, errors: [] };
-        });
+        this.registerComponents([
+            {
+                type: "TransformComponent",
+                factory: (data): TransformComponent => TransformComponent.create(data),
+                validator: (component): ValidationResult => component.validate(),
+            },
+            {
+                type: "RenderComponent",
+                factory: (data): RenderComponent => RenderComponent.create(data),
+                validator: (component): ValidationResult => component.validate(),
+            },
+        ]);
     }
 }

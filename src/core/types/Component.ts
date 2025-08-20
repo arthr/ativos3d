@@ -5,6 +5,7 @@ import type { EntityId } from "./Entity";
  */
 export interface Component {
     readonly type: string;
+    validate: () => ValidationResult;
 }
 
 /**
