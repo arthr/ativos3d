@@ -1,4 +1,5 @@
 import type { AABB, Vec3 } from "@core/geometry";
+import { Vec3Factory, Vec3Operations } from "@core/geometry";
 
 /**
  * Factory para criar AABB
@@ -12,20 +13,22 @@ export class AABBFactory {
     }
 
     /**
-     * Cria uma AABB a partir do centro e meia-extensão
+     * Cria uma AABB a partir do centro
      */
-    static fromCenter(center: Vec3, halfSize: Vec3): AABB {
+    static fromCenterSize(center: Vec3, size: Vec3): AABB {
+        const halfSize = Vec3Operations.multiply(size, 0.5);
+
         return {
-            min: {
-                x: center.x - halfSize.x,
-                y: center.y - halfSize.y,
-                z: center.z - halfSize.z,
-            },
-            max: {
-                x: center.x + halfSize.x,
-                y: center.y + halfSize.y,
-                z: center.z + halfSize.z,
-            },
+            min: Vec3Operations.subtract(center, halfSize),
+            max: Vec3Operations.add(center, halfSize),
         };
+    }
+
+    /**
+     * Cria um AABB vazia
+     */
+    static empty(): AABB {
+        const zero = Vec3Factory.zero();
+        return { min: zero, max: zero };
     }
 }

@@ -10,13 +10,18 @@ describe("AABBFactory", () => {
         expect(box).toEqual({ min, max });
     });
 
-    it("deve criar AABB a partir do centro e meia-extensão", () => {
-        const center = Vec3Factory.create(1, 1, 1);
-        const half = Vec3Factory.create(1, 1, 1);
-        const box = AABBFactory.fromCenter(center, half);
+    it("deve criar AABB a partir do centro e tamanho", () => {
+        const center = Vec3Factory.zero();
+        const size = Vec3Factory.create(2, 2, 2);
+        const box = AABBFactory.fromCenterSize(center, size);
         expect(box).toEqual({
-            min: { x: 0, y: 0, z: 0 },
-            max: { x: 2, y: 2, z: 2 },
+            min: { x: -1, y: -1, z: -1 },
+            max: { x: 1, y: 1, z: 1 },
         });
+    });
+
+    it("deve criar um AABB vazio", () => {
+        const box = AABBFactory.empty();
+        expect(box).toEqual({ min: Vec3Factory.zero(), max: Vec3Factory.zero() });
     });
 });

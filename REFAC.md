@@ -69,9 +69,9 @@ Perfeito! Vou elaborar um planejamento estruturado para reconstruir o projeto de
 - [x] Modularizar Vec3 em arquivos separados por responsabilidade
 - [x] Reorganizar diretório types seguindo princípios de design
 - [x] Mover Vec2 para pasta geometry e criar estrutura completa
-- [ ] Implementar sistema de AABB
-  - [ ] Definir tipos para AABB
-  - [ ] Implementar sistema de AABB
+- [x] Implementar sistema de AABB
+  - [x] Definir tipos para AABB
+  - [x] Implementar sistema de AABB
 - [ ] Implementar sistema de colisão básico
   - [ ] Definir tipos para detecção de colisão
   - [ ] Implementar sistema de colisão básico
