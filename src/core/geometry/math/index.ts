@@ -7,3 +7,4 @@
 
 export * from "./Vec2Math";
 export * from "./Vec3Math";
+export * from "./AABBMath";

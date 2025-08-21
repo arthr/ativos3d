@@ -1,5 +1,5 @@
 import type { Component } from "@core/types/Component";
-import type { Vec3 } from "@core/geometry";
+import type { Vec3, Transform } from "@core/geometry";
 
 /**
  * Interface para componente de transformação 3D
@@ -57,12 +57,12 @@ export interface TransformComponent extends Component {
     /**
      * Aplica uma transformação completa
      */
-    setTransform(transform: { position?: Vec3; rotation?: Vec3; scale?: Vec3 }): TransformComponent;
+    setTransform(transform: Partial<Transform>): TransformComponent;
 
     /**
      * Retorna a transformação como objeto
      */
-    getTransform(): { position: Vec3; rotation: Vec3; scale: Vec3 };
+    getTransform(): Transform;
 
     /**
      * Verifica se a transformação é válida
@@ -73,16 +73,12 @@ export interface TransformComponent extends Component {
 /**
  * Dados para criar um TransformComponent
  */
-export interface TransformComponentData {
-    position?: Vec3;
-    rotation?: Vec3;
-    scale?: Vec3;
-}
+export type TransformComponentData = Partial<Transform>;
 
 /**
  * Configuração padrão para TransformComponent
  */
-export const DEFAULT_TRANSFORM: Required<TransformComponentData> = {
+export const DEFAULT_TRANSFORM: Transform = {
     position: { x: 0, y: 0, z: 0 },
     rotation: { x: 0, y: 0, z: 0 },
     scale: { x: 1, y: 1, z: 1 },

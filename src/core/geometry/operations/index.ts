@@ -7,3 +7,4 @@
 
 export * from "./Vec2Operations";
 export * from "./Vec3Operations";
+export * from "./AABBOperations";
