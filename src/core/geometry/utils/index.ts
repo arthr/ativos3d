@@ -7,3 +7,4 @@
 
 export * from "./Vec2Utils";
 export * from "./Vec3Utils";
+export * from "./AABBUtils";

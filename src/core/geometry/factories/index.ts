@@ -7,3 +7,4 @@
 
 export * from "./Vec2Factory";
 export * from "./Vec3Factory";
+export * from "./AABBFactory";
