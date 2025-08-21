@@ -17,13 +17,7 @@ export class Application {
      * Inicializa o container de dependências
      */
     constructor() {
-        const eventBus = new EventBus();
-        const commandStack = new CommandStack();
-        const entityManager = EntityManager.getInstance(undefined, { eventBus });
-
-        this.container.set("eventBus", eventBus);
-        this.container.set("commandStack", commandStack);
-        this.container.set("entityManager", entityManager);
+        this.initializeContainer();
     }
 
     /**
@@ -37,6 +31,21 @@ export class Application {
             throw new Error(`Dependência não encontrada: ${key}`);
         }
         return dependency;
+    }
+
+    /**
+     * Inicializa o container de dependências
+     */
+    private initializeContainer(): DependencyMap {
+        const eventBus = new EventBus();
+        const commandStack = new CommandStack();
+        const entityManager = EntityManager.getInstance(undefined, { eventBus });
+
+        this.container.set("eventBus", eventBus);
+        this.container.set("commandStack", commandStack);
+        this.container.set("entityManager", entityManager);
+
+        return { eventBus, commandStack, entityManager };
     }
 }
 

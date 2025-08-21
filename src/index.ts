@@ -17,7 +17,7 @@ export const application = new Application();
 const rootElement = document.getElementById("root") as HTMLElement;
 if (rootElement) {
     const root = createRoot(rootElement);
-    root.render(React.createElement(React.StrictMode));
+    root.render(React.createElement(React.StrictMode, null, "Ativos3D"));
 } else {
     console.error('Elemento com id "root" não encontrado.');
 }
