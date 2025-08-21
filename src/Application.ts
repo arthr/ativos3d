@@ -1,3 +1,8 @@
+/**
+ * TODO: Refatorar para estar de acordo com o Roadmap de Refatoração do projeto.
+ * Arquivo `REFAC.md` para mais detalhes.
+ */
+
 import { EventBus } from "@core/events/EventBus";
 import { CommandStack } from "@core/commands";
 import { EntityManager } from "@domain/entities";
