@@ -72,10 +72,10 @@ Perfeito! Vou elaborar um planejamento estruturado para reconstruir o projeto de
 - [x] Implementar sistema de AABB
   - [x] Definir tipos para AABB
   - [x] Implementar sistema de AABB
-- [ ] Implementar sistema de colisão básico
-  - [ ] Definir tipos para detecção de colisão
-  - [ ] Implementar sistema de colisão básico
-- [ ] Testes para geometria
+- [x] Implementar sistema de colisão básico
+  - [x] Definir tipos para deteção de colisão
+  - [x] Implementar sistema de colisão básico
+- [x] Testes para geometria
 
 ### **Fase 3: Renderização e Cena**
 
