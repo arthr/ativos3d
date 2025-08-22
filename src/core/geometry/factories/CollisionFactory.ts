@@ -133,18 +133,6 @@ export class CollisionFactory {
     }
 
     /**
-     * Cria uma AABB centralizada na origem com tamanho específico
-     */
-    static createCenteredAABB(size: Vec3): AABB {
-        const halfSize = Vec3Factory.create(size.x * 0.5, size.y * 0.5, size.z * 0.5);
-
-        return {
-            min: Vec3Factory.create(-halfSize.x, -halfSize.y, -halfSize.z),
-            max: Vec3Factory.create(halfSize.x, halfSize.y, halfSize.z),
-        };
-    }
-
-    /**
      * Cria múltiplos corpos de colisão em grade
      */
     static createGridOfBodies(config: {

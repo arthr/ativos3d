@@ -14,7 +14,7 @@ import {
 
 describe("CollisionDetection", () => {
     describe("checkAABBCollision", () => {
-        it("deve detectar colisão entre AABBs que se intersectam", () => {
+        it("deve detectar colisão entre AABBs sobrepostos", () => {
             const boxA: AABB = AABBFactory.create(
                 Vec3Factory.create(0, 0, 0),
                 Vec3Factory.create(2, 2, 2),
@@ -29,7 +29,7 @@ describe("CollisionDetection", () => {
             expect(result.hasCollision).toBe(true);
         });
 
-        it("não deve detectar colisão entre AABBs que não se intersectam", () => {
+        it("não deve detectar colisão entre AABBs separados", () => {
             const boxA: AABB = AABBFactory.create(
                 Vec3Factory.create(0, 0, 0),
                 Vec3Factory.create(1, 1, 1),
@@ -85,7 +85,7 @@ describe("CollisionDetection", () => {
             expect(result.contactPoint?.z).toBe(1.5);
         });
 
-        it("deve lidar com caso de borda de AABBs perfeitamente encostados", () => {
+        it("deve detectar colisão entre AABBs tangentes", () => {
             const boxA: AABB = AABBFactory.create(
                 Vec3Factory.create(0, 0, 0),
                 Vec3Factory.create(1, 1, 1),
@@ -102,7 +102,7 @@ describe("CollisionDetection", () => {
     });
 
     describe("checkBodyCollision", () => {
-        it("deve detectar colisão entre dois corpos de colisão", () => {
+        it("deve detectar colisão entre corpos sobrepostos", () => {
             const bodyA = CollisionFactory.createCollisionBodyFromBox({
                 id: "bodyA",
                 position: Vec3Factory.create(0, 0, 0),
@@ -120,7 +120,7 @@ describe("CollisionDetection", () => {
             expect(result.hasCollision).toBe(true);
         });
 
-        it("não deve detectar colisão quando os corpos estão separados", () => {
+        it("não deve detectar colisão entre corpos separados", () => {
             const bodyA = CollisionFactory.createCollisionBodyFromBox({
                 id: "bodyA",
                 position: Vec3Factory.create(0, 0, 0),
@@ -138,22 +138,22 @@ describe("CollisionDetection", () => {
             expect(result.hasCollision).toBe(false);
         });
 
-        it("deve respeitar máscaras de camada", () => {
+        it("deve respeitar máscaras de camadas de colisão", () => {
             const bodyA = CollisionFactory.createCollisionBodyFromBox({
                 id: "bodyA",
                 position: Vec3Factory.create(0, 0, 0),
                 size: Vec3Factory.create(2, 2, 2),
-                layers: 1, // Camada 1
+                layers: 1, // Camada de colisão 1
             });
 
             const bodyB = CollisionFactory.createCollisionBodyFromBox({
                 id: "bodyB",
                 position: Vec3Factory.create(1, 1, 1),
                 size: Vec3Factory.create(2, 2, 2),
-                layers: 2, // Camada 2
+                layers: 2, // Camada de colisão 2
             });
 
-            // Teste com máscara que inclui apenas camada 1
+            // Teste com máscara que inclui apenas a camada 1
             const resultLayer1 = CollisionDetection.checkBodyCollision(bodyA, bodyB, {
                 layerMask: 1,
             });
@@ -162,7 +162,7 @@ describe("CollisionDetection", () => {
 
             // Teste com máscara que inclui ambas as camadas
             const resultBothLayers = CollisionDetection.checkBodyCollision(bodyA, bodyB, {
-                layerMask: 3, // 1 | 2
+                layerMask: 3, // Combinação das camadas 1 e 2
             });
 
             expect(resultBothLayers.hasCollision).toBe(true);
@@ -170,7 +170,7 @@ describe("CollisionDetection", () => {
     });
 
     describe("pointInAABB", () => {
-        it("deve detectar ponto dentro de AABB", () => {
+        it("deve detectar ponto contido em AABB", () => {
             const box: AABB = AABBFactory.create(
                 Vec3Factory.create(0, 0, 0),
                 Vec3Factory.create(2, 2, 2),
@@ -182,7 +182,7 @@ describe("CollisionDetection", () => {
             expect(result).toBe(true);
         });
 
-        it("deve detectar ponto fora de AABB", () => {
+        it("deve detectar ponto externo ao AABB", () => {
             const box: AABB = AABBFactory.create(
                 Vec3Factory.create(0, 0, 0),
                 Vec3Factory.create(2, 2, 2),
@@ -194,7 +194,7 @@ describe("CollisionDetection", () => {
             expect(result).toBe(false);
         });
 
-        it("deve detectar ponto na borda de AABB", () => {
+        it("deve detectar ponto na fronteira do AABB", () => {
             const box: AABB = AABBFactory.create(
                 Vec3Factory.create(0, 0, 0),
                 Vec3Factory.create(2, 2, 2),
@@ -208,10 +208,10 @@ describe("CollisionDetection", () => {
     });
 
     describe("checkSphereAABBCollision", () => {
-        it("deve detectar colisão entre esfera e AABB", () => {
+        it("deve detectar colisão entre esfera e AABB sobrepostos", () => {
             const sphere: SphereCollisionData = CollisionFactory.createSphereCollisionData(
                 Vec3Factory.create(0, 0, 0),
-                2.0, // Radius large enough to reach the AABB
+                2.0, // Raio grande o suficiente para atingir o AABB
             );
             const box: AABB = AABBFactory.create(
                 Vec3Factory.create(1, 1, 1),
@@ -223,7 +223,7 @@ describe("CollisionDetection", () => {
             expect(result.hasCollision).toBe(true);
         });
 
-        it("não deve detectar colisão quando esfera e AABB estão separados", () => {
+        it("não deve detectar colisão entre esfera e AABB separados", () => {
             const sphere: SphereCollisionData = CollisionFactory.createSphereCollisionData(
                 Vec3Factory.create(0, 0, 0),
                 0.5,
@@ -238,7 +238,7 @@ describe("CollisionDetection", () => {
             expect(result.hasCollision).toBe(false);
         });
 
-        it("deve calcular vetor de separação para colisão entre esfera e AABB", () => {
+        it("deve calcular vetor de separação na colisão esfera-AABB", () => {
             const sphere: SphereCollisionData = CollisionFactory.createSphereCollisionData(
                 Vec3Factory.create(0, 0, 0),
                 1.5,
@@ -257,7 +257,7 @@ describe("CollisionDetection", () => {
             expect(result.penetrationDepth).toBeGreaterThan(0);
         });
 
-        it("deve calcular ponto de contato para colisão entre esfera e AABB", () => {
+        it("deve calcular ponto de contato na colisão esfera-AABB", () => {
             const sphere: SphereCollisionData = CollisionFactory.createSphereCollisionData(
                 Vec3Factory.create(0, 0, 0),
                 1.5,
@@ -280,10 +280,10 @@ describe("CollisionDetection", () => {
     });
 
     describe("raycastAABB", () => {
-        it("deve detectar raio atingindo AABB", () => {
+        it("deve detectar interseção de raio com AABB", () => {
             const query: RaycastQuery = CollisionFactory.createRaycastQuery({
                 origin: Vec3Factory.create(-5, 0, 0),
-                direction: Vec3Factory.create(1, 0, 0), // Direção normalizada para direita
+                direction: Vec3Factory.create(1, 0, 0), // Direção para direita
                 maxDistance: 10,
             });
 
@@ -295,12 +295,12 @@ describe("CollisionDetection", () => {
             const result = CollisionDetection.raycastAABB(query, box);
 
             expect(result.hit).toBe(true);
-            expect(result.distance).toBe(4); // Distância de -5 até -1
+            expect(result.distance).toBe(4); // Distância da origem até o AABB
             expect(result.point).toBeDefined();
             expect(result.normal).toBeDefined();
         });
 
-        it("não deve detectar raio faltando AABB", () => {
+        it("não deve detectar interseção quando raio não atinge AABB", () => {
             const query: RaycastQuery = CollisionFactory.createRaycastQuery({
                 origin: Vec3Factory.create(0, 5, 0),
                 direction: Vec3Factory.create(0, 1, 0), // Direção para cima
@@ -317,11 +317,11 @@ describe("CollisionDetection", () => {
             expect(result.hit).toBe(false);
         });
 
-        it("deve respeitar distância máxima", () => {
+        it("deve respeitar limite de distância do raycast", () => {
             const query: RaycastQuery = CollisionFactory.createRaycastQuery({
                 origin: Vec3Factory.create(-10, 0, 0),
                 direction: Vec3Factory.create(1, 0, 0),
-                maxDistance: 5, // Distância insuficiente
+                maxDistance: 5, // Distância insuficiente para atingir o AABB
             });
 
             const box: AABB = AABBFactory.create(
@@ -334,9 +334,9 @@ describe("CollisionDetection", () => {
             expect(result.hit).toBe(false);
         });
 
-        it("deve lidar com raio iniciando dentro de AABB", () => {
+        it("deve detectar raio originado dentro do AABB", () => {
             const query: RaycastQuery = CollisionFactory.createRaycastQuery({
-                origin: Vec3Factory.create(0, 0, 0), // Dentro da caixa
+                origin: Vec3Factory.create(0, 0, 0), // Origem dentro do AABB
                 direction: Vec3Factory.create(1, 0, 0),
                 maxDistance: 10,
             });
@@ -349,10 +349,10 @@ describe("CollisionDetection", () => {
             const result = CollisionDetection.raycastAABB(query, box);
 
             expect(result.hit).toBe(true);
-            expect(result.distance).toBe(1); // Distância até a saída
+            expect(result.distance).toBe(1); // Distância até a borda do AABB
         });
 
-        it("deve calcular a normal correta para a interseção do raio", () => {
+        it("deve calcular normal correta na interseção do raio", () => {
             const query: RaycastQuery = CollisionFactory.createRaycastQuery({
                 origin: Vec3Factory.create(-5, 0, 0),
                 direction: Vec3Factory.create(1, 0, 0),
@@ -374,8 +374,8 @@ describe("CollisionDetection", () => {
         });
     });
 
-    describe("edge cases", () => {
-        it("deve lidar com AABB de tamanho zero", () => {
+    describe("casos extremos", () => {
+        it("deve lidar com AABB degenerado (tamanho zero)", () => {
             const boxA: AABB = AABBFactory.create(
                 Vec3Factory.create(0, 0, 0),
                 Vec3Factory.create(0, 0, 0),
@@ -390,7 +390,7 @@ describe("CollisionDetection", () => {
             expect(result.hasCollision).toBe(true);
         });
 
-        it("deve lidar com esfera com raio zero", () => {
+        it("deve lidar com esfera degenerada (raio zero)", () => {
             const sphere: SphereCollisionData = {
                 center: Vec3Factory.create(0, 0, 0),
                 radius: 0,
@@ -405,7 +405,7 @@ describe("CollisionDetection", () => {
             expect(result.hasCollision).toBe(true);
         });
 
-        it("deve lidar com raio com componente de direção zero", () => {
+        it("deve lidar com raio com componentes de direção nulos", () => {
             const query: RaycastQuery = CollisionFactory.createRaycastQuery({
                 origin: Vec3Factory.create(0, -5, 0),
                 direction: Vec3Factory.create(0, 1, 0),

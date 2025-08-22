@@ -7,7 +7,7 @@ import { Vec3Factory, AABBFactory } from "@core/geometry";
 
 describe("CollisionFactory", () => {
     describe("createCollisionBody", () => {
-        it("should create collision body with basic config", () => {
+        it("deve criar corpo de colisão com configuração básica", () => {
             const bounds = AABBFactory.create(
                 Vec3Factory.create(-1, -1, -1),
                 Vec3Factory.create(1, 1, 1),
@@ -25,7 +25,7 @@ describe("CollisionFactory", () => {
             expect(body.layers).toBe(1);
         });
 
-        it("should create collision body with custom config", () => {
+        it("deve criar corpo de colisão com configuração personalizada", () => {
             const bounds = AABBFactory.create(
                 Vec3Factory.create(-2, -2, -2),
                 Vec3Factory.create(2, 2, 2),
@@ -49,7 +49,7 @@ describe("CollisionFactory", () => {
     });
 
     describe("createCollisionBodyFromBox", () => {
-        it("should create collision body from box parameters", () => {
+        it("deve criar corpo de colisão a partir de parâmetros de caixa", () => {
             const position = Vec3Factory.create(10, 20, 30);
             const size = Vec3Factory.create(4, 6, 8);
 
@@ -69,7 +69,7 @@ describe("CollisionFactory", () => {
             expect(body.bounds).toEqual(expectedBounds);
         });
 
-        it("should create static collision body from box", () => {
+        it("deve criar corpo de colisão estático a partir de caixa", () => {
             const body = CollisionFactory.createCollisionBodyFromBox({
                 id: "static-box",
                 position: Vec3Factory.zero(),
@@ -84,7 +84,7 @@ describe("CollisionFactory", () => {
     });
 
     describe("createCollisionConfig", () => {
-        it("should create default collision config", () => {
+        it("deve criar configuração de colisão padrão", () => {
             const config = CollisionFactory.createCollisionConfig();
 
             expect(config.tolerance).toBe(0.001);
@@ -93,7 +93,7 @@ describe("CollisionFactory", () => {
             expect(config.layerMask).toBeUndefined();
         });
 
-        it("should create custom collision config", () => {
+        it("deve criar configuração de colisão personalizada", () => {
             const config = CollisionFactory.createCollisionConfig({
                 tolerance: 0.01,
                 calculateContact: true,
@@ -109,7 +109,7 @@ describe("CollisionFactory", () => {
     });
 
     describe("createRaycastQuery", () => {
-        it("should create raycast query with default values", () => {
+        it("deve criar consulta de raycast com valores padrão", () => {
             const origin = Vec3Factory.create(1, 2, 3);
             const direction = Vec3Factory.create(0, 1, 0);
 
@@ -124,7 +124,7 @@ describe("CollisionFactory", () => {
             expect(query.layerMask).toBeUndefined();
         });
 
-        it("should create raycast query with custom values", () => {
+        it("deve criar consulta de raycast com valores personalizados", () => {
             const origin = Vec3Factory.create(1, 2, 3);
             const direction = Vec3Factory.create(1, 0, 0);
 
@@ -143,7 +143,7 @@ describe("CollisionFactory", () => {
     });
 
     describe("createSphereCollisionData", () => {
-        it("should create sphere collision data", () => {
+        it("deve criar dados de colisão de esfera", () => {
             const center = Vec3Factory.create(5, 10, 15);
             const radius = 3.5;
 
@@ -153,7 +153,7 @@ describe("CollisionFactory", () => {
             expect(sphere.radius).toBe(radius);
         });
 
-        it("should throw error for negative radius", () => {
+        it("deve lançar erro para raio negativo", () => {
             const center = Vec3Factory.zero();
 
             expect(() => {
@@ -161,7 +161,7 @@ describe("CollisionFactory", () => {
             }).toThrow("Raio da esfera deve ser positivo");
         });
 
-        it("should throw error for zero radius", () => {
+        it("deve lançar erro para raio zero", () => {
             const center = Vec3Factory.zero();
 
             expect(() => {
@@ -171,7 +171,7 @@ describe("CollisionFactory", () => {
     });
 
     describe("createCapsuleCollisionData", () => {
-        it("should create capsule collision data", () => {
+        it("deve criar dados de colisão de cápsula", () => {
             const start = Vec3Factory.create(0, 0, 0);
             const end = Vec3Factory.create(0, 10, 0);
             const radius = 2;
@@ -183,7 +183,7 @@ describe("CollisionFactory", () => {
             expect(capsule.radius).toBe(radius);
         });
 
-        it("should throw error for invalid radius", () => {
+        it("deve lançar erro para raio inválido", () => {
             const start = Vec3Factory.zero();
             const end = Vec3Factory.create(0, 5, 0);
 
@@ -194,7 +194,7 @@ describe("CollisionFactory", () => {
     });
 
     describe("createPlaneCollisionData", () => {
-        it("should create plane collision data", () => {
+        it("deve criar dados de colisão de plano", () => {
             const normal = Vec3Factory.create(0, 1, 0);
             const distance = 5;
 
@@ -206,19 +206,19 @@ describe("CollisionFactory", () => {
     });
 
     describe("createCenteredAABB", () => {
-        it("should create AABB centered at origin", () => {
+        it("deve criar AABB centralizado na origem", () => {
             const size = Vec3Factory.create(4, 6, 8);
 
-            const aabb = CollisionFactory.createCenteredAABB(size);
+            const aabb = AABBFactory.fromCenterSize(Vec3Factory.zero(), size);
 
             expect(aabb.min).toEqual(Vec3Factory.create(-2, -3, -4));
             expect(aabb.max).toEqual(Vec3Factory.create(2, 3, 4));
         });
 
-        it("should handle unit cube", () => {
+        it("deve lidar com cubo unitário", () => {
             const size = Vec3Factory.create(1, 1, 1);
 
-            const aabb = CollisionFactory.createCenteredAABB(size);
+            const aabb = AABBFactory.fromCenterSize(Vec3Factory.zero(), size);
 
             expect(aabb.min).toEqual(Vec3Factory.create(-0.5, -0.5, -0.5));
             expect(aabb.max).toEqual(Vec3Factory.create(0.5, 0.5, 0.5));
@@ -226,7 +226,7 @@ describe("CollisionFactory", () => {
     });
 
     describe("createGridOfBodies", () => {
-        it("should create 2x2x1 grid of bodies", () => {
+        it("deve criar grade 2x2x1 de corpos", () => {
             const bodies = CollisionFactory.createGridOfBodies({
                 baseId: "grid",
                 gridSize: { x: 2, y: 2, z: 1 },
@@ -249,7 +249,7 @@ describe("CollisionFactory", () => {
             expect(bodies[3]!.position).toEqual(Vec3Factory.create(3, 3, 0));
         });
 
-        it("should create grid with custom start position", () => {
+        it("deve criar grade com posição inicial personalizada", () => {
             const startPosition = Vec3Factory.create(10, 20, 30);
 
             const bodies = CollisionFactory.createGridOfBodies({
@@ -265,7 +265,7 @@ describe("CollisionFactory", () => {
             expect(bodies[1]!.position).toEqual(Vec3Factory.create(10, 20, 32));
         });
 
-        it("should create static grid bodies", () => {
+        it("deve criar corpos de grade estáticos", () => {
             const bodies = CollisionFactory.createGridOfBodies({
                 baseId: "static-grid",
                 gridSize: { x: 1, y: 1, z: 1 },
@@ -281,7 +281,7 @@ describe("CollisionFactory", () => {
     });
 
     describe("createFastCollisionConfig", () => {
-        it("should create optimized config for fast detection", () => {
+        it("deve criar configuração otimizada para detecção rápida", () => {
             const config = CollisionFactory.createFastCollisionConfig();
 
             expect(config.tolerance).toBe(0.01);
@@ -291,7 +291,7 @@ describe("CollisionFactory", () => {
     });
 
     describe("createDetailedCollisionConfig", () => {
-        it("should create detailed config for collision resolution", () => {
+        it("deve criar configuração detalhada para resolução de colisão", () => {
             const config = CollisionFactory.createDetailedCollisionConfig();
 
             expect(config.tolerance).toBe(0.001);
