@@ -4,6 +4,29 @@
 import type { Vec3, AABB } from "@core/geometry";
 
 /**
+ * Configuração para deteção de colisão
+ */
+export interface CollisionConfig {
+    /** Tolerância para considerar colisão */
+    readonly tolerance: number;
+    /** Se deve calcular informações de contato */
+    readonly calculateContact: boolean;
+    /** Se deve calcular vetor de separação */
+    readonly calculateSeparation: boolean;
+    /** Filtro de camadas (opcional) */
+    readonly layerMask?: number | undefined;
+}
+
+/**
+ * Configuração padrão para detecção de colisão
+ */
+export const DEFAULT_COLLISION_CONFIG: CollisionConfig = {
+    tolerance: 0.001,
+    calculateContact: false,
+    calculateSeparation: false,
+};
+
+/**
  * Resultado de uma deteção de colisão
  */
 export interface CollisionResult {
@@ -31,20 +54,6 @@ export interface CollisionBody {
     readonly layers: number;
     /** Identificador único do corpo */
     readonly id: string;
-}
-
-/**
- * Configuração para deteção de colisão
- */
-export interface CollisionConfig {
-    /** Tolerância para considerar colisão */
-    readonly tolerance: number;
-    /** Se deve calcular informações de contato */
-    readonly calculateContact: boolean;
-    /** Se deve calcular vetor de separação */
-    readonly calculateSeparation: boolean;
-    /** Filtro de camadas (opcional) */
-    readonly layerMask?: number | undefined;
 }
 
 /**

@@ -2,11 +2,11 @@
  * Testes para o sistema de detecção de colisão
  */
 import { describe, it, expect } from "vitest";
-import { CollisionDetection } from "../../../src/core/geometry/operations/CollisionDetection";
 import {
     Vec3Factory,
     AABBFactory,
     CollisionFactory,
+    CollisionDetection,
     type AABB,
     type RaycastQuery,
     type SphereCollisionData,

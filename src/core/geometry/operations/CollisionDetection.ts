@@ -14,21 +14,17 @@ import type {
     RaycastResult,
     SphereCollisionData,
 } from "@core/geometry";
-import { Vec3Factory, Vec3Operations, AABBOperations } from "@core/geometry";
+import {
+    DEFAULT_COLLISION_CONFIG,
+    Vec3Factory,
+    Vec3Operations,
+    AABBOperations,
+} from "@core/geometry";
 
 /**
  * Sistema de detecção de colisão básico
  */
 export class CollisionDetection {
-    /**
-     * Configuração padrão para detecção de colisão
-     */
-    private static readonly DEFAULT_CONFIG: CollisionConfig = {
-        tolerance: 0.001,
-        calculateContact: false,
-        calculateSeparation: false,
-    };
-
     /**
      * Detecta colisão entre duas AABBs
      */
@@ -37,7 +33,7 @@ export class CollisionDetection {
         boxB: AABB,
         config: Partial<CollisionConfig> = {},
     ): CollisionResult {
-        const finalConfig = { ...this.DEFAULT_CONFIG, ...config };
+        const finalConfig = { ...DEFAULT_COLLISION_CONFIG, ...config };
 
         // Verifica se há interseção básica
         if (!AABBOperations.intersects(boxA, boxB)) {
@@ -48,7 +44,7 @@ export class CollisionDetection {
 
         if (finalConfig.calculateSeparation || finalConfig.calculateContact) {
             const overlap = this.calculateAABBOverlap(boxA, boxB);
-            
+
             if (finalConfig.calculateSeparation) {
                 result.separationVector = this.calculateSeparationVector(boxA, boxB, overlap);
                 result.penetrationDepth = Vec3Operations.magnitude(result.separationVector);
@@ -72,7 +68,10 @@ export class CollisionDetection {
     ): CollisionResult {
         // Verifica filtros de camada se especificado
         if (config.layerMask !== undefined) {
-            if ((bodyA.layers & config.layerMask) === 0 || (bodyB.layers & config.layerMask) === 0) {
+            if (
+                (bodyA.layers & config.layerMask) === 0 ||
+                (bodyB.layers & config.layerMask) === 0
+            ) {
                 return { hasCollision: false };
             }
         }
@@ -99,14 +98,14 @@ export class CollisionDetection {
         box: AABB,
         config: Partial<CollisionConfig> = {},
     ): CollisionResult {
-        const finalConfig = { ...this.DEFAULT_CONFIG, ...config };
+        const finalConfig = { ...DEFAULT_COLLISION_CONFIG, ...config };
 
         // Encontra o ponto mais próximo na AABB
         const closestPoint = this.closestPointOnAABB(sphere.center, box);
-        
+
         // Calcula a distância entre o centro da esfera e o ponto mais próximo
         const distance = Vec3Operations.distance(sphere.center, closestPoint);
-        
+
         if (distance > sphere.radius + finalConfig.tolerance) {
             return { hasCollision: false };
         }
@@ -117,7 +116,7 @@ export class CollisionDetection {
             const direction = Vec3Operations.subtract(sphere.center, closestPoint);
             const directionNormalized = Vec3Operations.normalize(direction);
             const penetration = sphere.radius - distance;
-            
+
             result.penetrationDepth = penetration;
             result.separationVector = Vec3Operations.multiply(directionNormalized, penetration);
         }
@@ -147,14 +146,8 @@ export class CollisionDetection {
         const t5 = (box.min.z - query.origin.z) * invDir.z;
         const t6 = (box.max.z - query.origin.z) * invDir.z;
 
-        const tMin = Math.max(
-            Math.max(Math.min(t1, t2), Math.min(t3, t4)),
-            Math.min(t5, t6),
-        );
-        const tMax = Math.min(
-            Math.min(Math.max(t1, t2), Math.max(t3, t4)),
-            Math.max(t5, t6),
-        );
+        const tMin = Math.max(Math.max(Math.min(t1, t2), Math.min(t3, t4)), Math.min(t5, t6));
+        const tMax = Math.min(Math.min(Math.max(t1, t2), Math.max(t3, t4)), Math.max(t5, t6));
 
         // Se tMax < 0, o raio está apontando para longe da AABB
         if (tMax < 0) {
@@ -251,10 +244,7 @@ export class CollisionDetection {
             Math.min(boxA.max.z, boxB.max.z),
         );
 
-        return Vec3Operations.divide(
-            Vec3Operations.add(intersectionMin, intersectionMax),
-            2,
-        );
+        return Vec3Operations.divide(Vec3Operations.add(intersectionMin, intersectionMax), 2);
     }
 
     /**

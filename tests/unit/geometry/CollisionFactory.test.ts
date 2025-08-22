@@ -2,8 +2,7 @@
  * Testes para CollisionFactory
  */
 import { describe, it, expect } from "vitest";
-import { CollisionFactory } from "../../../src/core/geometry/factories/CollisionFactory";
-import { Vec3Factory, AABBFactory } from "@core/geometry";
+import { Vec3Factory, AABBFactory, CollisionFactory } from "@core/geometry";
 
 describe("CollisionFactory", () => {
     describe("createCollisionBody", () => {
