@@ -65,13 +65,24 @@ describe("RenderSystem", () => {
 
         // Inicia o sistema
         renderSystem.start();
+
+        // Estatísticas iniciais após o start
+        expect(renderSystem.getStats()).toEqual({
+            objectCount: 0,
+            renderCount: 1,
+            lastRenderTime: 0,
+            lastRenderDelta: 0,
+            lastRenderFPS: 0,
+        });
+
+        // Simula um frame
         nowTime = 16;
         callbacks[0]?.(16);
 
         // Estatísticas após um frame
         expect(renderSystem.getStats()).toEqual({
             objectCount: 0,
-            renderCount: 1,
+            renderCount: 2,
             lastRenderTime: 16,
             lastRenderDelta: 16,
             lastRenderFPS: 62.5,
@@ -81,7 +92,7 @@ describe("RenderSystem", () => {
         nowTime = 32;
         expect(renderSystem.getStats()).toEqual({
             objectCount: 0,
-            renderCount: 1,
+            renderCount: 2,
             lastRenderTime: 16,
             lastRenderDelta: 16,
             lastRenderFPS: 62.5,

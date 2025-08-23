@@ -98,7 +98,7 @@ export class RenderSystem {
 
         this.running = true;
         this.lastTime = this.now();
-        this.frameCount = 0;
+        this.frameCount++;
         this.lastRenderTime = this.now();
         this.lastRenderDelta = 0;
         this.lastRenderFPS = 0;
