@@ -1,7 +1,8 @@
 /**
  * Tipos para detecção de colisão
  */
-import type { Vec3, AABB } from "@core/geometry";
+import type { Vec3 } from "./Vec3";
+import type { AABB } from "./AABB";
 
 /**
  * Configuração para deteção de colisão

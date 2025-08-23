@@ -13,8 +13,9 @@ import type {
     SphereCollisionData,
     CapsuleCollisionData,
     PlaneCollisionData,
-} from "@core/geometry";
-import { Vec3Factory, AABBFactory } from "@core/geometry";
+} from "../types";
+import { Vec3Factory } from "./Vec3Factory";
+import { AABBFactory } from "./AABBFactory";
 
 /**
  * Factory para objetos relacionados à detecção de colisão

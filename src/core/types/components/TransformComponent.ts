@@ -1,4 +1,4 @@
-import type { Component } from "@core/types/Component";
+import type { Component } from "@core/types/ecs/Component";
 import type { Vec3, Transform } from "@core/geometry";
 
 /**

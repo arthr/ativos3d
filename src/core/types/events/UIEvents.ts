@@ -1,4 +1,4 @@
-import type { ToastVariant } from "@core/types";
+import type { ToastVariant } from "../ui/UITypes";
 
 /**
  * Eventos de UI

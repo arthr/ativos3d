@@ -8,8 +8,8 @@ import type {
     ValidationResult,
     EntityValidationResult,
     ComponentInfo,
-} from "@core/types";
-import { Entity } from "@domain/entities";
+} from "@core/types/ecs";
+import { Entity } from "../entities";
 import { TransformComponent } from "./TransformComponent";
 import { PhysicsComponent } from "./PhysicsComponent";
 import { RenderComponent } from "./RenderComponent";

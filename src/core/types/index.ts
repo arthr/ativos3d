@@ -1,10 +1,7 @@
 // Tipos fundamentais
-export * from "./Entity";
-export * from "./Component";
-export * from "./ComponentSystem";
-export * from "./EntityManager";
-export * from "./Events";
+export * from "./ecs"; // ECS (Entity Component System)
 export * from "./Command";
+export * from "./Events";
 
 // Tipos organizados por domínio
 export * from "./input";

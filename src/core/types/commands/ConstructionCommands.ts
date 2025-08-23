@@ -1,5 +1,5 @@
-import type { Command } from "@core/types";
-import type { Vec3 } from "@core/geometry";
+import type { Command } from "./Command";
+import type { Vec3 } from "../../geometry/types/Vec3";
 
 /**
  * Comando para criar uma parede

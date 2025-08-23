@@ -13,13 +13,11 @@ import type {
     RaycastQuery,
     RaycastResult,
     SphereCollisionData,
-} from "@core/geometry";
-import {
-    DEFAULT_COLLISION_CONFIG,
-    Vec3Factory,
-    Vec3Operations,
-    AABBOperations,
-} from "@core/geometry";
+} from "../types";
+import { DEFAULT_COLLISION_CONFIG } from "../types/Collision";
+import { Vec3Factory } from "../factories/Vec3Factory";
+import { Vec3Operations } from "./Vec3Operations";
+import { AABBOperations } from "./AABBOperations";
 
 /**
  * Sistema de detecção de colisão básico

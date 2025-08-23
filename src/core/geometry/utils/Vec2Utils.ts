@@ -1,4 +1,4 @@
-import type { Vec2 } from "@core/geometry";
+import type { Vec2 } from "../types/Vec2";
 
 /**
  * Utilitários para Vec2

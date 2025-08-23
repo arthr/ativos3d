@@ -1,13 +1,9 @@
 import type { Component } from "./Component";
+import type { EntityId } from "./EntityId";
 
 /**
  * Tipos fundamentais para o sistema de entidades
  */
-
-/**
- * Identificador único para entidades
- */
-export type EntityId = string;
 
 /**
  * Representa uma entidade no sistema

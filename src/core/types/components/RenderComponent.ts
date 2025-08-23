@@ -1,4 +1,4 @@
-import type { Component } from "@core/types/Component";
+import type { Component } from "@core/types/ecs/Component";
 
 /**
  * Interface para componente de renderização 3D

@@ -9,9 +9,9 @@ import type {
     EntityManagerConfig,
     EntityInfo,
     EntityManagerDependencies,
-} from "@core/types";
+} from "@core/types/ecs";
 import { Entity as EntityImplementation } from "./Entity";
-import { ComponentSystem } from "@domain/components";
+import { ComponentSystem } from "../components";
 import type { EventBus } from "@core/events/EventBus";
 
 /**

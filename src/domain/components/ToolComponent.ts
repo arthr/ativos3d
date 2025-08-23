@@ -1,11 +1,11 @@
-import type { ValidationResult } from "@core/types/Component";
+import type { ValidationResult } from "@core/types/ecs/Component";
 import type {
     ToolComponent as IToolComponent,
     ToolComponentData,
 } from "@core/types/components/ToolComponent";
 import type { ToolType, ModeType } from "@core/types";
-import { BaseComponent } from "./BaseComponent";
 import { DEFAULT_TOOL, MODES, TOOLS } from "@core/types/components/ToolComponent";
+import { BaseComponent } from "./BaseComponent";
 
 /**
  * Componente de estado de ferramenta

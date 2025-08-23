@@ -1,11 +1,11 @@
-import type { ValidationResult } from "@core/types/Component";
+import type { ValidationResult } from "@core/types/ecs/Component";
 import type {
     TransformComponent as ITransformComponent,
     TransformComponentData,
 } from "@core/types/components/TransformComponent";
 import type { Vec3 } from "@core/geometry";
-import { BaseComponent } from "./BaseComponent";
 import { Vec3Factory, Vec3Operations } from "@core/geometry";
+import { BaseComponent } from "./BaseComponent";
 
 /**
  * Componente de transformação 3D

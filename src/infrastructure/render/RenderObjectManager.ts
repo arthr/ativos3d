@@ -1,5 +1,5 @@
-import type { EntityId } from "@core/types/Entity";
-import type { RenderComponent } from "@core/types/components";
+import type { EntityId } from "@core/types/ecs/EntityId";
+import type { RenderComponent } from "@core/types/components/RenderComponent";
 import type { EventBus } from "@core/events/EventBus";
 
 /**

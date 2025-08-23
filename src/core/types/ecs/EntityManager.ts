@@ -1,5 +1,8 @@
-import type { Entity, EntityId, ComponentConfig, ComponentSystem } from "@core/types";
-import type { EventBus } from "@core/events/EventBus";
+import type { Entity } from "./Entity";
+import type { EntityId } from "./EntityId";
+import type { ComponentConfig } from "./ComponentConfig";
+import type { ComponentSystem } from "./ComponentSystem";
+import type { EventBus } from "../../events/EventBus";
 
 /**
  * Configuração para criar uma entidade

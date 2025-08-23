@@ -1,5 +1,5 @@
-import type { EntityId } from "../Entity";
-import type { Component } from "../Component";
+import type { EntityId } from "@core/types/ecs/EntityId";
+import type { Component } from "@core/types/ecs/Component";
 
 /**
  * Eventos de entidades

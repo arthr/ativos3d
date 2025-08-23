@@ -1,15 +1,13 @@
-import type {
-    Component,
-    ComponentFactory,
-    ComponentValidator,
-    ComponentData,
-    ValidationResult,
-    ComponentInfo,
-    EntityId,
-    Entity,
-    ComponentConfig,
-    EntityValidationResult,
-} from "@core/types";
+import type { Component } from "./Component";
+import type { ComponentFactory } from "./ComponentFactory";
+import type { ComponentValidator } from "./ComponentValidator";
+import type { ComponentData } from "./ComponentData";
+import type { ValidationResult } from "./ValidationResult";
+import type { ComponentInfo } from "./ComponentInfo";
+import type { EntityId } from "./EntityId";
+import type { Entity } from "./Entity";
+import type { ComponentConfig } from "./ComponentConfig";
+import type { EntityValidationResult } from "./EntityValidationResult";
 
 export interface ComponentSystem {
     instance: ComponentSystem;

@@ -1,5 +1,6 @@
-import type { AABB, Vec3 } from "@core/geometry";
-import { Vec3Factory, Vec3Operations } from "@core/geometry";
+import type { AABB, Vec3 } from "../types";
+import { Vec3Factory } from "../factories/Vec3Factory";
+import { Vec3Operations } from "./Vec3Operations";
 
 /**
  * Operações básicas de AABB

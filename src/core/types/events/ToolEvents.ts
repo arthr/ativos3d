@@ -1,4 +1,4 @@
-import type { ToolType, ModeType } from "@core/types";
+import type { ToolType, ModeType } from "../tools/ToolTypes";
 
 /**
  * Eventos de ferramentas

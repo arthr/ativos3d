@@ -1,5 +1,5 @@
-import type { AABB } from "@core/geometry";
-import { Vec3Utils } from "@core/geometry";
+import type { AABB } from "../types/AABB";
+import { Vec3Utils } from "../utils/Vec3Utils";
 
 /**
  * Utilitários para AABB

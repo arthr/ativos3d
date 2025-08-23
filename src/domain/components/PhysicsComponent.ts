@@ -1,12 +1,12 @@
-import type { ValidationResult } from "@core/types/Component";
+import type { ValidationResult } from "@core/types/ecs/Component";
 import type {
     PhysicsComponent as IPhysicsComponent,
     PhysicsComponentData,
 } from "@core/types/components/PhysicsComponent";
 import type { Vec3 } from "@core/geometry";
-import { BaseComponent } from "./BaseComponent";
 import { Vec3Factory, Vec3Operations } from "@core/geometry";
 import { DEFAULT_PHYSICS } from "@core/types/components/PhysicsComponent";
+import { BaseComponent } from "./BaseComponent";
 
 /**
  * Componente de física básica

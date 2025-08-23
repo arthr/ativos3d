@@ -1,11 +1,11 @@
-import type { ValidationResult } from "@core/types/Component";
+import type { ValidationResult } from "@core/types/ecs/Component";
 import type {
     RenderComponent as IRenderComponent,
     RenderComponentData,
     MaterialConfig,
 } from "@core/types/components/RenderComponent";
-import { BaseComponent } from "./BaseComponent";
 import { DEFAULT_RENDER } from "@core/types/components/RenderComponent";
+import { BaseComponent } from "./BaseComponent";
 
 /**
  * Componente de renderização 3D

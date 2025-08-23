@@ -1,4 +1,4 @@
-import type { EntityId } from "@core/types";
+import type { EntityId } from "../ecs/EntityId";
 
 /**
  * Eventos de orçamento
