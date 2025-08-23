@@ -6,7 +6,12 @@
 import { EventBus } from "@core/events/EventBus";
 import { CommandStack } from "@core/commands";
 import { EntityManager } from "@domain/entities";
-import { createWebGLRenderAdapter, RenderSystem } from "@infrastructure/render";
+import {
+    createWebGLRenderAdapter,
+    RenderSystem,
+    RenderObjectManager,
+    RenderSync,
+} from "@infrastructure/render";
 
 import { Scene, Camera } from "three";
 
@@ -42,6 +47,12 @@ export class Application {
     private initializeContainer(eventBus: EventBus): DependencyMap {
         const commandStack = new CommandStack();
         const entityManager = EntityManager.getInstance({}, { eventBus });
+        const renderObjectManager = RenderObjectManager.getInstance(eventBus);
+
+        // Sincroniza o RenderObjectManager com o resto do lifecycle da aplicação
+        new RenderSync(eventBus, renderObjectManager);
+
+        // Inicializa o RenderSystem
         const renderSystem = RenderSystem.getInstance(
             {},
             {
