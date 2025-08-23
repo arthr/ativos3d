@@ -31,7 +31,6 @@ export class EntityManager {
     private componentSystem: ComponentSystem;
     private eventBus: typeof eventBus;
     private config: EntityManagerConfig;
-    private idCounter: number = 0;
 
     private constructor(
         config: EntityManagerConfig = {},
@@ -342,7 +341,7 @@ export class EntityManager {
      * Gera um ID único para entidade
      */
     private generateId(): EntityId {
-        return `entity_${++this.idCounter}_${Date.now()}`;
+        return crypto.randomUUID();
     }
 
     /**
