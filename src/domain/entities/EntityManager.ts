@@ -11,7 +11,7 @@ import type {
     EntityManagerDependencies,
 } from "@core/types/ecs";
 import { Entity as EntityImplementation } from "./Entity";
-import { ComponentSystem } from "../components";
+import { ComponentSystem } from "../components/ComponentSystem";
 import type { EventBus } from "@core/events/EventBus";
 
 /**

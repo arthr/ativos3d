@@ -127,44 +127,36 @@ describe("ComponentSystem", () => {
     });
 
     describe("Gerenciamento de Entidades", () => {
-        it("deve criar entidade com componentes", () => {
+        it("deve criar componente para entidade", () => {
             const transformComponent = new TransformComponent();
             const factory = vi.fn().mockReturnValue(transformComponent);
 
             componentSystem.registerComponentFactory("TransformComponent", factory);
 
-            const entity = componentSystem.createEntityWithComponents("test-entity", [
-                { type: "TransformComponent", data: {} },
-            ]);
+            const component = componentSystem.createComponentForEntity("TransformComponent", {});
 
-            expect(entity.id).toBe("test-entity");
-            expect(entity.hasComponent("TransformComponent")).toBe(true);
+            expect(component).toBe(transformComponent);
+            expect(component.type).toBe("TransformComponent");
         });
 
-        it("deve adicionar componente a entidade", () => {
+        it("deve criar componente e adicionar a entidade", () => {
             const transformComponent = new TransformComponent();
             const factory = vi.fn().mockReturnValue(transformComponent);
             const entity = Entity.create("test-entity");
 
             componentSystem.registerComponentFactory("TransformComponent", factory);
 
-            const newEntity = componentSystem.addComponentToEntity(
-                entity,
-                "TransformComponent",
-                {},
-            );
+            const component = componentSystem.createComponentForEntity("TransformComponent", {});
+            const newEntity = entity.addComponent(component);
 
             expect(newEntity).not.toBe(entity);
             expect(newEntity.hasComponent("TransformComponent")).toBe(true);
         });
 
-        it("deve remover componente de entidade", () => {
+        it("deve criar componente e remover de entidade", () => {
             const entity = Entity.create("test-entity").addComponent(new TransformComponent());
 
-            const newEntity = componentSystem.removeComponentFromEntity(
-                entity,
-                "TransformComponent",
-            );
+            const newEntity = entity.removeComponent("TransformComponent");
 
             expect(newEntity).not.toBe(entity);
             expect(newEntity.hasComponent("TransformComponent")).toBe(false);

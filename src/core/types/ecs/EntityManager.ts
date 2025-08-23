@@ -1,6 +1,6 @@
 import type { Entity } from "./Entity";
 import type { EntityId } from "./EntityId";
-import type { ComponentConfig } from "./ComponentConfig";
+import type { ComponentConfig } from "./Component";
 import type { ComponentSystem } from "./ComponentSystem";
 import type { EventBus } from "../../events/EventBus";
 

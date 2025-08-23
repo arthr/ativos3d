@@ -1,15 +1,13 @@
 import type {
-    EntityId,
     Component,
     ComponentFactory,
     ComponentValidator,
     ComponentData,
-    ComponentConfig,
     ValidationResult,
     EntityValidationResult,
     ComponentInfo,
+    Entity,
 } from "@core/types/ecs";
-import { Entity } from "../entities";
 import { TransformComponent } from "./TransformComponent";
 import { PhysicsComponent } from "./PhysicsComponent";
 import { RenderComponent } from "./RenderComponent";
@@ -151,36 +149,10 @@ export class ComponentSystem {
     }
 
     /**
-     * Cria uma entidade com componentes usando o sistema
+     * Cria um componente para ser adicionado a uma entidade
      */
-    public createEntityWithComponents(id: EntityId, componentConfigs: ComponentConfig[]): Entity {
-        const components: Component[] = [];
-
-        for (const config of componentConfigs) {
-            const component = this.createComponent(config.type, config.data);
-            components.push(component);
-        }
-
-        return Entity.createWithComponents(id, components);
-    }
-
-    /**
-     * Adiciona um componente a uma entidade usando o sistema
-     */
-    public addComponentToEntity(
-        entity: Entity,
-        componentType: string,
-        data: ComponentData,
-    ): Entity {
-        const component = this.createComponent(componentType, data);
-        return entity.addComponent(component);
-    }
-
-    /**
-     * Remove um componente de uma entidade
-     */
-    public removeComponentFromEntity(entity: Entity, componentType: string): Entity {
-        return entity.removeComponent(componentType);
+    public createComponentForEntity(componentType: string, data: ComponentData): Component {
+        return this.createComponent(componentType, data);
     }
 
     /**
