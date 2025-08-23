@@ -14,7 +14,7 @@ export interface EntityConfig {
  */
 export interface EntityManagerDependencies {
     componentSystem?: ComponentSystem;
-    eventBus?: EventBus;
+    eventBus: EventBus;
 }
 
 /**

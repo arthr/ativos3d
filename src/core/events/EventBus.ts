@@ -132,8 +132,3 @@ export class EventBus {
         return this.listenerCount(eventType) > 0;
     }
 }
-
-/**
- * Instância global do EventBus
- */
-export const eventBus = new EventBus();

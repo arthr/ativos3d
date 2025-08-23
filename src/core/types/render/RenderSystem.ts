@@ -75,5 +75,5 @@ export interface RenderSystemDependencies {
     /**
      * EventBus a ser usado para emitir eventos
      */
-    readonly eventBus?: EventBus;
+    eventBus: EventBus;
 }

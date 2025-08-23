@@ -33,6 +33,7 @@ describe("RenderSystem", () => {
             adapter: { render: vi.fn() },
             scene: new Scene(),
             camera: new Camera(),
+            eventBus: new EventBus(),
         };
         const system1 = RenderSystem.getInstance({}, dependencies);
         const system2 = RenderSystem.getInstance({}, dependencies);
@@ -49,6 +50,7 @@ describe("RenderSystem", () => {
                 adapter: { render: vi.fn() },
                 scene: new Scene(),
                 camera: new Camera(),
+                eventBus: new EventBus(),
             },
         );
 
@@ -82,7 +84,7 @@ describe("RenderSystem", () => {
         const camera = new Camera();
         const system = RenderSystem.getInstance(
             {},
-            { adapter: { render: renderFn }, scene, camera },
+            { adapter: { render: renderFn }, scene, camera, eventBus: new EventBus() },
         );
         system.renderFrame();
         expect(renderFn).toHaveBeenCalledWith(scene, camera);
@@ -98,6 +100,7 @@ describe("RenderSystem", () => {
                 adapter: { render: vi.fn() },
                 scene: new Scene(),
                 camera: new Camera(),
+                eventBus: new EventBus(),
             },
         );
 
@@ -132,7 +135,7 @@ describe("RenderSystem", () => {
         const camera = new Camera();
         const system = RenderSystem.getInstance(
             {},
-            { adapter: { render: renderFn }, scene, camera },
+            { adapter: { render: renderFn }, scene, camera, eventBus: new EventBus() },
         );
 
         system.start();
@@ -154,6 +157,7 @@ describe("RenderSystem", () => {
                 adapter: { render: renderFn },
                 scene: new Scene(),
                 camera: new Camera(),
+                eventBus: new EventBus(),
             },
         );
         renderSystem.start();

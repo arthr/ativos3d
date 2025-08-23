@@ -1,4 +1,3 @@
-import { Scene, Camera } from "three";
 import type {
     RenderLoopCallback,
     RenderSystemConfig,
@@ -6,7 +5,8 @@ import type {
     RenderStats,
     RenderSystemDependencies,
 } from "@core/types/render";
-import { EventBus } from "@core/events/EventBus";
+import type { EventBus } from "@core/events/EventBus";
+import { Scene, Camera } from "three";
 import { RenderObjectManager } from "./RenderObjectManager";
 
 /**
@@ -34,24 +34,17 @@ export class RenderSystem {
     private scene: Scene;
     private camera: Camera;
 
-    private constructor(
-        config: RenderSystemConfig = {},
-        dependencies: RenderSystemDependencies = {
-            adapter: { render: () => {} },
-            scene: new Scene(),
-            camera: new Camera(),
-        },
-    ) {
+    private constructor(config: RenderSystemConfig = {}, dependencies: RenderSystemDependencies) {
         this.config = { autoStart: false, ...config };
         this.raf = dependencies.raf ?? ((cb): number => globalThis.requestAnimationFrame(cb));
         this.caf = dependencies.caf ?? ((handle): void => globalThis.cancelAnimationFrame(handle));
         this.now = dependencies.now ?? ((): number => globalThis.performance.now());
-        this.eventBus = dependencies.eventBus ?? new EventBus();
+        this.eventBus = dependencies.eventBus;
         this.objectManager = RenderObjectManager.getInstance(this.eventBus);
 
-        this.adapter = dependencies.adapter;
-        this.scene = dependencies.scene;
-        this.camera = dependencies.camera;
+        this.adapter = dependencies.adapter ?? { render: (): void => {} };
+        this.scene = dependencies.scene ?? new Scene();
+        this.camera = dependencies.camera ?? new Camera();
 
         if (this.config.autoStart) {
             this.start();
@@ -62,8 +55,8 @@ export class RenderSystem {
      * Obtém a instância singleton do RenderSystem
      */
     public static getInstance(
-        config?: RenderSystemConfig,
-        dependencies?: RenderSystemDependencies,
+        config: RenderSystemConfig = {},
+        dependencies: RenderSystemDependencies,
     ): RenderSystem {
         if (!RenderSystem.instance) {
             RenderSystem.instance = new RenderSystem(config, dependencies);

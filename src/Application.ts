@@ -6,6 +6,9 @@
 import { EventBus } from "@core/events/EventBus";
 import { CommandStack } from "@core/commands";
 import { EntityManager } from "@domain/entities";
+import { RenderSystem } from "@infrastructure/render";
+
+import { Scene, Camera } from "three";
 
 /**
  * Classe principal da aplicação
@@ -38,13 +41,23 @@ export class Application {
      */
     private initializeContainer(eventBus: EventBus): DependencyMap {
         const commandStack = new CommandStack();
-        const entityManager = EntityManager.getInstance(undefined, { eventBus });
+        const entityManager = EntityManager.getInstance({}, { eventBus });
+        const renderSystem = RenderSystem.getInstance(
+            {},
+            {
+                eventBus,
+                adapter: { render: () => {} },
+                scene: new Scene(),
+                camera: new Camera(),
+            },
+        );
 
         this.container.set("eventBus", eventBus);
         this.container.set("commandStack", commandStack);
         this.container.set("entityManager", entityManager);
+        this.container.set("renderSystem", renderSystem);
 
-        return { eventBus, commandStack, entityManager };
+        return { eventBus, commandStack, entityManager, renderSystem };
     }
 }
 
@@ -55,6 +68,7 @@ type DependencyMap = {
     eventBus: EventBus;
     commandStack: CommandStack;
     entityManager: EntityManager;
+    renderSystem: RenderSystem;
 };
 
 /**

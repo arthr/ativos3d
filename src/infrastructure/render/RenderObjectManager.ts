@@ -1,6 +1,6 @@
 import type { EntityId } from "@core/types/Entity";
 import type { RenderComponent } from "@core/types/components";
-import { EventBus } from "@core/events/EventBus";
+import type { EventBus } from "@core/events/EventBus";
 
 /**
  * Objeto renderizável registrado no sistema de renderização
@@ -28,11 +28,9 @@ export class RenderObjectManager {
     /**
      * Obtém a instância singleton do RenderObjectManager
      */
-    public static getInstance(eventBusInstance?: EventBus): RenderObjectManager {
+    public static getInstance(eventBusInstance: EventBus): RenderObjectManager {
         if (!RenderObjectManager.instance) {
-            RenderObjectManager.instance = new RenderObjectManager(
-                eventBusInstance ?? new EventBus(),
-            );
+            RenderObjectManager.instance = new RenderObjectManager(eventBusInstance);
         }
         return RenderObjectManager.instance;
     }
