@@ -6,7 +6,7 @@
 import { EventBus } from "@core/events/EventBus";
 import { CommandStack } from "@core/commands";
 import { EntityManager } from "@domain/entities";
-import { RenderSystem } from "@infrastructure/render";
+import { createWebGLRenderAdapter, RenderSystem } from "@infrastructure/render";
 
 import { Scene, Camera } from "three";
 
@@ -46,7 +46,7 @@ export class Application {
             {},
             {
                 eventBus,
-                adapter: { render: () => {} },
+                adapter: createWebGLRenderAdapter(),
                 scene: new Scene(),
                 camera: new Camera(),
             },
