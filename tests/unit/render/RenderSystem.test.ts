@@ -76,6 +76,16 @@ describe("RenderSystem", () => {
             lastRenderDelta: 16,
             lastRenderFPS: 62.5,
         });
+
+        // Uma nova chamada sem novo frame não deve alterar as estatísticas
+        nowTime = 32;
+        expect(renderSystem.getStats()).toEqual({
+            objectCount: 0,
+            renderCount: 1,
+            lastRenderTime: 16,
+            lastRenderDelta: 16,
+            lastRenderFPS: 62.5,
+        });
     });
 
     it("deve renderizar um frame", () => {

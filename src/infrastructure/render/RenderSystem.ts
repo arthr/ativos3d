@@ -28,7 +28,9 @@ export class RenderSystem {
     private frameHandle: number = 0;
     private lastTime: number = 0;
     private frameCount: number = 0;
-    private lastStatsTime: number = 0;
+    private lastRenderTime: number = 0;
+    private lastRenderDelta: number = 0;
+    private lastRenderFPS: number = 0;
 
     private adapter: RenderAdapter;
     private scene: Scene;
@@ -79,21 +81,13 @@ export class RenderSystem {
      * Retorna as estatísticas básicas do sistema de renderização
      */
     public getStats(): RenderStats {
-        const currentTime = this.now();
-        const deltaTime = currentTime - this.lastStatsTime;
-        const fps = deltaTime > 0 ? 1000 / deltaTime : 0;
-
-        const stats = {
+        return {
             objectCount: this.objectManager.getObjectCount(),
             renderCount: this.frameCount,
-            lastRenderTime: currentTime,
-            lastRenderDelta: deltaTime,
-            lastRenderFPS: fps,
+            lastRenderTime: this.lastRenderTime,
+            lastRenderDelta: this.lastRenderDelta,
+            lastRenderFPS: this.lastRenderFPS,
         };
-
-        this.lastStatsTime = currentTime;
-
-        return stats;
     }
 
     /**
@@ -104,8 +98,10 @@ export class RenderSystem {
 
         this.running = true;
         this.lastTime = this.now();
-        this.lastStatsTime = this.now();
         this.frameCount = 0;
+        this.lastRenderTime = this.now();
+        this.lastRenderDelta = 0;
+        this.lastRenderFPS = 0;
         this.adapter.render(this.scene, this.camera);
         this.frameHandle = this.raf(this.loop);
     }
@@ -150,6 +146,10 @@ export class RenderSystem {
         const delta = time - this.lastTime;
         this.lastTime = time;
         this.frameCount++;
+
+        this.lastRenderTime = time;
+        this.lastRenderDelta = delta;
+        this.lastRenderFPS = delta > 0 ? 1000 / delta : 0;
 
         // Executa callbacks de renderização
         for (const callback of this.callbacks) {
