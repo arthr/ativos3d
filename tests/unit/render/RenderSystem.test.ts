@@ -2,7 +2,7 @@ import { Scene, Camera } from "three";
 import { describe, it, expect, vi, afterEach, beforeEach } from "vitest";
 import { RenderSystem, RenderObjectManager } from "@infrastructure/render";
 import { RenderComponent } from "@domain/components";
-import { eventBus } from "@core/events/EventBus";
+import { EventBus } from "@core/events/EventBus";
 
 // Helpers para simular requestAnimationFrame
 let callbacks: FrameRequestCallback[] = [];
@@ -169,13 +169,15 @@ describe("RenderObjectManager", () => {
     });
 
     it("deve ser singleton", () => {
-        const manager1 = RenderObjectManager.getInstance();
-        const manager2 = RenderObjectManager.getInstance();
+        const eventBus = new EventBus();
+        const manager1 = RenderObjectManager.getInstance(eventBus);
+        const manager2 = RenderObjectManager.getInstance(eventBus);
         expect(manager1).toBe(manager2);
     });
 
     it("deve registrar um componente de renderização", () => {
-        const manager = RenderObjectManager.getInstance();
+        const eventBus = new EventBus();
+        const manager = RenderObjectManager.getInstance(eventBus);
         const component = new RenderComponent();
         manager.registerObject("entity", component);
         expect(manager.hasObject("entity")).toBe(true);
@@ -183,7 +185,8 @@ describe("RenderObjectManager", () => {
     });
 
     it("deve atualizar um componente de renderização", () => {
-        const manager = RenderObjectManager.getInstance();
+        const eventBus = new EventBus();
+        const manager = RenderObjectManager.getInstance(eventBus);
         const component = new RenderComponent({ color: "red" });
         manager.registerObject("entity", component);
         const updatedComponent = new RenderComponent({ color: "blue" });
@@ -192,7 +195,8 @@ describe("RenderObjectManager", () => {
     });
 
     it("deve remover um componente de renderização", () => {
-        const manager = RenderObjectManager.getInstance();
+        const eventBus = new EventBus();
+        const manager = RenderObjectManager.getInstance(eventBus);
         const component = new RenderComponent({ color: "red" });
         manager.registerObject("entity", component);
         manager.removeObject("entity");
@@ -200,7 +204,8 @@ describe("RenderObjectManager", () => {
     });
 
     it("deve retornar todos os objetos registrados", () => {
-        const manager = RenderObjectManager.getInstance();
+        const eventBus = new EventBus();
+        const manager = RenderObjectManager.getInstance(eventBus);
         const components: RenderComponent[] = [];
         for (let i = 0; i < 10; i++) {
             components.push(new RenderComponent({ color: "red" }));
@@ -217,7 +222,8 @@ describe("RenderObjectManager", () => {
     });
 
     it("deve emitir eventos de renderização", () => {
-        const manager = RenderObjectManager.getInstance();
+        const eventBus = new EventBus();
+        const manager = RenderObjectManager.getInstance(eventBus);
         const addListener = vi.fn();
         const updateListener = vi.fn();
         const removeListener = vi.fn();
@@ -237,7 +243,8 @@ describe("RenderObjectManager", () => {
     });
 
     it("deve retornar o número correto de objetos", () => {
-        const manager = RenderObjectManager.getInstance();
+        const eventBus = new EventBus();
+        const manager = RenderObjectManager.getInstance(eventBus);
         expect(manager.getObjectCount()).toBe(0);
 
         const component = new RenderComponent({ color: "red" });
@@ -252,7 +259,8 @@ describe("RenderObjectManager", () => {
     });
 
     it("deve limpar todos os objetos", () => {
-        const manager = RenderObjectManager.getInstance();
+        const eventBus = new EventBus();
+        const manager = RenderObjectManager.getInstance(eventBus);
         const component = new RenderComponent({ color: "red" });
         manager.registerObject("entity1", component);
         manager.registerObject("entity2", component);

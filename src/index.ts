@@ -6,9 +6,11 @@
  */
 import React from "react";
 import { createRoot } from "react-dom/client";
+import { EventBus } from "@core/events/EventBus";
 import { Application } from "./Application";
 
-export const application = new Application();
+const eventBus = new EventBus();
+export const application = new Application(eventBus);
 
 // TODO: Configurar injeção de dependência
 // TODO: Inicializar sistemas principais

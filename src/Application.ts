@@ -16,8 +16,8 @@ export class Application {
     /**
      * Inicializa o container de dependências
      */
-    constructor() {
-        this.initializeContainer();
+    constructor(eventBus: EventBus) {
+        this.initializeContainer(eventBus);
     }
 
     /**
@@ -36,8 +36,7 @@ export class Application {
     /**
      * Inicializa o container de dependências
      */
-    private initializeContainer(): DependencyMap {
-        const eventBus = new EventBus();
+    private initializeContainer(eventBus: EventBus): DependencyMap {
         const commandStack = new CommandStack();
         const entityManager = EntityManager.getInstance(undefined, { eventBus });
 

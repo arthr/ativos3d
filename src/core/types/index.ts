@@ -1,6 +1,7 @@
 // Tipos fundamentais
 export * from "./Entity";
 export * from "./Component";
+export * from "./ComponentSystem";
 export * from "./EntityManager";
 export * from "./Events";
 export * from "./Command";

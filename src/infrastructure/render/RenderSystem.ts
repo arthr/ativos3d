@@ -6,7 +6,7 @@ import type {
     RenderStats,
     RenderSystemDependencies,
 } from "@core/types/render";
-import { eventBus } from "@core/events/EventBus";
+import { EventBus } from "@core/events/EventBus";
 import { RenderObjectManager } from "./RenderObjectManager";
 
 /**
@@ -21,7 +21,7 @@ export class RenderSystem {
     private readonly raf: (callback: FrameRequestCallback) => number;
     private readonly caf: (handle: number) => void;
     private readonly now: () => number;
-    private readonly eventBus: typeof eventBus;
+    private readonly eventBus: EventBus;
     private readonly objectManager: RenderObjectManager;
     private callbacks: RenderLoopCallback[] = [];
     private running: boolean = false;
@@ -46,7 +46,7 @@ export class RenderSystem {
         this.raf = dependencies.raf ?? ((cb): number => globalThis.requestAnimationFrame(cb));
         this.caf = dependencies.caf ?? ((handle): void => globalThis.cancelAnimationFrame(handle));
         this.now = dependencies.now ?? ((): number => globalThis.performance.now());
-        this.eventBus = dependencies.eventBus ?? eventBus;
+        this.eventBus = dependencies.eventBus ?? new EventBus();
         this.objectManager = RenderObjectManager.getInstance(this.eventBus);
 
         this.adapter = dependencies.adapter;

@@ -4,7 +4,7 @@ import type { SystemEventMap, EventListener, Unsubscribe } from "@core/types";
  * Gerenciador de eventos do sistema
  */
 export class EventBus {
-    private readonly listeners = new Map<keyof SystemEventMap, EventListener[]>();
+    private readonly listeners = new Map<keyof SystemEventMap, Set<EventListener>>();
 
     /**
      * Registra um listener para um tipo de evento
@@ -14,18 +14,15 @@ export class EventBus {
         listener: EventListener<SystemEventMap[K]>,
     ): Unsubscribe {
         if (!this.listeners.has(eventType)) {
-            this.listeners.set(eventType, []);
+            this.listeners.set(eventType, new Set());
         }
 
         const eventListeners = this.listeners.get(eventType)!;
-        eventListeners.push(listener as EventListener);
+        eventListeners.add(listener as EventListener);
 
         // Retorna função para cancelar a inscrição
         return () => {
-            const index = eventListeners.indexOf(listener as EventListener);
-            if (index > -1) {
-                eventListeners.splice(index, 1);
-            }
+            eventListeners.delete(listener as EventListener);
         };
     }
 
@@ -55,10 +52,7 @@ export class EventBus {
         const eventListeners = this.listeners.get(eventType);
         if (!eventListeners) return;
 
-        const index = eventListeners.indexOf(listener as EventListener);
-        if (index > -1) {
-            eventListeners.splice(index, 1);
-        }
+        eventListeners.delete(listener as EventListener);
     }
 
     /**
@@ -66,10 +60,10 @@ export class EventBus {
      */
     emit<K extends keyof SystemEventMap>(eventType: K, payload: SystemEventMap[K]): void {
         const eventListeners = this.listeners.get(eventType);
-        if (!eventListeners || eventListeners.length === 0) return;
+        if (!eventListeners || eventListeners.size === 0) return;
 
         // Copia o array para evitar problemas se listeners forem removidos durante a execução
-        const listenersCopy = [...eventListeners];
+        const listenersCopy = Array.from(eventListeners);
 
         for (const listener of listenersCopy) {
             try {
@@ -121,7 +115,7 @@ export class EventBus {
      */
     listenerCount<K extends keyof SystemEventMap>(eventType: K): number {
         const eventListeners = this.listeners.get(eventType);
-        return eventListeners ? eventListeners.length : 0;
+        return eventListeners ? eventListeners.size : 0;
     }
 
     /**

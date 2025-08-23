@@ -40,7 +40,7 @@ describe("EntityManager", () => {
             const entity = entityManager.createEntity();
 
             expect(entity).toBeDefined();
-            expect(entity.id).toMatch(/^entity_\d+_\d+$/);
+            expect(entity.id).toMatch(/^[a-f0-9-]{36}$/);
             expect(entityManager.hasEntity(entity.id)).toBe(true);
         });
 

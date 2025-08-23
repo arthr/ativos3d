@@ -1,5 +1,5 @@
 import type { Scene, Camera } from "three";
-import { eventBus } from "@core/events/EventBus";
+import type { EventBus } from "@core/events/EventBus";
 
 /**
  * Tipos relacionados ao sistema de renderização
@@ -75,5 +75,5 @@ export interface RenderSystemDependencies {
     /**
      * EventBus a ser usado para emitir eventos
      */
-    readonly eventBus?: typeof eventBus;
+    readonly eventBus?: EventBus;
 }

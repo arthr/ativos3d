@@ -12,7 +12,7 @@ import type {
 } from "@core/types";
 import { Entity as EntityImplementation } from "./Entity";
 import { ComponentSystem } from "@domain/components";
-import { eventBus } from "@core/events/EventBus";
+import { EventBus } from "@core/events/EventBus";
 
 /**
  * EntityManager - Sistema centralizado para gerenciar entidades
@@ -29,12 +29,12 @@ export class EntityManager {
     private entities: Map<EntityId, Entity> = new Map();
     private entityInfo: Map<EntityId, EntityInfo> = new Map();
     private componentSystem: ComponentSystem;
-    private eventBus: typeof eventBus;
+    private eventBus: EventBus;
     private config: EntityManagerConfig;
 
     private constructor(
         config: EntityManagerConfig = {},
-        dependencies?: EntityManagerDependencies,
+        dependencies: EntityManagerDependencies = {},
     ) {
         this.config = {
             maxEntities: 10000,
@@ -44,8 +44,8 @@ export class EntityManager {
             ...config,
         };
 
-        this.componentSystem = dependencies?.componentSystem ?? ComponentSystem.getInstance();
-        this.eventBus = dependencies?.eventBus ?? eventBus;
+        this.componentSystem = ComponentSystem.getInstance();
+        this.eventBus = dependencies.eventBus ?? new EventBus();
     }
 
     /**
@@ -56,7 +56,7 @@ export class EntityManager {
         dependencies?: EntityManagerDependencies,
     ): EntityManager {
         if (!EntityManager.instance) {
-            EntityManager.instance = new EntityManager(config, dependencies);
+            EntityManager.instance = new EntityManager(config, dependencies ?? {});
         }
         return EntityManager.instance;
     }
