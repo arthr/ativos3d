@@ -10,7 +10,9 @@ import type {
     ComponentInfo,
 } from "@core/types";
 import { Entity } from "@domain/entities";
-import { TransformComponent, RenderComponent, PhysicsComponent } from "@domain/components";
+import { TransformComponent } from "./TransformComponent";
+import { PhysicsComponent } from "./PhysicsComponent";
+import { RenderComponent } from "./RenderComponent";
 
 /**
  * Sistema de Componentes seguindo Domain-Driven Design
