@@ -1,4 +1,4 @@
-import type { SystemEventMap, EventListener, Unsubscribe } from "../types/events";
+import type { SystemEventMap, EventListener, Unsubscribe } from "../types/Events";
 
 /**
  * Gerenciador de eventos do sistema
@@ -23,6 +23,9 @@ export class EventBus {
         // Retorna função para cancelar a inscrição
         return () => {
             eventListeners.delete(listener as EventListener);
+            if (eventListeners.size === 0) {
+                this.listeners.delete(eventType);
+            }
         };
     }
 
@@ -53,6 +56,9 @@ export class EventBus {
         if (!eventListeners) return;
 
         eventListeners.delete(listener as EventListener);
+        if (eventListeners.size === 0) {
+            this.listeners.delete(eventType);
+        }
     }
 
     /**

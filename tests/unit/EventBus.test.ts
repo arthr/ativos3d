@@ -124,6 +124,26 @@ describe("EventBus", () => {
             expect(listener).not.toHaveBeenCalled();
         });
 
+        it("deve remover o tipo de evento quando último listener é desinscrito", () => {
+            const listener = vi.fn();
+            const unsubscribe = eventBus.on("pointerMove", listener);
+
+            expect(eventBus.getEventTypes()).toContain("pointerMove");
+
+            unsubscribe();
+            expect(eventBus.getEventTypes()).not.toContain("pointerMove");
+        });
+
+        it("deve remover o tipo de evento quando off remove o último listener", () => {
+            const listener = vi.fn();
+            eventBus.on("pointerMove", listener);
+
+            expect(eventBus.getEventTypes()).toContain("pointerMove");
+
+            eventBus.off("pointerMove", listener);
+            expect(eventBus.getEventTypes()).not.toContain("pointerMove");
+        });
+
         it("deve limpar todos os listeners de um tipo de evento", () => {
             const listener1 = vi.fn();
             const listener2 = vi.fn();
