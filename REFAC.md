@@ -80,7 +80,7 @@ Perfeito! Vou elaborar um planejamento estruturado para reconstruir o projeto de
 ### **Fase 3: Renderização e Cena**
 
 #### **3.1 Sistema de Renderização**
-- [ ] Implementar RenderSystem base
+- [x] Implementar RenderSystem base
 - [ ] Implementar SceneManager
 - [ ] Implementar CameraSystem
 - [ ] Testes para renderização
