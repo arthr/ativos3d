@@ -91,7 +91,12 @@ export class ComponentSystem {
         }
 
         const component = factory(data);
-        this.validateComponent(component);
+        const validation = this.validateComponent(component);
+        if (!validation.isValid) {
+            throw new Error(
+                `Componente inválido: ${componentType} - ${validation.errors.join(", ")}`,
+            );
+        }
         return component as T;
     }
 

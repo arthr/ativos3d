@@ -90,6 +90,14 @@ describe("ComponentSystem", () => {
                 componentSystem.createComponent("inexistent", {});
             }).toThrow("Factory não registrada para componente: inexistent");
         });
+
+        it("deve lançar erro ao criar componente inválido", () => {
+            expect(() => {
+                componentSystem.createComponent<TransformComponent>("TransformComponent", {
+                    scale: Vec3Factory.create(0, 0, 0),
+                });
+            }).toThrow("Componente inválido: TransformComponent - Escala não pode ser zero");
+        });
     });
 
     describe("Validação de Componentes", () => {
