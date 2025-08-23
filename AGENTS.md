@@ -13,3 +13,4 @@ Se detectar divergência entre arquivos:
 4) Depois, `CONTEXT.md`.
 5) Por fim, demais fontes.
 Se ainda houver ambiguidade: proponha 2–3 opções e escolha a mais aderente a `/.cursor/.cursorrules` e ao `CONTEXT.md`.
+```
