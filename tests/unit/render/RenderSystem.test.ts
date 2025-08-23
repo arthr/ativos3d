@@ -59,8 +59,6 @@ describe("RenderSystem", () => {
             lastRenderTime: 0,
             lastRenderDelta: 0,
             lastRenderFPS: 0,
-            lastRenderTimeDelta: 0,
-            lastRenderFPSDelta: 0,
         });
 
         // Inicia o sistema
@@ -75,8 +73,6 @@ describe("RenderSystem", () => {
             lastRenderTime: 16,
             lastRenderDelta: 16,
             lastRenderFPS: 62.5,
-            lastRenderTimeDelta: 16,
-            lastRenderFPSDelta: 62.5,
         });
     });
 

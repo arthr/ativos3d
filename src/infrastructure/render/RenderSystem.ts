@@ -90,15 +90,17 @@ export class RenderSystem {
         const deltaTime = currentTime - this.lastStatsTime;
         const fps = deltaTime > 0 ? 1000 / deltaTime : 0;
 
-        return {
+        const stats = {
             objectCount: this.objectManager.getObjectCount(),
             renderCount: this.frameCount,
             lastRenderTime: currentTime,
             lastRenderDelta: deltaTime,
             lastRenderFPS: fps,
-            lastRenderTimeDelta: deltaTime,
-            lastRenderFPSDelta: fps,
         };
+
+        this.lastStatsTime = currentTime;
+
+        return stats;
     }
 
     /**

@@ -36,8 +36,6 @@ export interface RenderStats {
     readonly lastRenderTime: number;
     readonly lastRenderDelta: number;
     readonly lastRenderFPS: number;
-    readonly lastRenderTimeDelta: number;
-    readonly lastRenderFPSDelta: number;
 }
 
 /**
