@@ -1,4 +1,4 @@
-import { Scene, Camera } from "three";
+import type { Scene, Camera } from "three";
 import { eventBus } from "@core/events/EventBus";
 
 /**
@@ -25,6 +25,19 @@ export interface RenderSystemConfig {
  */
 export interface RenderAdapter {
     render(scene: Scene, camera: Camera): void;
+}
+
+/**
+ * Estatísticas básicas de renderização
+ */
+export interface RenderStats {
+    readonly objectCount: number;
+    readonly renderCount: number;
+    readonly lastRenderTime: number;
+    readonly lastRenderDelta: number;
+    readonly lastRenderFPS: number;
+    readonly lastRenderTimeDelta: number;
+    readonly lastRenderFPSDelta: number;
 }
 
 /**

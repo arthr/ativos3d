@@ -13,3 +13,4 @@ export type { CameraEvents } from "./CameraEvents";
 export type { UIEvents } from "./UIEvents";
 export type { HistoryEvents } from "./HistoryEvents";
 export type { SystemEvents } from "./SystemEvents";
+export type { RenderEvents } from "./RenderEvents";

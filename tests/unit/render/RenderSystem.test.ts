@@ -1,6 +1,8 @@
 import { Scene, Camera } from "three";
 import { describe, it, expect, vi, afterEach, beforeEach } from "vitest";
-import { RenderSystem } from "@infrastructure/render";
+import { RenderSystem, RenderObjectManager } from "@infrastructure/render";
+import { RenderComponent } from "@domain/components";
+import { eventBus } from "@core/events/EventBus";
 
 // Helpers para simular requestAnimationFrame
 let callbacks: FrameRequestCallback[] = [];
@@ -37,19 +39,7 @@ describe("RenderSystem", () => {
         expect(system1).toBe(system2);
     });
 
-    it("deve renderizar um frame", () => {
-        const renderFn = vi.fn();
-        const scene = new Scene();
-        const camera = new Camera();
-        const system = RenderSystem.getInstance(
-            {},
-            { adapter: { render: renderFn }, scene, camera },
-        );
-        system.onRender(() => {});
-        expect(renderFn).toHaveBeenCalledWith(scene, camera);
-    });
-
-    it("deve iniciar e executar callbacks de renderização", () => {
+    it("deve retornar as estatísticas corretas do sistema de renderização", () => {
         const renderSystem = RenderSystem.getInstance(
             {},
             {
@@ -61,8 +51,62 @@ describe("RenderSystem", () => {
                 camera: new Camera(),
             },
         );
+
+        // Estatísticas iniciais
+        expect(renderSystem.getStats()).toEqual({
+            objectCount: 0,
+            renderCount: 0,
+            lastRenderTime: 0,
+            lastRenderDelta: 0,
+            lastRenderFPS: 0,
+            lastRenderTimeDelta: 0,
+            lastRenderFPSDelta: 0,
+        });
+
+        // Inicia o sistema
+        renderSystem.start();
+        nowTime = 16;
+        callbacks[0]?.(16);
+
+        // Estatísticas após um frame
+        expect(renderSystem.getStats()).toEqual({
+            objectCount: 0,
+            renderCount: 1,
+            lastRenderTime: 16,
+            lastRenderDelta: 16,
+            lastRenderFPS: 62.5,
+            lastRenderTimeDelta: 16,
+            lastRenderFPSDelta: 62.5,
+        });
+    });
+
+    it("deve renderizar um frame", () => {
+        const renderFn = vi.fn();
+        const scene = new Scene();
+        const camera = new Camera();
+        const system = RenderSystem.getInstance(
+            {},
+            { adapter: { render: renderFn }, scene, camera },
+        );
+        system.renderFrame();
+        expect(renderFn).toHaveBeenCalledWith(scene, camera);
+    });
+
+    it("deve adicionar e remover callbacks de renderização", () => {
+        const renderSystem = RenderSystem.getInstance(
+            {},
+            {
+                raf,
+                caf,
+                now,
+                adapter: { render: vi.fn() },
+                scene: new Scene(),
+                camera: new Camera(),
+            },
+        );
+
         const renderCallback = vi.fn();
-        renderSystem.onRender(renderCallback);
+        renderSystem.addRenderCallback(renderCallback);
         renderSystem.start();
 
         // Simula um frame
@@ -70,6 +114,14 @@ describe("RenderSystem", () => {
         callbacks[0]?.(16);
 
         expect(renderCallback).toHaveBeenCalledWith(16);
+
+        // Remove o callback
+        renderSystem.removeRenderCallback(renderCallback);
+        nowTime = 32;
+        callbacks[0]?.(32);
+
+        // O callback não deve ser chamado novamente
+        expect(renderCallback).toHaveBeenCalledTimes(1);
     });
 
     it("deve iniciar e parar o loop de renderização", () => {
@@ -112,5 +164,106 @@ describe("RenderSystem", () => {
         expect(renderFn).toHaveBeenCalled();
         renderSystem.stop();
         expect(caf).toHaveBeenCalledWith(1);
+    });
+});
+
+describe("RenderObjectManager", () => {
+    afterEach(() => {
+        RenderObjectManager.resetInstance();
+    });
+
+    it("deve ser singleton", () => {
+        const manager1 = RenderObjectManager.getInstance();
+        const manager2 = RenderObjectManager.getInstance();
+        expect(manager1).toBe(manager2);
+    });
+
+    it("deve registrar um componente de renderização", () => {
+        const manager = RenderObjectManager.getInstance();
+        const component = new RenderComponent();
+        manager.registerObject("entity", component);
+        expect(manager.hasObject("entity")).toBe(true);
+        expect(manager.getObjectComponent("entity")).toBe(component);
+    });
+
+    it("deve atualizar um componente de renderização", () => {
+        const manager = RenderObjectManager.getInstance();
+        const component = new RenderComponent({ color: "red" });
+        manager.registerObject("entity", component);
+        const updatedComponent = new RenderComponent({ color: "blue" });
+        manager.updateObject("entity", updatedComponent);
+        expect(manager.getObjectComponent("entity")).toEqual(updatedComponent);
+    });
+
+    it("deve remover um componente de renderização", () => {
+        const manager = RenderObjectManager.getInstance();
+        const component = new RenderComponent({ color: "red" });
+        manager.registerObject("entity", component);
+        manager.removeObject("entity");
+        expect(manager.hasObject("entity")).toBe(false);
+    });
+
+    it("deve retornar todos os objetos registrados", () => {
+        const manager = RenderObjectManager.getInstance();
+        const components: RenderComponent[] = [];
+        for (let i = 0; i < 10; i++) {
+            components.push(new RenderComponent({ color: "red" }));
+        }
+        components.forEach((component, index) => {
+            manager.registerObject(`entity${index}`, component);
+        });
+        expect(manager.getObjects()).toEqual(
+            components.map((component, index) => ({
+                entityId: `entity${index}`,
+                component,
+            })),
+        );
+    });
+
+    it("deve emitir eventos de renderização", () => {
+        const manager = RenderObjectManager.getInstance();
+        const addListener = vi.fn();
+        const updateListener = vi.fn();
+        const removeListener = vi.fn();
+
+        eventBus.on("renderObjectAdded", addListener);
+        eventBus.on("renderObjectUpdated", updateListener);
+        eventBus.on("renderObjectRemoved", removeListener);
+
+        const component = new RenderComponent({ color: "red" });
+        manager.registerObject("entity", component);
+        manager.updateObject("entity", new RenderComponent({ color: "blue" }));
+        manager.removeObject("entity");
+
+        expect(addListener).toHaveBeenCalledWith({ entityId: "entity" });
+        expect(updateListener).toHaveBeenCalledWith({ entityId: "entity" });
+        expect(removeListener).toHaveBeenCalledWith({ entityId: "entity" });
+    });
+
+    it("deve retornar o número correto de objetos", () => {
+        const manager = RenderObjectManager.getInstance();
+        expect(manager.getObjectCount()).toBe(0);
+
+        const component = new RenderComponent({ color: "red" });
+        manager.registerObject("entity1", component);
+        expect(manager.getObjectCount()).toBe(1);
+
+        manager.registerObject("entity2", component);
+        expect(manager.getObjectCount()).toBe(2);
+
+        manager.removeObject("entity1");
+        expect(manager.getObjectCount()).toBe(1);
+    });
+
+    it("deve limpar todos os objetos", () => {
+        const manager = RenderObjectManager.getInstance();
+        const component = new RenderComponent({ color: "red" });
+        manager.registerObject("entity1", component);
+        manager.registerObject("entity2", component);
+        expect(manager.getObjectCount()).toBe(2);
+
+        manager.clearObjects();
+        expect(manager.getObjectCount()).toBe(0);
+        expect(manager.getObjects()).toEqual([]);
     });
 });

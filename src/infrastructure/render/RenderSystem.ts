@@ -3,9 +3,11 @@ import type {
     RenderLoopCallback,
     RenderSystemConfig,
     RenderAdapter,
+    RenderStats,
     RenderSystemDependencies,
 } from "@core/types/render";
 import { eventBus } from "@core/events/EventBus";
+import { RenderObjectManager } from "./RenderObjectManager";
 
 /**
  * Sistema básico de renderização
@@ -19,11 +21,14 @@ export class RenderSystem {
     private readonly raf: (callback: FrameRequestCallback) => number;
     private readonly caf: (handle: number) => void;
     private readonly now: () => number;
-    private eventBus: typeof eventBus; // TODO: Verificar se é necessário
+    private readonly eventBus: typeof eventBus;
+    private readonly objectManager: RenderObjectManager;
     private callbacks: RenderLoopCallback[] = [];
     private running: boolean = false;
     private frameHandle: number = 0;
     private lastTime: number = 0;
+    private frameCount: number = 0;
+    private lastStatsTime: number = 0;
 
     private adapter: RenderAdapter;
     private scene: Scene;
@@ -42,6 +47,7 @@ export class RenderSystem {
         this.caf = dependencies.caf ?? ((handle): void => globalThis.cancelAnimationFrame(handle));
         this.now = dependencies.now ?? ((): number => globalThis.performance.now());
         this.eventBus = dependencies.eventBus ?? eventBus;
+        this.objectManager = RenderObjectManager.getInstance(this.eventBus);
 
         this.adapter = dependencies.adapter;
         this.scene = dependencies.scene;
@@ -73,6 +79,26 @@ export class RenderSystem {
             RenderSystem.instance.stop();
         }
         RenderSystem.instance = null;
+        RenderObjectManager.resetInstance();
+    }
+
+    /**
+     * Retorna as estatísticas básicas do sistema de renderização
+     */
+    public getStats(): RenderStats {
+        const currentTime = this.now();
+        const deltaTime = currentTime - this.lastStatsTime;
+        const fps = deltaTime > 0 ? 1000 / deltaTime : 0;
+
+        return {
+            objectCount: this.objectManager.getObjectCount(),
+            renderCount: this.frameCount,
+            lastRenderTime: currentTime,
+            lastRenderDelta: deltaTime,
+            lastRenderFPS: fps,
+            lastRenderTimeDelta: deltaTime,
+            lastRenderFPSDelta: fps,
+        };
     }
 
     /**
@@ -82,8 +108,10 @@ export class RenderSystem {
         if (this.running) return;
 
         this.running = true;
-        this.adapter.render(this.scene, this.camera);
         this.lastTime = this.now();
+        this.lastStatsTime = this.now();
+        this.frameCount = 0;
+        this.adapter.render(this.scene, this.camera);
         this.frameHandle = this.raf(this.loop);
     }
 
@@ -97,11 +125,27 @@ export class RenderSystem {
     }
 
     /**
-     * Renderiza um único frame
+     * Registra um callback para ser executado a cada frame
      */
-    public onRender(callback: RenderLoopCallback): void {
-        this.adapter.render(this.scene, this.camera);
+    public addRenderCallback(callback: RenderLoopCallback): void {
         this.callbacks.push(callback);
+    }
+
+    /**
+     * Remove um callback do loop de renderização
+     */
+    public removeRenderCallback(callback: RenderLoopCallback): void {
+        const index = this.callbacks.indexOf(callback);
+        if (index > -1) {
+            this.callbacks.splice(index, 1);
+        }
+    }
+
+    /**
+     * Renderiza um único frame (para testes ou renderização sob demanda)
+     */
+    public renderFrame(): void {
+        this.adapter.render(this.scene, this.camera);
     }
 
     /**
@@ -110,11 +154,17 @@ export class RenderSystem {
     private loop = (time: number): void => {
         const delta = time - this.lastTime;
         this.lastTime = time;
+        this.frameCount++;
 
+        // Executa callbacks de renderização
         for (const callback of this.callbacks) {
             callback(delta);
         }
 
+        // Renderiza o frame
+        this.adapter.render(this.scene, this.camera);
+
+        // Agenda próximo frame se ainda estiver rodando
         if (this.running) {
             this.frameHandle = this.raf(this.loop);
         }

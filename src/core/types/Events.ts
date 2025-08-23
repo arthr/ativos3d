@@ -16,6 +16,7 @@ import type { CameraEvents } from "./events/CameraEvents";
 import type { UIEvents } from "./events/UIEvents";
 import type { HistoryEvents } from "./events/HistoryEvents";
 import type { SystemEvents } from "./events/SystemEvents";
+import type { RenderEvents } from "./events/RenderEvents";
 
 /**
  * Todos os eventos do sistema
@@ -30,7 +31,8 @@ export type SystemEventMap = InputEvents &
     CameraEvents &
     UIEvents &
     HistoryEvents &
-    SystemEvents;
+    SystemEvents &
+    RenderEvents;
 
 /**
  * Tipo para qualquer evento do sistema

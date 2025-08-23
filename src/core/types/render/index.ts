@@ -5,5 +5,6 @@ export type {
     RenderLoopCallback,
     RenderSystemConfig,
     RenderAdapter,
+    RenderStats,
     RenderSystemDependencies,
 } from "./RenderSystem";
