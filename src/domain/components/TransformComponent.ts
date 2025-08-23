@@ -4,7 +4,7 @@ import type {
     TransformComponentData,
 } from "@core/types/components/TransformComponent";
 import type { Vec3 } from "@core/geometry";
-import { BaseComponent } from "@domain/components";
+import { BaseComponent } from "./BaseComponent";
 import { Vec3Factory, Vec3Operations } from "@core/geometry";
 
 /**

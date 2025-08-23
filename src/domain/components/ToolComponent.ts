@@ -4,7 +4,7 @@ import type {
     ToolComponentData,
 } from "@core/types/components/ToolComponent";
 import type { ToolType, ModeType } from "@core/types";
-import { BaseComponent } from "@domain/components";
+import { BaseComponent } from "./BaseComponent";
 import { DEFAULT_TOOL, MODES, TOOLS } from "@core/types/components/ToolComponent";
 
 /**

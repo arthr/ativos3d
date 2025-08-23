@@ -4,7 +4,7 @@ import type {
     PhysicsComponentData,
 } from "@core/types/components/PhysicsComponent";
 import type { Vec3 } from "@core/geometry";
-import { BaseComponent } from "@domain/components";
+import { BaseComponent } from "./BaseComponent";
 import { Vec3Factory, Vec3Operations } from "@core/geometry";
 import { DEFAULT_PHYSICS } from "@core/types/components/PhysicsComponent";
 

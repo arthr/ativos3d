@@ -4,7 +4,7 @@ import type {
     RenderComponentData,
     MaterialConfig,
 } from "@core/types/components/RenderComponent";
-import { BaseComponent } from "@domain/components";
+import { BaseComponent } from "./BaseComponent";
 import { DEFAULT_RENDER } from "@core/types/components/RenderComponent";
 
 /**
