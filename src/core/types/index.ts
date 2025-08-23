@@ -11,4 +11,5 @@ export * from "./tools";
 export * from "./camera";
 export * from "./ui";
 export * from "./scene";
+export * from "./render";
 export * from "./snap";
