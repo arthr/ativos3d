@@ -48,6 +48,8 @@ src/
 4. **Interface**: Adicione em `presentation/`
 
 ### **Para Testes**
+
+Utilize o vitest para executar os testes. `pnpm vitest --run`  
 - **Unitários**: `tests/unit/`
 - **Integração**: `tests/integration/`
 - **E2E**: `tests/e2e/`
@@ -101,6 +103,16 @@ export class NewTool implements Tool {
 }
 ```
 
-## **Legacy**
+### **Para Verificar Depedência Circular**
+```bash
+npx -y madge --circular src --extensions ts,tsx --ts-config tsconfig.json
+``` 
+
+### **Para Verificar o Lint**
+```bash
+pnpm lint
+```
+
+## **Projecto Legacy (Legado)**
 
 O código antigo está preservado em `legacy/` para referência durante a migração.
