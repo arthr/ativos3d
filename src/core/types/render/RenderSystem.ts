@@ -1,25 +1,68 @@
+import { Scene, Camera } from "three";
 import { eventBus } from "@core/events/EventBus";
+
+/**
+ * Tipos relacionados ao sistema de renderização
+ */
+
+/**
+ * Função de callback executada a cada frame de renderização
+ */
+export type RenderLoopCallback = (delta: number) => void;
+
+/**
+ * Configuração do RenderSystem
+ */
+export interface RenderSystemConfig {
+    /**
+     * Inicia automaticamente o loop de renderização
+     */
+    autoStart?: boolean;
+}
 
 /**
  * Adaptador genérico para motores de renderização
  */
 export interface RenderAdapter {
-    render(scene: unknown, camera: unknown): void;
+    render(scene: Scene, camera: Camera): void;
 }
 
 /**
  * Dependências necessárias para o RenderSystem
  */
 export interface RenderSystemDependencies {
+    /**
+     * Adaptador de renderização
+     */
     adapter: RenderAdapter;
-    scene: unknown;
-    camera: unknown;
-    eventBus?: typeof eventBus;
-}
 
-/**
- * Configuração do RenderSystem
- */
-export interface RenderSystemConfig {
-    autoStart?: boolean;
+    /**
+     * Cena a ser renderizada
+     */
+    scene: Scene;
+
+    /**
+     * Câmera a ser usada para renderização
+     */
+    camera: Camera;
+
+    /**
+     * Função de requestFrameAnimation (injetável para testes)
+     */
+    readonly raf?: (callback: FrameRequestCallback) => number;
+
+    /**
+     * Função de cancelAnimationFrame (injetável para testes)
+     */
+    readonly caf?: (handle: number) => void;
+
+    /**
+     * Função para obter o tempo atual
+     */
+    readonly now?: () => number;
+
+    /**
+     * EventBus a ser usado para emitir eventos
+     */
+    readonly eventBus?: typeof eventBus;
 }

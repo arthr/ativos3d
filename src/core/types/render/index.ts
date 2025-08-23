@@ -1,4 +1,9 @@
 /**
  * Exportações de tipos de renderização
  */
-export type { RenderAdapter, RenderSystemDependencies, RenderSystemConfig } from "./RenderSystem";
+export type {
+    RenderLoopCallback,
+    RenderSystemConfig,
+    RenderAdapter,
+    RenderSystemDependencies,
+} from "./RenderSystem";
