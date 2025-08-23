@@ -274,4 +274,21 @@ describe("RenderObjectManager", () => {
         expect(manager.getObjectCount()).toBe(0);
         expect(manager.getObjects()).toEqual([]);
     });
+
+    it("deve emitir eventos de remoção ao limpar todos os objetos", () => {
+        const eventBus = new EventBus();
+        const manager = RenderObjectManager.getInstance(eventBus);
+        const component = new RenderComponent({ color: "red" });
+        const removeListener = vi.fn();
+
+        eventBus.on("renderObjectRemoved", removeListener);
+
+        manager.registerObject("entity1", component);
+        manager.registerObject("entity2", component);
+
+        manager.clearObjects();
+
+        expect(removeListener).toHaveBeenNthCalledWith(1, { entityId: "entity1" });
+        expect(removeListener).toHaveBeenNthCalledWith(2, { entityId: "entity2" });
+    });
 });

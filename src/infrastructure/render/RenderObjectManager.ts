@@ -104,8 +104,12 @@ export class RenderObjectManager {
 
     /**
      * Remove todos os objetos registrados
+     * emitindo eventos de remoção
      */
     public clearObjects(): void {
+        for (const entityId of this.objects.keys()) {
+            this.eventBus.emit("renderObjectRemoved", { entityId });
+        }
         this.objects.clear();
     }
 }
