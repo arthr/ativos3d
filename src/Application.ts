@@ -14,7 +14,7 @@ import { Scene, Camera } from "three";
  * Classe principal da aplicação
  */
 export class Application {
-    private readonly container = new Map<DependencyKey, DependencyValue>();
+    private readonly container = new Map<DependencyKey, DependencyMap[DependencyKey]>();
 
     /**
      * Inicializa o container de dependências
@@ -28,12 +28,12 @@ export class Application {
      * @param key - A chave da dependência
      * @returns A dependência resolvida
      */
-    resolve<K extends DependencyKey>(key: K): DependencyValue {
+    resolve<K extends DependencyKey>(key: K): DependencyMap[K] {
         const dependency = this.container.get(key);
         if (!dependency) {
             throw new Error(`Dependência não encontrada: ${key}`);
         }
-        return dependency;
+        return dependency as DependencyMap[K];
     }
 
     /**
@@ -75,8 +75,3 @@ type DependencyMap = {
  * Chave da dependência
  */
 type DependencyKey = keyof DependencyMap;
-
-/**
- * Valor da dependência
- */
-type DependencyValue = DependencyMap[DependencyKey];
