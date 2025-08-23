@@ -219,6 +219,21 @@ describe("RenderObjectManager", () => {
         expect(manager.getObjectComponent("entity")).toEqual(updatedComponent);
     });
 
+    it("não deve atualizar um componente não registrado e não deve emitir eventos", () => {
+        const eventBus = new EventBus();
+        const manager = RenderObjectManager.getInstance(eventBus);
+        const addListener = vi.fn();
+        const updateListener = vi.fn();
+        eventBus.on("renderObjectAdded", addListener);
+        eventBus.on("renderObjectUpdated", updateListener);
+
+        manager.updateObject("entity", new RenderComponent({ color: "red" }));
+
+        expect(manager.hasObject("entity")).toBe(false);
+        expect(addListener).not.toHaveBeenCalled();
+        expect(updateListener).not.toHaveBeenCalled();
+    });
+
     it("deve remover um componente de renderização", () => {
         const eventBus = new EventBus();
         const manager = RenderObjectManager.getInstance(eventBus);
@@ -226,6 +241,19 @@ describe("RenderObjectManager", () => {
         manager.registerObject("entity", component);
         manager.removeObject("entity");
         expect(manager.hasObject("entity")).toBe(false);
+    });
+
+    it("não deve remover um componente não registrado e não deve emitir eventos", () => {
+        const eventBus = new EventBus();
+        const manager = RenderObjectManager.getInstance(eventBus);
+        const addListener = vi.fn();
+        const removeListener = vi.fn();
+        eventBus.on("renderObjectAdded", addListener);
+        eventBus.on("renderObjectRemoved", removeListener);
+        manager.removeObject("entity");
+        expect(manager.hasObject("entity")).toBe(false);
+        expect(addListener).not.toHaveBeenCalled();
+        expect(removeListener).not.toHaveBeenCalled();
     });
 
     it("deve retornar todos os objetos registrados", () => {

@@ -52,19 +52,17 @@ export class RenderObjectManager {
 
     /**
      * Atualiza um objeto já registrado
+     * Se o objeto não estiver registrado, não faz nada
      */
     public updateObject(entityId: EntityId, component: RenderComponent): void {
-        if (!this.objects.has(entityId)) {
-            this.registerObject(entityId, component);
-            return;
-        }
-
+        if (!this.objects.has(entityId)) return;
         this.objects.set(entityId, component);
         this.eventBus.emit("renderObjectUpdated", { entityId });
     }
 
     /**
      * Remove um objeto já registrado
+     * Se o objeto não estiver registrado, não faz nada
      */
     public removeObject(entityId: EntityId): void {
         if (!this.objects.delete(entityId)) return;
@@ -73,6 +71,7 @@ export class RenderObjectManager {
 
     /**
      * Obtém o componente de renderização de um objeto
+     * Se o objeto não estiver registrado, retorna undefined
      */
     public getObjectComponent(entityId: EntityId): RenderComponent | undefined {
         return this.objects.get(entityId);
@@ -80,6 +79,7 @@ export class RenderObjectManager {
 
     /**
      * Verifica se um objeto está registrado
+     * Se o objeto não estiver registrado, retorna false
      */
     public hasObject(entityId: EntityId): boolean {
         return this.objects.has(entityId);
@@ -87,6 +87,7 @@ export class RenderObjectManager {
 
     /**
      * Obtém todos os objetos registrados
+     * Se não houver objetos registrados, retorna um array vazio
      */
     public getObjects(): RenderObject[] {
         return Array.from(this.objects.entries()).map(([entityId, component]) => ({
@@ -97,6 +98,7 @@ export class RenderObjectManager {
 
     /**
      * Obtém o número de objetos registrados
+     * Se não houver objetos registrados, retorna 0
      */
     public getObjectCount(): number {
         return this.objects.size;
@@ -105,6 +107,7 @@ export class RenderObjectManager {
     /**
      * Remove todos os objetos registrados
      * emitindo eventos de remoção
+     * Se não houver objetos registrados, não faz nada
      */
     public clearObjects(): void {
         for (const entityId of this.objects.keys()) {
