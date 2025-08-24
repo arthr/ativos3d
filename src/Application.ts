@@ -61,7 +61,7 @@ export class Application {
                 eventBus,
                 adapter: createWebGLRenderAdapter(),
                 scene: new Scene(),
-                camera: cameraSystem.getCamera(),
+                cameraSystem,
             },
         );
 

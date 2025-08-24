@@ -1,5 +1,6 @@
 import type { Scene, Camera } from "three";
 import type { EventBus } from "@core/events/EventBus";
+import type { CameraSystemProvider } from "@core/types/camera";
 
 /**
  * Tipos relacionados ao sistema de renderização
@@ -53,9 +54,9 @@ export interface RenderSystemDependencies {
     scene: Scene;
 
     /**
-     * Câmera a ser usada para renderização
+     * Sistema de câmera injetado
      */
-    camera: Camera;
+    cameraSystem: CameraSystemProvider;
 
     /**
      * Função de requestFrameAnimation (injetável para testes)

@@ -1,6 +1,6 @@
-import { Scene, Camera } from "three";
+import { Scene, Camera, PerspectiveCamera, OrthographicCamera } from "three";
 import { describe, it, expect, vi, afterEach, beforeEach } from "vitest";
-import { RenderSystem } from "@infrastructure/render";
+import { RenderSystem, CameraSystem } from "@infrastructure/render";
 import { EventBus } from "@core/events/EventBus";
 
 // Helpers para simular requestAnimationFrame
@@ -12,6 +12,7 @@ let now: () => number;
 
 afterEach(() => {
     RenderSystem.resetInstance();
+    CameraSystem.resetInstance();
     vi.restoreAllMocks();
 });
 
@@ -31,8 +32,8 @@ describe("RenderSystem", () => {
         const dependencies = {
             adapter: { render: vi.fn() },
             scene: new Scene(),
-            camera: new Camera(),
             eventBus: new EventBus(),
+            cameraSystem: { getCamera: (): Camera => new Camera() },
         };
         const system1 = RenderSystem.getInstance({}, dependencies);
         const system2 = RenderSystem.getInstance({}, dependencies);
@@ -48,8 +49,8 @@ describe("RenderSystem", () => {
                 now,
                 adapter: { render: vi.fn() },
                 scene: new Scene(),
-                camera: new Camera(),
                 eventBus: new EventBus(),
+                cameraSystem: { getCamera: (): Camera => new Camera() },
             },
         );
 
@@ -101,13 +102,37 @@ describe("RenderSystem", () => {
     it("deve renderizar um frame", () => {
         const renderFn = vi.fn();
         const scene = new Scene();
-        const camera = new Camera();
+        const camera = new PerspectiveCamera(75, 1, 0.1, 2000);
         const system = RenderSystem.getInstance(
             {},
-            { adapter: { render: renderFn }, scene, camera, eventBus: new EventBus() },
+            {
+                adapter: { render: renderFn },
+                scene,
+                eventBus: new EventBus(),
+                cameraSystem: { getCamera: (): Camera => camera },
+            },
         );
         system.renderFrame();
         expect(renderFn).toHaveBeenCalledWith(scene, camera);
+    });
+
+    it("deve atualizar a câmera após alterar o modo", () => {
+        const eventBus = new EventBus();
+        const cameraSystem = CameraSystem.getInstance({}, { eventBus });
+        const scene = new Scene();
+        const firstCamera = cameraSystem.getCamera();
+        const renderFn = vi.fn();
+        const renderSystem = RenderSystem.getInstance(
+            {},
+            { adapter: { render: renderFn }, scene, eventBus, cameraSystem },
+        );
+
+        cameraSystem.setMode("ortho");
+        const newCamera = cameraSystem.getCamera();
+
+        renderSystem.renderFrame();
+        expect(renderFn).toHaveBeenCalledWith(scene, newCamera);
+        expect(firstCamera).not.toBe(newCamera);
     });
 
     it("deve adicionar e remover callbacks de renderização", () => {
@@ -119,8 +144,8 @@ describe("RenderSystem", () => {
                 now,
                 adapter: { render: vi.fn() },
                 scene: new Scene(),
-                camera: new Camera(),
                 eventBus: new EventBus(),
+                cameraSystem: { getCamera: (): Camera => new Camera() },
             },
         );
 
@@ -152,10 +177,15 @@ describe("RenderSystem", () => {
             .spyOn(globalThis, "cancelAnimationFrame")
             .mockImplementation(() => undefined);
         const scene = new Scene();
-        const camera = new Camera();
+        const camera = new PerspectiveCamera(75, 1, 0.1, 2000);
         const system = RenderSystem.getInstance(
             {},
-            { adapter: { render: renderFn }, scene, camera, eventBus: new EventBus() },
+            {
+                adapter: { render: renderFn },
+                scene,
+                cameraSystem: { getCamera: (): Camera => camera },
+                eventBus: new EventBus(),
+            },
         );
 
         system.start();
@@ -176,7 +206,9 @@ describe("RenderSystem", () => {
                 now,
                 adapter: { render: renderFn },
                 scene: new Scene(),
-                camera: new Camera(),
+                cameraSystem: {
+                    getCamera: (): Camera => new OrthographicCamera(-1, 1, 1, -1, 0.1, 2000),
+                },
                 eventBus: new EventBus(),
             },
         );

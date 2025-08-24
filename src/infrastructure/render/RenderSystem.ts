@@ -6,6 +6,8 @@ import type {
     RenderSystemDependencies,
 } from "@core/types/render";
 import type { EventBus } from "@core/events/EventBus";
+import type { Unsubscribe } from "@core/types/Events";
+import type { CameraSystemProvider } from "@core/types/camera";
 import { Scene, Camera } from "three";
 import { RenderObjectManager } from "./RenderObjectManager";
 
@@ -23,6 +25,7 @@ export class RenderSystem {
     private readonly now: () => number;
     private readonly eventBus: EventBus;
     private readonly objectManager: RenderObjectManager;
+    private readonly cameraSystem: CameraSystemProvider;
     private callbacks: RenderLoopCallback[] = [];
     private running: boolean = false;
     private frameHandle: number = 0;
@@ -35,6 +38,7 @@ export class RenderSystem {
     private adapter: RenderAdapter;
     private scene: Scene;
     private camera: Camera;
+    private removeCameraListener: Unsubscribe | null = null;
 
     private constructor(config: RenderSystemConfig = {}, dependencies: RenderSystemDependencies) {
         this.config = { autoStart: false, ...config };
@@ -43,10 +47,16 @@ export class RenderSystem {
         this.now = dependencies.now ?? ((): number => globalThis.performance.now());
         this.eventBus = dependencies.eventBus;
         this.objectManager = RenderObjectManager.getInstance(this.eventBus);
+        this.cameraSystem = dependencies.cameraSystem;
 
         this.adapter = dependencies.adapter ?? { render: (): void => {} };
         this.scene = dependencies.scene ?? new Scene();
-        this.camera = dependencies.camera ?? new Camera();
+        this.camera = this.cameraSystem.getCamera();
+
+        this.removeCameraListener = this.eventBus.on(
+            "cameraModeChanged",
+            this.handleCameraModeChanged,
+        );
 
         if (this.config.autoStart) {
             this.start();
@@ -72,6 +82,7 @@ export class RenderSystem {
     public static resetInstance(): void {
         if (RenderSystem.instance) {
             RenderSystem.instance.stop();
+            RenderSystem.instance.removeCameraListener?.();
         }
         RenderSystem.instance = null;
         RenderObjectManager.resetInstance();
@@ -163,5 +174,12 @@ export class RenderSystem {
         if (this.running) {
             this.frameHandle = this.raf(this.loop);
         }
+    };
+
+    /**
+     * Atualiza a câmera quando o modo da câmera é alterado
+     */
+    private handleCameraModeChanged = (): void => {
+        this.camera = this.cameraSystem.getCamera();
     };
 }

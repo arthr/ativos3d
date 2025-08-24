@@ -31,3 +31,13 @@ export interface CameraSystemDependencies {
      */
     createCamera?: (mode: CameraMode) => Camera;
 }
+
+/**
+ * Provedor de câmera ativa
+ */
+export interface CameraSystemProvider {
+    /**
+     * Retorna a câmera ativa
+     */
+    getCamera(): Camera;
+}
