@@ -113,6 +113,11 @@ npx -y madge --circular src --extensions ts,tsx --ts-config tsconfig.json
 pnpm lint
 ```
 
+### **Para Executar os Testes**
+```bash
+pnpm vitest --run
+```
+
 ## **Projecto Legacy (Legado)**
 
 O código antigo está preservado em `legacy/` para referência durante a migração.
