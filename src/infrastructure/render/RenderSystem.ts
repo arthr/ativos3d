@@ -179,7 +179,7 @@ export class RenderSystem {
     /**
      * Atualiza a câmera quando o modo da câmera é alterado
      */
-    private handleCameraModeChanged = (): void => {
-        this.camera = this.cameraSystem.getCamera();
+    private handleCameraModeChanged = ({ camera }: { camera: Camera }): void => {
+        this.camera = camera;
     };
 }

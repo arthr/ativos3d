@@ -21,9 +21,10 @@ describe("CameraSystem", () => {
         const system = CameraSystem.getInstance({ mode: "persp" }, { eventBus });
         const firstCamera = system.getCamera();
         system.setMode("ortho");
+        const secondCamera = system.getCamera();
         expect(system.getMode()).toBe("ortho");
-        expect(system.getCamera()).not.toBe(firstCamera);
-        expect(listener).toHaveBeenCalledWith({ mode: "ortho" });
+        expect(secondCamera).not.toBe(firstCamera);
+        expect(listener).toHaveBeenCalledWith({ mode: "ortho", camera: secondCamera });
     });
 
     it("deve emitir eventos de gestos de câmera", () => {

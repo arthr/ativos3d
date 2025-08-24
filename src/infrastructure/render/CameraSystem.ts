@@ -64,7 +64,7 @@ export class CameraSystem {
         if (this.mode === mode) return;
         this.mode = mode;
         this.camera = this.cameraFactory(mode);
-        this.eventBus.emit("cameraModeChanged", { mode });
+        this.eventBus.emit("cameraModeChanged", { mode, camera: this.camera });
     }
 
     /**
