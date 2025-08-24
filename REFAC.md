@@ -92,7 +92,7 @@ Perfeito! Vou elaborar um planejamento estruturado para reconstruir o projeto de
 - [ ] Implementar FloorLayer
 
 #### **3.3 Sistema de Câmera**
-- [ ] Implementar CameraController
+- [x] Implementar CameraController
 - [ ] Implementar CameraModes (persp/ortho)
 - [ ] Implementar controles de câmera
 - [ ] Testes para câmera
