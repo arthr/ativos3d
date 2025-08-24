@@ -72,4 +72,13 @@ describe("CameraSystem", () => {
         expect(startListener).not.toHaveBeenCalled();
         expect(endListener).not.toHaveBeenCalled();
     });
+
+    it("deve indicar corretamente o estado de um gesto", () => {
+        const eventBus = new EventBus();
+        const system = CameraSystem.getInstance({ mode: "persp" }, { eventBus });
+        system.startGesture("pan");
+        expect(system.isGestureActive("pan")).toBe(true);
+        system.endGesture("pan");
+        expect(system.isGestureActive("pan")).toBe(false);
+    });
 });
