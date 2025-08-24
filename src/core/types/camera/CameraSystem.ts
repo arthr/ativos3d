@@ -1,5 +1,5 @@
 import type { Camera } from "three";
-import type { EventBus } from "@/core/events/EventBus";
+import type { EventBus } from "@core/events/EventBus";
 import type { CameraMode } from "./CameraTypes";
 
 /**

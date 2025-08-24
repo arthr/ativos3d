@@ -1,10 +1,7 @@
 import { PerspectiveCamera, OrthographicCamera, Camera } from "three";
-import type { CameraMode, CameraGesture } from "@/core/types/camera";
-import type {
-    CameraSystemConfig,
-    CameraSystemDependencies,
-} from "@/core/types/camera/CameraSystem";
-import type { EventBus } from "@/core/events/EventBus";
+import type { CameraMode, CameraGesture } from "@core/types/camera";
+import type { CameraSystemConfig, CameraSystemDependencies } from "@core/types/camera/CameraSystem";
+import type { EventBus } from "@core/events/EventBus";
 
 /**
  * Sistema de gerenciamento de câmera
