@@ -14,6 +14,7 @@ describe("CameraController", () => {
     beforeEach(() => {
         emit = vi.fn();
         modeHandler = undefined;
+        // @ts-expect-error - Mocking eventBus.on
         on = vi.fn((eventType, handler) => {
             if (eventType === "cameraModeChanged") {
                 modeHandler = handler as typeof modeHandler;
@@ -63,4 +64,3 @@ describe("CameraController", () => {
         expect(emit.mock.calls[callCount]).toEqual(["cameraUpdated", { camera: payload.camera }]);
     });
 });
-
