@@ -3,3 +3,8 @@
  */
 
 export type { SceneAction } from "./SceneTypes";
+export type {
+    SceneId,
+    SceneManagerConfig,
+    SceneManagerDependencies,
+} from "./SceneManager";
