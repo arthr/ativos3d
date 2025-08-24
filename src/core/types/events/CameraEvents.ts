@@ -1,5 +1,5 @@
 import type { Camera } from "three";
-import type { CameraMode, CameraGesture } from "../camera";
+import type { CameraMode, CameraGesture } from "../camera/CameraTypes";
 
 /**
  * Eventos de câmera
