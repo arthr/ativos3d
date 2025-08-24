@@ -11,9 +11,10 @@ import {
     RenderSystem,
     RenderObjectManager,
     RenderSync,
+    CameraSystem,
 } from "@infrastructure/render";
 
-import { Scene, Camera } from "three";
+import { Scene } from "three";
 
 /**
  * Classe principal da aplicação
@@ -48,6 +49,7 @@ export class Application {
         const commandStack = new CommandStack();
         const entityManager = EntityManager.getInstance({}, { eventBus });
         const renderObjectManager = RenderObjectManager.getInstance(eventBus);
+        const cameraSystem = CameraSystem.getInstance({}, { eventBus });
 
         // Sincroniza o RenderObjectManager com o resto do lifecycle da aplicação
         new RenderSync(eventBus, renderObjectManager);
@@ -59,16 +61,17 @@ export class Application {
                 eventBus,
                 adapter: createWebGLRenderAdapter(),
                 scene: new Scene(),
-                camera: new Camera(),
+                camera: cameraSystem.getCamera(),
             },
         );
 
         this.container.set("eventBus", eventBus);
         this.container.set("commandStack", commandStack);
         this.container.set("entityManager", entityManager);
+        this.container.set("cameraSystem", cameraSystem);
         this.container.set("renderSystem", renderSystem);
 
-        return { eventBus, commandStack, entityManager, renderSystem };
+        return { eventBus, commandStack, entityManager, cameraSystem, renderSystem };
     }
 }
 
@@ -79,6 +82,7 @@ type DependencyMap = {
     eventBus: EventBus;
     commandStack: CommandStack;
     entityManager: EntityManager;
+    cameraSystem: CameraSystem;
     renderSystem: RenderSystem;
 };
 

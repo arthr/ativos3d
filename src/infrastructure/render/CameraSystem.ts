@@ -1,7 +1,6 @@
 import { PerspectiveCamera, OrthographicCamera, Camera } from "three";
 import type { CameraMode, CameraGesture } from "@/core/types/camera";
 import type {
-    CameraSystem as CameraSystemType,
     CameraSystemConfig,
     CameraSystemDependencies,
 } from "@/core/types/camera/CameraSystem";
@@ -10,8 +9,8 @@ import type { EventBus } from "@/core/events/EventBus";
 /**
  * Sistema de gerenciamento de câmera
  */
-export class CameraSystem implements CameraSystemType {
-    private static instance: CameraSystemType | null = null;
+export class CameraSystem {
+    private static instance: CameraSystem | null = null;
     private readonly eventBus: EventBus;
     private readonly cameraFactory: (mode: CameraMode) => Camera;
     private readonly gestures = new Set<CameraGesture>();
@@ -32,7 +31,7 @@ export class CameraSystem implements CameraSystemType {
     public static getInstance(
         config: CameraSystemConfig = {},
         deps: CameraSystemDependencies,
-    ): CameraSystemType {
+    ): CameraSystem {
         if (!CameraSystem.instance) {
             CameraSystem.instance = new CameraSystem(config, deps);
         }

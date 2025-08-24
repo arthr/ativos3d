@@ -3,4 +3,4 @@
  */
 
 export type { CameraGesture, CameraMode } from "./CameraTypes";
-export type { CameraSystemDependencies, CameraSystem, CameraSystemConfig } from "./CameraSystem";
+export type { CameraSystemDependencies, CameraSystemConfig } from "./CameraSystem";

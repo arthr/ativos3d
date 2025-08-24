@@ -1,6 +1,6 @@
 import type { Camera } from "three";
 import type { EventBus } from "@/core/events/EventBus";
-import type { CameraMode, CameraGesture } from "./CameraTypes";
+import type { CameraMode } from "./CameraTypes";
 
 /**
  * Configurações do CameraSystem
@@ -30,18 +30,4 @@ export interface CameraSystemDependencies {
      * Função opcional para criação de câmera
      */
     createCamera?: (mode: CameraMode) => Camera;
-}
-
-/**
- * Sistema de gerenciamento de câmera
- */
-export interface CameraSystem {
-    getCamera(): Camera;
-    getMode(): CameraMode;
-    setMode(mode: CameraMode): void;
-    startGesture(gesture: CameraGesture): void;
-    endGesture(gesture: CameraGesture): void;
-    isGestureActive(gesture: CameraGesture): boolean;
-    toggleControls(): void;
-    isControlsEnabled(): boolean;
 }
