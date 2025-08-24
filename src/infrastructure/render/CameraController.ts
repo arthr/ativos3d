@@ -2,10 +2,12 @@ import type {
     CameraControllerProvider,
     CameraControllerDependencies,
     CameraControllerConfig,
+    CameraMode,
 } from "@core/types/camera";
 import type { CameraSystemProvider } from "@core/types/camera";
 import type { EventBus } from "@core/events/EventBus";
 import type { Vec3 } from "@core/geometry";
+import type { Camera } from "@react-three/fiber";
 
 /**
  * Controlador básico de câmera
@@ -21,6 +23,7 @@ export class CameraController implements CameraControllerProvider {
         this.config = config ?? {};
         this.cameraSystem = this.dependencies.cameraSystem;
         this.eventBus = this.dependencies.eventBus;
+        this.eventBus.on("cameraModeChanged", this.handleCameraModeChanged);
     }
 
     /**
@@ -59,6 +62,22 @@ export class CameraController implements CameraControllerProvider {
 
         this.update();
     }
+
+    /**
+     * Remove listeners do controlador
+     */
+    dispose(): void {
+        this.eventBus.off("cameraModeChanged", this.handleCameraModeChanged);
+    }
+
+    /**
+     * Reemite o evento de atualização quando o modo da câmera é alterado
+     */
+    private handleCameraModeChanged = ({ camera }: { mode: CameraMode; camera: Camera }): void => {
+        this.eventBus.emit("cameraUpdated", {
+            camera,
+        });
+    };
 
     /**
      * Envia um evento de atualização da câmera

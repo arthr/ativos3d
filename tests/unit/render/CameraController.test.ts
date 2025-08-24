@@ -55,4 +55,11 @@ describe("CameraController", () => {
         expect(camera.position.z).toBe(5);
         expect(listener).toHaveBeenCalledWith({ camera });
     });
+
+    it("deve remover o listener de modo ao chamar dispose", () => {
+        const controller = new CameraController({ eventBus, cameraSystem });
+        expect(eventBus.listenerCount("cameraModeChanged")).toBe(1);
+        controller.dispose();
+        expect(eventBus.listenerCount("cameraModeChanged")).toBe(0);
+    });
 });
