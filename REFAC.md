@@ -83,7 +83,7 @@ Perfeito! Vou elaborar um planejamento estruturado para reconstruir o projeto de
 - [x] Implementar RenderSystem base
 - [x] Implementar SceneManager
 - [x] Implementar CameraSystem
-- [ ] Testes para renderização
+- [x] Testes para renderização
 
 #### **3.2 Camadas de Renderização**
 - [ ] Implementar GridLayer
