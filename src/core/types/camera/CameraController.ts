@@ -1,6 +1,7 @@
-import type { Camera } from "@react-three/fiber";
 import type { EventBus } from "../../events/EventBus";
 import type { CameraGesture } from "./CameraTypes";
+import type { CameraSystemProvider } from "./CameraSystem";
+import type { Vec3 } from "@core/geometry";
 
 /**
  * Configurações do CameraController
@@ -9,7 +10,7 @@ export interface CameraControllerConfig {
     /**
      * Gestos habilitados para controle da câmera
      */
-    gestures?: CameraGesture[];
+    readonly gestures?: CameraGesture[];
 }
 
 /**
@@ -22,22 +23,27 @@ export interface CameraControllerDependencies {
     eventBus: EventBus;
 
     /**
-     * Câmera a ser controlada
+     * Sistema de câmera a ser controlado
      */
-    camera: Camera;
+    cameraSystem: CameraSystemProvider;
 }
 
 /**
  * Interface para o CameraController
  */
-export interface CameraController {
+export interface CameraControllerProvider {
     /**
-     * Atualizar o estado do controlador
+     * Mover a câmera
      */
-    update(): void;
+    pan(delta: Vec3): void;
 
     /**
-     * Liberar recursos do controlador
+     * Rotacionar a câmera
      */
-    dispose(): void;
+    rotate(delta: Vec3): void;
+
+    /**
+     * Aproxima ou afasta a câmera
+     */
+    zoom(delta: number): void;
 }

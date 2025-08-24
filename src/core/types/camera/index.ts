@@ -11,5 +11,5 @@ export type {
 export type {
     CameraControllerDependencies,
     CameraControllerConfig,
-    CameraController,
+    CameraControllerProvider,
 } from "./CameraController";

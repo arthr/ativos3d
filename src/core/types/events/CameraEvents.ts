@@ -9,4 +9,5 @@ export interface CameraEvents {
     cameraGestureStarted: { gesture: CameraGesture };
     cameraGestureEnded: { gesture: CameraGesture };
     cameraControlsToggled: { enabled: boolean };
+    cameraUpdated: { camera: Camera };
 }
