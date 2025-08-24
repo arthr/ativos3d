@@ -1,5 +1,21 @@
 import type { Camera } from "three";
+import type { EventBus } from "@/core/events/EventBus";
 import type { CameraMode, CameraGesture } from "./CameraTypes";
+
+/**
+ * Configurações do CameraSystem
+ */
+export interface CameraSystemConfig {
+    /**
+     * Modo da câmera
+     */
+    mode?: CameraMode;
+
+    /**
+     * Controles da câmera
+     */
+    controlsEnabled?: boolean;
+}
 
 /**
  * Dependências do CameraSystem
@@ -8,7 +24,7 @@ export interface CameraSystemDependencies {
     /**
      * EventBus para emissão de eventos de câmera
      */
-    eventBus: CameraEventEmitter;
+    eventBus: EventBus;
 
     /**
      * Função opcional para criação de câmera
@@ -17,11 +33,15 @@ export interface CameraSystemDependencies {
 }
 
 /**
- * Emissor de eventos de câmera
+ * Sistema de gerenciamento de câmera
  */
-export interface CameraEventEmitter {
-    emit(event: "cameraModeChanged", payload: { mode: CameraMode }): void;
-    emit(event: "cameraGestureStarted", payload: { gesture: CameraGesture }): void;
-    emit(event: "cameraGestureEnded", payload: { gesture: CameraGesture }): void;
-    emit(event: "cameraControlsToggled", payload: { enabled: boolean }): void;
+export interface CameraSystem {
+    getCamera(): Camera;
+    getMode(): CameraMode;
+    setMode(mode: CameraMode): void;
+    startGesture(gesture: CameraGesture): void;
+    endGesture(gesture: CameraGesture): void;
+    isGestureActive(gesture: CameraGesture): boolean;
+    toggleControls(): void;
+    isControlsEnabled(): boolean;
 }

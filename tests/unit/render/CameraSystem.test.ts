@@ -9,8 +9,8 @@ describe("CameraSystem", () => {
 
     it("deve ser singleton", () => {
         const deps = { eventBus: new EventBus() };
-        const system1 = CameraSystem.getInstance("persp", deps);
-        const system2 = CameraSystem.getInstance("ortho", deps);
+        const system1 = CameraSystem.getInstance({ mode: "persp" }, deps);
+        const system2 = CameraSystem.getInstance({ mode: "ortho" }, deps);
         expect(system1).toBe(system2);
     });
 
@@ -18,7 +18,7 @@ describe("CameraSystem", () => {
         const eventBus = new EventBus();
         const listener = vi.fn();
         eventBus.on("cameraModeChanged", listener);
-        const system = CameraSystem.getInstance("persp", { eventBus });
+        const system = CameraSystem.getInstance({ mode: "persp" }, { eventBus });
         const firstCamera = system.getCamera();
         system.setMode("ortho");
         expect(system.getMode()).toBe("ortho");
@@ -32,7 +32,7 @@ describe("CameraSystem", () => {
         const endListener = vi.fn();
         eventBus.on("cameraGestureStarted", startListener);
         eventBus.on("cameraGestureEnded", endListener);
-        const system = CameraSystem.getInstance("persp", { eventBus });
+        const system = CameraSystem.getInstance({ mode: "persp" }, { eventBus });
         system.startGesture("pan");
         system.endGesture("pan");
         expect(startListener).toHaveBeenCalledWith({ gesture: "pan" });
@@ -43,9 +43,9 @@ describe("CameraSystem", () => {
         const eventBus = new EventBus();
         const listener = vi.fn();
         eventBus.on("cameraControlsToggled", listener);
-        const system = CameraSystem.getInstance("persp", { eventBus });
-        system.setControlsEnabled(false);
-        system.setControlsEnabled(true);
+        const system = CameraSystem.getInstance({ mode: "persp" }, { eventBus });
+        system.toggleControls();
+        system.toggleControls();
         expect(listener).toHaveBeenNthCalledWith(1, { enabled: false });
         expect(listener).toHaveBeenNthCalledWith(2, { enabled: true });
     });

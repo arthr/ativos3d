@@ -1,31 +1,40 @@
 import { PerspectiveCamera, OrthographicCamera, Camera } from "three";
-import type { CameraMode, CameraSystemDependencies, CameraGesture } from "@/core/types/camera";
+import type { CameraMode, CameraGesture } from "@/core/types/camera";
+import type {
+    CameraSystem as CameraSystemType,
+    CameraSystemConfig,
+    CameraSystemDependencies,
+} from "@/core/types/camera/CameraSystem";
+import type { EventBus } from "@/core/events/EventBus";
 
 /**
  * Sistema de gerenciamento de câmera
  */
-export class CameraSystem {
-    private static instance: CameraSystem | null = null;
-    private readonly eventBus: CameraSystemDependencies["eventBus"];
+export class CameraSystem implements CameraSystemType {
+    private static instance: CameraSystemType | null = null;
+    private readonly eventBus: EventBus;
     private readonly cameraFactory: (mode: CameraMode) => Camera;
     private readonly gestures = new Set<CameraGesture>();
     private camera: Camera;
     private mode: CameraMode;
     private controlsEnabled = true;
 
-    private constructor(mode: CameraMode, deps: CameraSystemDependencies) {
+    private constructor(config: CameraSystemConfig, deps: CameraSystemDependencies) {
+        this.mode = config.mode ?? "persp";
         this.eventBus = deps.eventBus;
         this.cameraFactory = deps.createCamera ?? defaultCameraFactory;
-        this.mode = mode;
-        this.camera = this.cameraFactory(mode);
+        this.camera = this.cameraFactory(this.mode);
     }
 
     /**
      * Obtem a instância singleton do CameraSystem
      */
-    public static getInstance(mode: CameraMode, deps: CameraSystemDependencies): CameraSystem {
+    public static getInstance(
+        config: CameraSystemConfig = {},
+        deps: CameraSystemDependencies,
+    ): CameraSystemType {
         if (!CameraSystem.instance) {
-            CameraSystem.instance = new CameraSystem(mode, deps);
+            CameraSystem.instance = new CameraSystem(config, deps);
         }
         return CameraSystem.instance;
     }
@@ -89,10 +98,9 @@ export class CameraSystem {
     /**
      * Define se os controles estão habilitados
      */
-    public setControlsEnabled(enabled: boolean): void {
-        if (this.controlsEnabled === enabled) return;
-        this.controlsEnabled = enabled;
-        this.eventBus.emit("cameraControlsToggled", { enabled });
+    public toggleControls(): void {
+        this.controlsEnabled = !this.controlsEnabled;
+        this.eventBus.emit("cameraControlsToggled", { enabled: this.controlsEnabled });
     }
 
     /**
@@ -109,7 +117,7 @@ export class CameraSystem {
 function defaultCameraFactory(mode: CameraMode): Camera {
     switch (mode) {
         case "persp":
-            return new PerspectiveCamera();
+            return new PerspectiveCamera(75, 1, 0.1, 2000);
         case "ortho":
             return new OrthographicCamera(-1, 1, 1, -1, 0.1, 2000);
         default:
