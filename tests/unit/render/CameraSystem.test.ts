@@ -51,24 +51,19 @@ describe("CameraSystem", () => {
         expect(listener).toHaveBeenNthCalledWith(2, { enabled: true });
     });
 
-    it("deve impedir gestos de câmera se os controles estiverem desabilitados", () => {
+    it("deve iniciar com controles desabilitados e impedir gestos", () => {
         const eventBus = new EventBus();
         const startListener = vi.fn();
         const endListener = vi.fn();
         eventBus.on("cameraGestureStarted", startListener);
         eventBus.on("cameraGestureEnded", endListener);
         const system = CameraSystem.getInstance(
-            { mode: "persp", controlsEnabled: true },
+            { mode: "persp", controlsEnabled: false },
             { eventBus },
         );
-        // verifica se o gesto não está ativo
-        const controlsEnabled = system.isControlsEnabled();
-        expect(controlsEnabled).toBe(true);
-        // controles desabilitados
-        system.toggleControls();
+        expect(system.isControlsEnabled()).toBe(false);
         system.startGesture("pan");
         system.endGesture("pan");
-        // gestos não devem ser emitidos
         expect(startListener).not.toHaveBeenCalled();
         expect(endListener).not.toHaveBeenCalled();
     });
