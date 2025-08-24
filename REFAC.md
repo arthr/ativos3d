@@ -82,7 +82,7 @@ Perfeito! Vou elaborar um planejamento estruturado para reconstruir o projeto de
 #### **3.1 Sistema de Renderização**
 - [x] Implementar RenderSystem base
 - [x] Implementar SceneManager
-- [ ] Implementar CameraSystem
+- [x] Implementar CameraSystem
 - [ ] Testes para renderização
 
 #### **3.2 Camadas de Renderização**
