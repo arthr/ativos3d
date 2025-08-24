@@ -4,3 +4,4 @@ export { SceneManager } from "./SceneManager";
 export { createWebGLRenderAdapter } from "./createWebGLRenderAdapter";
 
 export { RenderSync } from "./RenderSync";
+export { CameraSystem } from "./CameraSystem";
