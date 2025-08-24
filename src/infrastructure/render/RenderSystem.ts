@@ -8,7 +8,9 @@ import type {
 import type { EventBus } from "@core/events/EventBus";
 import type { Unsubscribe } from "@core/types/Events";
 import type { CameraMode } from "@core/types/camera";
-import { Scene, Camera } from "three";
+import type { Camera } from "@react-three/fiber";
+
+import { Scene } from "three";
 import { RenderObjectManager } from "./RenderObjectManager";
 
 /**

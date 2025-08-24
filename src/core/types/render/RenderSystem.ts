@@ -1,4 +1,5 @@
-import type { Scene, Camera } from "three";
+import type { Scene } from "three";
+import type { Camera } from "@react-three/fiber";
 import type { EventBus } from "@core/events/EventBus";
 import type { CameraSystemProvider } from "@core/types/camera";
 

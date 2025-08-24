@@ -1,4 +1,4 @@
-import type { Camera } from "three";
+import type { Camera } from "@react-three/fiber";
 import type { CameraMode, CameraGesture } from "../camera/CameraTypes";
 
 /**

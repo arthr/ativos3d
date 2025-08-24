@@ -1,7 +1,9 @@
-import { PerspectiveCamera, OrthographicCamera, Camera } from "three";
+import type { Camera } from "@react-three/fiber";
 import type { CameraMode, CameraGesture } from "@core/types/camera";
 import type { CameraSystemConfig, CameraSystemDependencies } from "@core/types/camera/CameraSystem";
 import type { EventBus } from "@core/events/EventBus";
+
+import { PerspectiveCamera, OrthographicCamera } from "three";
 
 /**
  * Sistema de gerenciamento de câmera
