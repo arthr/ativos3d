@@ -21,18 +21,18 @@ import type { RenderEvents } from "./events/RenderEvents";
 /**
  * Todos os eventos do sistema
  */
-export type SystemEventMap = InputEvents &
-    SelectionEvents &
-    ToolEvents &
-    EntityEvents &
-    BudgetEvents &
-    SnapEvents &
-    ValidationEvents &
+export type SystemEventMap = BudgetEvents &
     CameraEvents &
-    UIEvents &
+    EntityEvents &
     HistoryEvents &
+    InputEvents &
+    RenderEvents &
+    SelectionEvents &
+    SnapEvents &
+    ToolEvents &
     SystemEvents &
-    RenderEvents;
+    UIEvents &
+    ValidationEvents;
 
 /**
  * Tipo para qualquer evento do sistema
