@@ -13,10 +13,11 @@ export class CameraSystem {
     private readonly gestures = new Set<CameraGesture>();
     private camera: Camera;
     private mode: CameraMode;
-    private controlsEnabled = true;
+    private controlsEnabled: boolean;
 
     private constructor(config: CameraSystemConfig, deps: CameraSystemDependencies) {
         this.mode = config.mode ?? "persp";
+        this.controlsEnabled = config.controlsEnabled ?? true;
         this.eventBus = deps.eventBus;
         this.cameraFactory = deps.createCamera ?? defaultCameraFactory;
         this.camera = this.cameraFactory(this.mode);
@@ -70,6 +71,7 @@ export class CameraSystem {
      * Ativa um gesto de câmera
      */
     public startGesture(gesture: CameraGesture): void {
+        if (!this.controlsEnabled) return;
         if (this.gestures.has(gesture)) return;
         this.gestures.add(gesture);
         this.eventBus.emit("cameraGestureStarted", { gesture });
@@ -79,6 +81,7 @@ export class CameraSystem {
      * Encerra um gesto de câmera
      */
     public endGesture(gesture: CameraGesture): void {
+        if (!this.controlsEnabled) return;
         if (!this.gestures.has(gesture)) return;
         this.gestures.delete(gesture);
         this.eventBus.emit("cameraGestureEnded", { gesture });
@@ -86,6 +89,7 @@ export class CameraSystem {
 
     /**
      * Verifica se um gesto está ativo
+     * TODO: Checar futuramente se será necessário, pois ainda não está sendo utilizado.
      */
     public isGestureActive(gesture: CameraGesture): boolean {
         return this.gestures.has(gesture);
