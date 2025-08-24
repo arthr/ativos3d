@@ -8,3 +8,8 @@ export type {
     CameraSystemConfig,
     CameraSystemProvider,
 } from "./CameraSystem";
+export type {
+    CameraControllerDependencies,
+    CameraControllerConfig,
+    CameraController,
+} from "./CameraController";
