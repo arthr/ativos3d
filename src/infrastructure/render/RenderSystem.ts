@@ -7,7 +7,7 @@ import type {
 } from "@core/types/render";
 import type { EventBus } from "@core/events/EventBus";
 import type { Unsubscribe } from "@core/types/Events";
-import type { CameraSystemProvider } from "@core/types/camera";
+import type { CameraMode } from "@core/types/camera";
 import { Scene, Camera } from "three";
 import { RenderObjectManager } from "./RenderObjectManager";
 
@@ -25,7 +25,6 @@ export class RenderSystem {
     private readonly now: () => number;
     private readonly eventBus: EventBus;
     private readonly objectManager: RenderObjectManager;
-    private readonly cameraSystem: CameraSystemProvider;
     private callbacks: RenderLoopCallback[] = [];
     private running: boolean = false;
     private frameHandle: number = 0;
@@ -47,11 +46,10 @@ export class RenderSystem {
         this.now = dependencies.now ?? ((): number => globalThis.performance.now());
         this.eventBus = dependencies.eventBus;
         this.objectManager = RenderObjectManager.getInstance(this.eventBus);
-        this.cameraSystem = dependencies.cameraSystem;
 
         this.adapter = dependencies.adapter ?? { render: (): void => {} };
         this.scene = dependencies.scene ?? new Scene();
-        this.camera = this.cameraSystem.getCamera();
+        this.camera = dependencies.cameraSystem.getCamera();
 
         this.removeCameraListener = this.eventBus.on(
             "cameraModeChanged",
@@ -179,7 +177,7 @@ export class RenderSystem {
     /**
      * Atualiza a câmera quando o modo da câmera é alterado
      */
-    private handleCameraModeChanged = ({ camera }: { camera: Camera }): void => {
+    private handleCameraModeChanged = ({ camera }: { mode: CameraMode; camera: Camera }): void => {
         this.camera = camera;
     };
 }
