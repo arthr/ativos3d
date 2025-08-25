@@ -27,40 +27,97 @@ describe("CameraController", () => {
         cameraSystem = CameraSystem.getInstance({ mode: "persp" }, { eventBus });
     });
 
-    it("deve realizar pan e emitir cameraUpdated", () => {
-        const controller = new CameraController({ eventBus, cameraSystem });
-        controller.pan({ x: 1, y: 2, z: 3 });
-        const camera = cameraSystem.getCamera();
-        expect(camera.position.x).toBe(1);
-        expect(camera.position.y).toBe(2);
-        expect(camera.position.z).toBe(3);
-        expect(emit).toHaveBeenCalledWith("cameraUpdated", { camera });
+    describe("pan", () => {
+        it("deve realizar pan e emitir cameraUpdated", () => {
+            const controller = new CameraController(
+                { eventBus, cameraSystem },
+                { gestures: ["pan"], controlsEnabled: true },
+            );
+            controller.pan({ x: 1, y: 2, z: 3 });
+            const camera = cameraSystem.getCamera();
+            expect(camera.position.x).toBe(1);
+            expect(camera.position.y).toBe(2);
+            expect(camera.position.z).toBe(3);
+            expect(emit).toHaveBeenCalledWith("cameraUpdated", { camera });
+        });
+
+        it("deve não realizar pan se o gesto não estiver habilitado", () => {
+            const controller = new CameraController(
+                { eventBus, cameraSystem },
+                { gestures: ["rotate"], controlsEnabled: true },
+            );
+            controller.pan({ x: 1, y: 2, z: 3 });
+            const camera = cameraSystem.getCamera();
+            expect(camera.position.x).toBe(0);
+            expect(camera.position.y).toBe(0);
+            expect(camera.position.z).toBe(0);
+            expect(emit).not.toHaveBeenCalled();
+        });
     });
 
-    it("deve rotacionar e emitir cameraUpdated", () => {
-        const controller = new CameraController({ eventBus, cameraSystem });
-        controller.rotate({ x: 0.1, y: 0.2, z: 0.3 });
-        const camera = cameraSystem.getCamera();
-        expect(camera.rotation.x).toBeCloseTo(0.1);
-        expect(camera.rotation.y).toBeCloseTo(0.2);
-        expect(camera.rotation.z).toBeCloseTo(0.3);
-        expect(emit).toHaveBeenCalledWith("cameraUpdated", { camera });
+    describe("rotate", () => {
+        it("deve rotacionar e emitir cameraUpdated", () => {
+            const controller = new CameraController(
+                { eventBus, cameraSystem },
+                { gestures: ["rotate"], controlsEnabled: true },
+            );
+            controller.rotate({ x: 0.1, y: 0.2, z: 0.3 });
+            const camera = cameraSystem.getCamera();
+            expect(camera.rotation.x).toBeCloseTo(0.1);
+            expect(camera.rotation.y).toBeCloseTo(0.2);
+            expect(camera.rotation.z).toBeCloseTo(0.3);
+            expect(emit).toHaveBeenCalledWith("cameraUpdated", { camera });
+        });
+
+        it("deve não realizar rotate se o gesto não estiver habilitado", () => {
+            const controller = new CameraController(
+                { eventBus, cameraSystem },
+                { gestures: ["pan"], controlsEnabled: true },
+            );
+            controller.rotate({ x: 0.1, y: 0.2, z: 0.3 });
+            const camera = cameraSystem.getCamera();
+            expect(camera.rotation.x).toBe(0);
+            expect(camera.rotation.y).toBe(0);
+            expect(camera.rotation.z).toBe(0);
+            expect(emit).not.toHaveBeenCalled();
+        });
     });
 
-    it("deve aplicar zoom e emitir cameraUpdated", () => {
-        const controller = new CameraController({ eventBus, cameraSystem });
-        controller.zoom(5);
-        const camera = cameraSystem.getCamera();
-        expect(camera.position.z).toBe(5);
-        expect(emit).toHaveBeenCalledWith("cameraUpdated", { camera });
+    describe("zoom", () => {
+        it("deve aplicar zoom e emitir cameraUpdated", () => {
+            const controller = new CameraController(
+                { eventBus, cameraSystem },
+                { gestures: ["zoom"], controlsEnabled: true },
+            );
+            controller.zoom(5);
+            const camera = cameraSystem.getCamera();
+            expect(camera.position.z).toBe(5);
+            expect(emit).toHaveBeenCalledWith("cameraUpdated", { camera });
+        });
+
+        it("deve não realizar zoom se o gesto não estiver habilitado", () => {
+            const controller = new CameraController(
+                { eventBus, cameraSystem },
+                { gestures: ["pan"], controlsEnabled: true },
+            );
+            controller.zoom(5);
+            const camera = cameraSystem.getCamera();
+            expect(camera.position.z).toBe(0);
+            expect(emit).not.toHaveBeenCalled();
+        });
     });
 
-    it("deve emitir cameraUpdated ao trocar modo da câmera", () => {
-        new CameraController({ eventBus, cameraSystem });
-        cameraSystem.setMode("ortho");
-        const payload = emit.mock.calls.find(([type]) => type === "cameraModeChanged")![1];
-        const callCount = emit.mock.calls.length;
-        modeHandler!(payload);
-        expect(emit.mock.calls[callCount]).toEqual(["cameraUpdated", { camera: payload.camera }]);
+    describe("cameraModeChanged", () => {
+        it("deve emitir cameraUpdated ao trocar modo da câmera", () => {
+            new CameraController({ eventBus, cameraSystem }, { controlsEnabled: true });
+            cameraSystem.setMode("ortho");
+            const payload = emit.mock.calls.find(([type]) => type === "cameraModeChanged")![1];
+            const callCount = emit.mock.calls.length;
+            modeHandler!(payload);
+            expect(emit.mock.calls[callCount]).toEqual([
+                "cameraUpdated",
+                { camera: payload.camera },
+            ]);
+        });
     });
 });

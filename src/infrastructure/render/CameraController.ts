@@ -3,6 +3,7 @@ import type {
     CameraControllerDependencies,
     CameraControllerConfig,
     CameraMode,
+    CameraGesture,
 } from "@core/types/camera";
 import type { CameraSystemProvider } from "@core/types/camera";
 import type { EventBus } from "@core/events/EventBus";
@@ -22,7 +23,9 @@ export class CameraController implements CameraControllerProvider {
 
     constructor(dependencies: CameraControllerDependencies, config?: CameraControllerConfig) {
         this.dependencies = dependencies;
-        this.config = config ?? {};
+        this.config = config ?? {
+            gestures: ["pan", "rotate", "zoom"],
+        };
         this.cameraSystem = this.dependencies.cameraSystem;
         this.eventBus = this.dependencies.eventBus;
         this.eventBus.on("cameraModeChanged", this.handleCameraModeChanged);
@@ -34,6 +37,7 @@ export class CameraController implements CameraControllerProvider {
      * Mover a câmera
      */
     pan(delta: Vec3): void {
+        if (!this.canDoGesture("pan")) return;
         if (!delta.x && !delta.y && !delta.z) return;
 
         this.camera.position.x += delta.x;
@@ -47,6 +51,7 @@ export class CameraController implements CameraControllerProvider {
      * Rotacionar a câmera
      */
     rotate(delta: Vec3): void {
+        if (!this.canDoGesture("rotate")) return;
         if (!delta.x && !delta.y && !delta.z) return;
 
         this.camera.rotation.x += delta.x;
@@ -60,6 +65,7 @@ export class CameraController implements CameraControllerProvider {
      * Aproxima ou afasta a câmera
      */
     zoom(delta: number): void {
+        if (!this.canDoGesture("zoom")) return;
         if (delta === 0) return;
 
         this.camera.position.z += delta;
@@ -90,5 +96,14 @@ export class CameraController implements CameraControllerProvider {
         this.eventBus.emit("cameraUpdated", {
             camera: this.camera,
         });
+    }
+
+    /**
+     * Verifica se pode executar um gesto
+     */
+    private canDoGesture(gesture: CameraGesture): boolean {
+        if (!this.config.controlsEnabled) return false;
+        if (this.config.gestures && !this.config.gestures.includes(gesture)) return false;
+        return true;
     }
 }

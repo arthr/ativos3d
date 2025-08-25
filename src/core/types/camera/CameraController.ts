@@ -11,6 +11,11 @@ export interface CameraControllerConfig {
      * Gestos habilitados para controle da câmera
      */
     readonly gestures?: CameraGesture[];
+
+    /**
+     * Controles habilitados para o controlador
+     */
+    readonly controlsEnabled?: boolean;
 }
 
 /**

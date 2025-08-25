@@ -1,6 +1,10 @@
 import type { Camera } from "@react-three/fiber";
 import type { CameraMode, CameraGesture } from "@core/types/camera";
-import type { CameraSystemConfig, CameraSystemDependencies } from "@core/types/camera/CameraSystem";
+import type {
+    CameraSystemConfig,
+    CameraSystemDependencies,
+    CameraSystemProvider,
+} from "@core/types/camera/CameraSystem";
 import type { EventBus } from "@core/events/EventBus";
 
 import { PerspectiveCamera, OrthographicCamera } from "three";
@@ -8,7 +12,7 @@ import { PerspectiveCamera, OrthographicCamera } from "three";
 /**
  * Sistema de gerenciamento de câmera
  */
-export class CameraSystem {
+export class CameraSystem implements CameraSystemProvider {
     private static instance: CameraSystem | null = null;
     private readonly eventBus: EventBus;
     private readonly cameraFactory: (mode: CameraMode) => Camera;
@@ -67,6 +71,13 @@ export class CameraSystem {
         this.mode = mode;
         this.camera = this.cameraFactory(mode);
         this.eventBus.emit("cameraModeChanged", { mode, camera: this.camera });
+    }
+
+    /**
+     * Retorna os gestos habilitados
+     */
+    public getGestures(): Set<CameraGesture> {
+        return this.gestures;
     }
 
     /**
