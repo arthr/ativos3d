@@ -18,12 +18,16 @@ export class CameraController implements CameraControllerProvider {
     private readonly cameraSystem: CameraSystemProvider;
     private readonly eventBus: EventBus;
 
+    private readonly camera: Camera;
+
     constructor(dependencies: CameraControllerDependencies, config?: CameraControllerConfig) {
         this.dependencies = dependencies;
         this.config = config ?? {};
         this.cameraSystem = this.dependencies.cameraSystem;
         this.eventBus = this.dependencies.eventBus;
         this.eventBus.on("cameraModeChanged", this.handleCameraModeChanged);
+
+        this.camera = this.cameraSystem.getCamera();
     }
 
     /**
@@ -32,9 +36,9 @@ export class CameraController implements CameraControllerProvider {
     pan(delta: Vec3): void {
         if (!delta.x && !delta.y && !delta.z) return;
 
-        this.cameraSystem.getCamera().position.x += delta.x;
-        this.cameraSystem.getCamera().position.y += delta.y;
-        this.cameraSystem.getCamera().position.z += delta.z;
+        this.camera.position.x += delta.x;
+        this.camera.position.y += delta.y;
+        this.camera.position.z += delta.z;
 
         this.update();
     }
@@ -45,9 +49,9 @@ export class CameraController implements CameraControllerProvider {
     rotate(delta: Vec3): void {
         if (!delta.x && !delta.y && !delta.z) return;
 
-        this.cameraSystem.getCamera().rotation.x += delta.x;
-        this.cameraSystem.getCamera().rotation.y += delta.y;
-        this.cameraSystem.getCamera().rotation.z += delta.z;
+        this.camera.rotation.x += delta.x;
+        this.camera.rotation.y += delta.y;
+        this.camera.rotation.z += delta.z;
 
         this.update();
     }
@@ -58,7 +62,7 @@ export class CameraController implements CameraControllerProvider {
     zoom(delta: number): void {
         if (delta === 0) return;
 
-        this.cameraSystem.getCamera().position.z += delta;
+        this.camera.position.z += delta;
 
         this.update();
     }
@@ -84,7 +88,7 @@ export class CameraController implements CameraControllerProvider {
      */
     private update(): void {
         this.eventBus.emit("cameraUpdated", {
-            camera: this.cameraSystem.getCamera(),
+            camera: this.camera,
         });
     }
 }
