@@ -6,10 +6,11 @@ import type {
     CameraGesture,
 } from "@core/types/camera";
 import type { CameraSystemProvider } from "@core/types/camera";
+import type { Unsubscribe } from "@core/types/Events";
 import type { EventBus } from "@core/events/EventBus";
 import type { Vec3 } from "@core/geometry";
 import type { Camera } from "@react-three/fiber";
-import { OrthographicCamera } from "three";
+import type { OrthographicCamera } from "three";
 
 /**
  * Controlador básico de câmera
@@ -21,6 +22,7 @@ export class CameraController implements CameraControllerProvider {
     private readonly eventBus: EventBus;
 
     private readonly camera: Camera;
+    private unsubscribeModeChanged: Unsubscribe;
 
     constructor(dependencies: CameraControllerDependencies, config?: CameraControllerConfig) {
         this.dependencies = dependencies;
@@ -29,7 +31,10 @@ export class CameraController implements CameraControllerProvider {
         };
         this.cameraSystem = this.dependencies.cameraSystem;
         this.eventBus = this.dependencies.eventBus;
-        this.eventBus.on("cameraModeChanged", this.handleCameraModeChanged);
+        this.unsubscribeModeChanged = this.eventBus.on(
+            "cameraModeChanged",
+            this.handleCameraModeChanged,
+        );
 
         this.camera = this.cameraSystem.getCamera();
     }
@@ -84,7 +89,7 @@ export class CameraController implements CameraControllerProvider {
      * Remove listeners do controlador
      */
     dispose(): void {
-        this.eventBus.off("cameraModeChanged", this.handleCameraModeChanged);
+        this.unsubscribeModeChanged();
     }
 
     /**

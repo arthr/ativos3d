@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { CameraController, CameraSystem } from "@infrastructure/render";
+import type { Unsubscribe } from "@core/types/Events";
 import type { EventBus } from "@core/events/EventBus";
 import type { Camera } from "@react-three/fiber";
 import type { OrthographicCamera } from "three";
@@ -11,16 +12,18 @@ describe("CameraController", () => {
     let eventBus: EventBus;
     let cameraSystem: CameraSystem;
     let modeHandler: ((payload: { mode: string; camera: Camera }) => void) | undefined;
+    let unsubscribe: Unsubscribe;
 
     beforeEach(() => {
         emit = vi.fn();
         modeHandler = undefined;
+        unsubscribe = vi.fn();
         // @ts-expect-error - Mocking eventBus.on
         on = vi.fn((eventType, handler) => {
             if (eventType === "cameraModeChanged") {
                 modeHandler = handler as typeof modeHandler;
             }
-            return vi.fn();
+            return unsubscribe;
         });
         off = vi.fn();
         eventBus = { emit, on, off } as unknown as EventBus;
@@ -134,6 +137,18 @@ describe("CameraController", () => {
                 "cameraUpdated",
                 { camera: payload.camera },
             ]);
+        });
+    });
+
+    describe("dispose", () => {
+        it("deve remover listener cameraModeChanged", () => {
+            const controller = new CameraController(
+                { eventBus, cameraSystem },
+                { controlsEnabled: true },
+            );
+            controller.dispose();
+            expect(unsubscribe).toHaveBeenCalled();
+            expect(off).not.toHaveBeenCalled();
         });
     });
 });
