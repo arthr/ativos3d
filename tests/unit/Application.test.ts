@@ -3,10 +3,14 @@ import { Application } from "@/Application";
 import { EventBus } from "@core/events/EventBus";
 import { CommandStack } from "@core/commands";
 import { EntityManager } from "@domain/entities";
+import { RenderSystem, RenderObjectManager, CameraSystem } from "@infrastructure/render";
 
 describe("Application", () => {
     beforeEach(() => {
         EntityManager.resetInstance();
+        RenderObjectManager.resetInstance();
+        CameraSystem.resetInstance();
+        RenderSystem.resetInstance();
     });
 
     it("deve criar uma instância da aplicação", () => {
@@ -35,5 +39,21 @@ describe("Application", () => {
     it("é instanciada em index.ts", async () => {
         const { application } = await import("@/index");
         expect(application).toBeInstanceOf(Application);
+    });
+
+    it("remove listeners no dispose", () => {
+        const eventBus = new EventBus();
+        const application = new Application(eventBus);
+        expect(eventBus.listenerCount("componentAdded")).toBe(1);
+        expect(eventBus.listenerCount("componentRemoved")).toBe(1);
+        expect(eventBus.listenerCount("entityDestroyed")).toBe(1);
+        expect(eventBus.listenerCount("cameraModeChanged")).toBe(2);
+
+        application.dispose();
+
+        expect(eventBus.listenerCount("componentAdded")).toBe(0);
+        expect(eventBus.listenerCount("componentRemoved")).toBe(0);
+        expect(eventBus.listenerCount("entityDestroyed")).toBe(0);
+        expect(eventBus.listenerCount("cameraModeChanged")).toBe(1);
     });
 });

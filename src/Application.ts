@@ -54,7 +54,7 @@ export class Application {
         const cameraController = new CameraController({ eventBus, cameraSystem });
 
         // Sincroniza o RenderObjectManager com o resto do lifecycle da aplicação
-        new RenderSync(eventBus, renderObjectManager);
+        const renderSync = new RenderSync(eventBus, renderObjectManager);
 
         // Inicializa o RenderSystem
         const renderSystem = RenderSystem.getInstance(
@@ -73,6 +73,7 @@ export class Application {
         this.container.set("cameraSystem", cameraSystem);
         this.container.set("cameraController", cameraController);
         this.container.set("renderSystem", renderSystem);
+        this.container.set("renderSync", renderSync);
 
         return {
             eventBus,
@@ -81,7 +82,20 @@ export class Application {
             cameraSystem,
             cameraController,
             renderSystem,
+            renderSync,
         };
+    }
+
+    /**
+     * Remove listeners e finaliza sistemas ativos
+     */
+    dispose(): void {
+        const cameraController = this.resolve("cameraController");
+        cameraController.dispose();
+        const renderSync = this.resolve("renderSync");
+        renderSync.dispose();
+        const renderSystem = this.resolve("renderSystem");
+        renderSystem.stop();
     }
 }
 
@@ -95,6 +109,7 @@ type DependencyMap = {
     cameraSystem: CameraSystem;
     cameraController: CameraController;
     renderSystem: RenderSystem;
+    renderSync: RenderSync;
 };
 
 /**
