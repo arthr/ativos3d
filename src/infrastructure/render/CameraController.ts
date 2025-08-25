@@ -9,6 +9,7 @@ import type { CameraSystemProvider } from "@core/types/camera";
 import type { EventBus } from "@core/events/EventBus";
 import type { Vec3 } from "@core/geometry";
 import type { Camera } from "@react-three/fiber";
+import { OrthographicCamera } from "three";
 
 /**
  * Controlador básico de câmera
@@ -68,7 +69,13 @@ export class CameraController implements CameraControllerProvider {
         if (!this.canDoGesture("zoom")) return;
         if (delta === 0) return;
 
-        this.camera.position.z += delta;
+        if (this.cameraSystem.getMode() === "ortho") {
+            const camera = this.camera as OrthographicCamera;
+            camera.zoom += delta;
+            camera.updateProjectionMatrix();
+        } else {
+            this.camera.position.z += delta;
+        }
 
         this.update();
     }

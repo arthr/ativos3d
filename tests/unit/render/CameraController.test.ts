@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { CameraController, CameraSystem } from "@infrastructure/render";
 import type { EventBus } from "@core/events/EventBus";
 import type { Camera } from "@react-three/fiber";
+import type { OrthographicCamera } from "three";
 
 describe("CameraController", () => {
     let emit: ReturnType<typeof vi.fn>;
@@ -92,6 +93,21 @@ describe("CameraController", () => {
             controller.zoom(5);
             const camera = cameraSystem.getCamera();
             expect(camera.position.z).toBe(5);
+            expect(emit).toHaveBeenCalledWith("cameraUpdated", { camera });
+        });
+
+        it("deve aplicar zoom em modo ortho e emitir cameraUpdated", () => {
+            CameraSystem.resetInstance();
+            cameraSystem = CameraSystem.getInstance({ mode: "ortho" }, { eventBus });
+            const controller = new CameraController(
+                { eventBus, cameraSystem },
+                { gestures: ["zoom"], controlsEnabled: true },
+            );
+            const camera = cameraSystem.getCamera() as OrthographicCamera;
+            const spy = vi.spyOn(camera, "updateProjectionMatrix");
+            controller.zoom(5);
+            expect(camera.zoom).toBe(6);
+            expect(spy).toHaveBeenCalled();
             expect(emit).toHaveBeenCalledWith("cameraUpdated", { camera });
         });
 
