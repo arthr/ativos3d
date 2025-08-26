@@ -12,16 +12,21 @@ describe("CameraController", () => {
     let eventBus: EventBus;
     let cameraSystem: CameraSystem;
     let modeHandler: ((payload: { mode: string; camera: Camera }) => void) | undefined;
+    let controlsHandler: ((payload: { enabled: boolean }) => void) | undefined;
     let unsubscribe: Unsubscribe;
 
     beforeEach(() => {
         emit = vi.fn();
         modeHandler = undefined;
+        controlsHandler = undefined;
         unsubscribe = vi.fn();
         // @ts-expect-error - Mocking eventBus.on
         on = vi.fn((eventType, handler) => {
             if (eventType === "cameraModeChanged") {
                 modeHandler = handler as typeof modeHandler;
+            }
+            if (eventType === "cameraControlsToggled") {
+                controlsHandler = handler as typeof controlsHandler;
             }
             return unsubscribe;
         });
@@ -35,7 +40,7 @@ describe("CameraController", () => {
         it("deve realizar pan e emitir cameraUpdated", () => {
             const controller = new CameraController(
                 { eventBus, cameraSystem },
-                { gestures: ["pan"], controlsEnabled: true },
+                { gestures: ["pan"] },
             );
             controller.pan({ x: 1, y: 2, z: 3 });
             const camera = cameraSystem.getCamera();
@@ -48,7 +53,7 @@ describe("CameraController", () => {
         it("deve não realizar pan se o gesto não estiver habilitado", () => {
             const controller = new CameraController(
                 { eventBus, cameraSystem },
-                { gestures: ["rotate"], controlsEnabled: true },
+                { gestures: ["rotate"] },
             );
             controller.pan({ x: 1, y: 2, z: 3 });
             const camera = cameraSystem.getCamera();
@@ -63,7 +68,7 @@ describe("CameraController", () => {
         it("deve rotacionar e emitir cameraUpdated", () => {
             const controller = new CameraController(
                 { eventBus, cameraSystem },
-                { gestures: ["rotate"], controlsEnabled: true },
+                { gestures: ["rotate"] },
             );
             controller.rotate({ x: 0.1, y: 0.2, z: 0.3 });
             const camera = cameraSystem.getCamera();
@@ -76,7 +81,7 @@ describe("CameraController", () => {
         it("deve não realizar rotate se o gesto não estiver habilitado", () => {
             const controller = new CameraController(
                 { eventBus, cameraSystem },
-                { gestures: ["pan"], controlsEnabled: true },
+                { gestures: ["pan"] },
             );
             controller.rotate({ x: 0.1, y: 0.2, z: 0.3 });
             const camera = cameraSystem.getCamera();
@@ -91,7 +96,7 @@ describe("CameraController", () => {
         it("deve aplicar zoom e emitir cameraUpdated", () => {
             const controller = new CameraController(
                 { eventBus, cameraSystem },
-                { gestures: ["zoom"], controlsEnabled: true },
+                { gestures: ["zoom"] },
             );
             controller.zoom(5);
             const camera = cameraSystem.getCamera();
@@ -104,7 +109,7 @@ describe("CameraController", () => {
             cameraSystem = CameraSystem.getInstance({ mode: "ortho" }, { eventBus });
             const controller = new CameraController(
                 { eventBus, cameraSystem },
-                { gestures: ["zoom"], controlsEnabled: true },
+                { gestures: ["zoom"] },
             );
             const camera = cameraSystem.getCamera() as OrthographicCamera;
             const spy = vi.spyOn(camera, "updateProjectionMatrix");
@@ -117,7 +122,7 @@ describe("CameraController", () => {
         it("deve não realizar zoom se o gesto não estiver habilitado", () => {
             const controller = new CameraController(
                 { eventBus, cameraSystem },
-                { gestures: ["pan"], controlsEnabled: true },
+                { gestures: ["pan"] },
             );
             controller.zoom(5);
             const camera = cameraSystem.getCamera();
@@ -128,7 +133,7 @@ describe("CameraController", () => {
 
     describe("cameraModeChanged", () => {
         it("deve emitir cameraUpdated ao trocar modo da câmera", () => {
-            new CameraController({ eventBus, cameraSystem }, { controlsEnabled: true });
+            new CameraController({ eventBus, cameraSystem });
             cameraSystem.setMode("ortho");
             const payload = emit.mock.calls.find(([type]) => type === "cameraModeChanged")![1];
             const callCount = emit.mock.calls.length;
@@ -140,12 +145,25 @@ describe("CameraController", () => {
         });
     });
 
-    describe("dispose", () => {
-        it("deve remover listener cameraModeChanged", () => {
+    describe("cameraControlsToggled", () => {
+        it("deve ignorar gestos quando controles estiverem desabilitados", () => {
             const controller = new CameraController(
                 { eventBus, cameraSystem },
-                { controlsEnabled: true },
+                { gestures: ["pan"] },
             );
+            cameraSystem.toggleControls();
+            controlsHandler!({ enabled: false });
+            emit.mockClear();
+            controller.pan({ x: 1, y: 0, z: 0 });
+            const camera = cameraSystem.getCamera();
+            expect(camera.position.x).toBe(0);
+            expect(emit).not.toHaveBeenCalled();
+        });
+    });
+
+    describe("dispose", () => {
+        it("deve remover listener cameraModeChanged", () => {
+            const controller = new CameraController({ eventBus, cameraSystem });
             controller.dispose();
             expect(unsubscribe).toHaveBeenCalled();
             expect(off).not.toHaveBeenCalled();

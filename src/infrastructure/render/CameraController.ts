@@ -22,21 +22,28 @@ export class CameraController implements CameraControllerProvider {
     private readonly eventBus: EventBus;
 
     private readonly camera: Camera;
+    private controlsEnabled: boolean;
     private unsubscribeModeChanged: Unsubscribe;
+    private unsubscribeControlsToggled: Unsubscribe;
 
     constructor(dependencies: CameraControllerDependencies, config?: CameraControllerConfig) {
         this.dependencies = dependencies;
-        this.config = config ?? {
+        this.config = {
             gestures: ["pan", "rotate", "zoom"],
+            ...config,
         };
         this.cameraSystem = this.dependencies.cameraSystem;
         this.eventBus = this.dependencies.eventBus;
+        this.camera = this.cameraSystem.getCamera();
+        this.controlsEnabled = this.cameraSystem.isControlsEnabled();
         this.unsubscribeModeChanged = this.eventBus.on(
             "cameraModeChanged",
             this.handleCameraModeChanged,
         );
-
-        this.camera = this.cameraSystem.getCamera();
+        this.unsubscribeControlsToggled = this.eventBus.on(
+            "cameraControlsToggled",
+            this.handleCameraControlsToggled,
+        );
     }
 
     /**
@@ -90,6 +97,7 @@ export class CameraController implements CameraControllerProvider {
      */
     dispose(): void {
         this.unsubscribeModeChanged();
+        this.unsubscribeControlsToggled();
     }
 
     /**
@@ -99,6 +107,13 @@ export class CameraController implements CameraControllerProvider {
         this.eventBus.emit("cameraUpdated", {
             camera,
         });
+    };
+
+    /**
+     * Atualiza o estado dos controles da câmera
+     */
+    private handleCameraControlsToggled = ({ enabled }: { enabled: boolean }): void => {
+        this.controlsEnabled = enabled;
     };
 
     /**
@@ -114,8 +129,6 @@ export class CameraController implements CameraControllerProvider {
      * Verifica se pode executar um gesto
      */
     private canDoGesture(gesture: CameraGesture): boolean {
-        if (!this.config.controlsEnabled) return false;
-        if (this.config.gestures && !this.config.gestures.includes(gesture)) return false;
-        return true;
+        return this.controlsEnabled && (this.config.gestures?.includes(gesture) ?? true);
     }
 }
