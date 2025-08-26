@@ -49,7 +49,7 @@ export class EntityManager {
      * Obtém a instância singleton do EntityManager
      */
     public static getInstance(
-        config: EntityManagerConfig,
+        config: EntityManagerConfig = {},
         dependencies: EntityManagerDependencies,
     ): EntityManager {
         if (!EntityManager.instance) {

@@ -15,22 +15,31 @@ describe("EntityManager", () => {
         mockEventBus.clearAll();
 
         // Obtém instâncias
-        entityManager = EntityManager.getInstance(undefined, {
-            eventBus: mockEventBus,
-            componentSystem: ComponentSystem.getInstance(),
-        });
+        entityManager = EntityManager.getInstance(
+            {},
+            {
+                eventBus: mockEventBus,
+                componentSystem: ComponentSystem.getInstance(),
+            },
+        );
     });
 
     describe("Singleton Pattern", () => {
         it("deve retornar a mesma instância", () => {
-            const instance1 = EntityManager.getInstance(undefined, {
-                eventBus: mockEventBus,
-                componentSystem: ComponentSystem.getInstance(),
-            });
-            const instance2 = EntityManager.getInstance(undefined, {
-                eventBus: mockEventBus,
-                componentSystem: ComponentSystem.getInstance(),
-            });
+            const instance1 = EntityManager.getInstance(
+                {},
+                {
+                    eventBus: mockEventBus,
+                    componentSystem: ComponentSystem.getInstance(),
+                },
+            );
+            const instance2 = EntityManager.getInstance(
+                {},
+                {
+                    eventBus: mockEventBus,
+                    componentSystem: ComponentSystem.getInstance(),
+                },
+            );
             expect(instance1).toBe(instance2);
         });
     });

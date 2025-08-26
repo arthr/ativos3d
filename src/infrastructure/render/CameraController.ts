@@ -84,6 +84,7 @@ export class CameraController implements CameraControllerProvider {
         if (this.cameraSystem.getMode() === "ortho") {
             const camera = this.camera as OrthographicCamera;
             camera.zoom += delta;
+            camera.zoom = Math.max(0.1, camera.zoom); // Previne zoom negativo
             camera.updateProjectionMatrix();
         } else {
             this.camera.position.z += delta;

@@ -1,4 +1,6 @@
-import { Scene, Camera, PerspectiveCamera, OrthographicCamera } from "three";
+import type { Camera } from "@react-three/fiber";
+import type { RenderSystemDependencies } from "@core/types/render/RenderSystem";
+import { Scene, PerspectiveCamera, OrthographicCamera } from "three";
 import { describe, it, expect, vi, afterEach, beforeEach } from "vitest";
 import { RenderSystem, CameraSystem } from "@infrastructure/render";
 import { EventBus } from "@core/events/EventBus";
@@ -17,7 +19,24 @@ afterEach(() => {
 });
 
 describe("RenderSystem", () => {
+    let dependencies: RenderSystemDependencies;
+
     beforeEach(() => {
+        dependencies = {
+            adapter: { render: vi.fn() },
+            scene: new Scene(),
+            eventBus: new EventBus(),
+            cameraSystem: {
+                getCamera: (): Camera => new PerspectiveCamera(75, 1, 0.1, 2000),
+                getMode: vi.fn(),
+                getGestures: vi.fn(),
+                startGesture: vi.fn(),
+                endGesture: vi.fn(),
+                isGestureActive: vi.fn(),
+                toggleControls: vi.fn(),
+                isControlsEnabled: vi.fn(),
+            },
+        };
         callbacks = [];
         raf = (cb): number => {
             callbacks.push(cb);
@@ -29,12 +48,6 @@ describe("RenderSystem", () => {
     });
 
     it("deve ser singleton", () => {
-        const dependencies = {
-            adapter: { render: vi.fn() },
-            scene: new Scene(),
-            eventBus: new EventBus(),
-            cameraSystem: { getCamera: (): Camera => new Camera() },
-        };
         const system1 = RenderSystem.getInstance({}, dependencies);
         const system2 = RenderSystem.getInstance({}, dependencies);
         expect(system1).toBe(system2);
@@ -47,10 +60,8 @@ describe("RenderSystem", () => {
                 raf,
                 caf,
                 now,
-                adapter: { render: vi.fn() },
-                scene: new Scene(),
-                eventBus: new EventBus(),
-                cameraSystem: { getCamera: (): Camera => new Camera() },
+                ...dependencies,
+                cameraSystem: dependencies.cameraSystem,
             },
         );
 
@@ -109,7 +120,7 @@ describe("RenderSystem", () => {
                 adapter: { render: renderFn },
                 scene,
                 eventBus: new EventBus(),
-                cameraSystem: { getCamera: (): Camera => camera },
+                cameraSystem: { ...dependencies.cameraSystem, getCamera: (): Camera => camera },
             },
         );
         system.renderFrame();
@@ -142,10 +153,7 @@ describe("RenderSystem", () => {
                 raf,
                 caf,
                 now,
-                adapter: { render: vi.fn() },
-                scene: new Scene(),
-                eventBus: new EventBus(),
-                cameraSystem: { getCamera: (): Camera => new Camera() },
+                ...dependencies,
             },
         );
 
@@ -183,7 +191,7 @@ describe("RenderSystem", () => {
             {
                 adapter: { render: renderFn },
                 scene,
-                cameraSystem: { getCamera: (): Camera => camera },
+                cameraSystem: { ...dependencies.cameraSystem, getCamera: (): Camera => camera },
                 eventBus: new EventBus(),
             },
         );
@@ -207,6 +215,7 @@ describe("RenderSystem", () => {
                 adapter: { render: renderFn },
                 scene: new Scene(),
                 cameraSystem: {
+                    ...dependencies.cameraSystem,
                     getCamera: (): Camera => new OrthographicCamera(-1, 1, 1, -1, 0.1, 2000),
                 },
                 eventBus: new EventBus(),

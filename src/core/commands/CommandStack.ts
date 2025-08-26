@@ -190,7 +190,7 @@ export class CommandStack implements ICommandStack {
      * Obtém o comando atual (último executado)
      */
     getCurrentCommand(): Command | null {
-        return this.history.length > 0 ? this.history[this.history.length - 1] || null : null;
+        return this.history.at(-1) ?? null;
     }
 
     /**

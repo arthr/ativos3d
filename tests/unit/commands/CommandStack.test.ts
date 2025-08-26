@@ -215,6 +215,14 @@ describe("CommandStack", () => {
             const currentCommand = commandStack.getCurrentCommand();
             expect(currentCommand).toBe(command2);
         });
+
+        it("deve retornar null após desfazer o único comando", () => {
+            const command = new TestCommand(testObject, 10, "Set value to 10");
+            commandStack.execute(command);
+            commandStack.undo();
+
+            expect(commandStack.getCurrentCommand()).toBe(null);
+        });
     });
 
     describe("getHistory/getRedoStack", () => {

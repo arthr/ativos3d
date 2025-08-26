@@ -80,10 +80,7 @@ export class RenderSystem {
      * Reseta a instância singleton (apenas para testes)
      */
     public static resetInstance(): void {
-        if (RenderSystem.instance) {
-            RenderSystem.instance.stop();
-            RenderSystem.instance.removeCameraListener?.();
-        }
+        RenderSystem.instance?.dispose();
         RenderSystem.instance = null;
         RenderObjectManager.resetInstance();
     }
@@ -124,6 +121,12 @@ export class RenderSystem {
         if (!this.running) return;
         this.running = false;
         this.caf(this.frameHandle);
+    }
+
+    public dispose(): void {
+        this.stop();
+        this.removeCameraListener?.();
+        this.removeCameraListener = null;
     }
 
     /**
