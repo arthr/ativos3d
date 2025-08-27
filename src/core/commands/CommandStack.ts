@@ -1,4 +1,5 @@
 import type { Command } from "@core/types";
+import type { EventBus } from "@core/events/EventBus";
 
 /**
  * Interface para o CommandStack
@@ -67,8 +68,10 @@ export class CommandStack implements ICommandStack {
     private history: Command[] = [];
     private redoStack: Command[] = [];
     private maxHistorySize: number;
+    private readonly eventBus: EventBus;
 
-    constructor(maxHistorySize: number = 100) {
+    constructor(eventBus: EventBus, maxHistorySize: number = 100) {
+        this.eventBus = eventBus;
         this.maxHistorySize = maxHistorySize;
     }
 
@@ -97,8 +100,10 @@ export class CommandStack implements ICommandStack {
 
             return false;
         } catch (error) {
-            // TODO: Handle error
-            console.error("Erro ao executar comando:", error);
+            this.eventBus.emit("error", {
+                source: "CommandStack",
+                error,
+            });
             return false;
         }
     }
@@ -117,8 +122,10 @@ export class CommandStack implements ICommandStack {
             this.redoStack.push(command);
             return true;
         } catch (error) {
-            // TODO: Handle error
-            console.error("Erro ao desfazer comando:", error);
+            this.eventBus.emit("error", {
+                source: "CommandStack",
+                error,
+            });
             return false;
         }
     }
@@ -144,8 +151,10 @@ export class CommandStack implements ICommandStack {
                 return false;
             }
         } catch (error) {
-            // TODO: Handle error
-            console.error("Erro ao refazer comando:", error);
+            this.eventBus.emit("error", {
+                source: "CommandStack",
+                error,
+            });
             return false;
         }
     }

@@ -25,9 +25,14 @@ export interface SystemEvents {
         renderTime: number;
     };
 
-    error: {
-        message: string;
-        code: string;
-        timestamp?: number;
-    };
+    error:
+        | {
+              message: string;
+              code?: string;
+              timestamp?: number;
+          }
+        | {
+              source: string;
+              error: unknown;
+          };
 }

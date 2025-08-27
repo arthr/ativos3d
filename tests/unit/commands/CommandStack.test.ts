@@ -1,13 +1,16 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import { CommandStack, TestCommand } from "@core/commands";
+import { EventBus } from "@core/events/EventBus";
 import type { Command } from "@core/types/commands/Command";
 
 describe("CommandStack", () => {
     let commandStack: CommandStack;
     let testObject: { value: number };
+    let eventBus: EventBus;
 
     beforeEach(() => {
-        commandStack = new CommandStack();
+        eventBus = new EventBus();
+        commandStack = new CommandStack(eventBus);
         testObject = { value: 0 };
     });
 
@@ -54,7 +57,7 @@ describe("CommandStack", () => {
         });
 
         it("deve limitar o tamanho do histórico", () => {
-            const limitedStack = new CommandStack(3);
+            const limitedStack = new CommandStack(eventBus, 3);
 
             // Executa 5 comandos
             for (let i = 1; i <= 5; i++) {
@@ -256,7 +259,7 @@ describe("CommandStack", () => {
         });
 
         it("deve remover comandos antigos ao reduzir o tamanho máximo", () => {
-            const limitedStack = new CommandStack(5);
+            const limitedStack = new CommandStack(eventBus, 5);
 
             // Executa 5 comandos
             for (let i = 1; i <= 5; i++) {
@@ -277,53 +280,76 @@ describe("CommandStack", () => {
     });
 
     describe("tratamento de erros", () => {
-        it("deve lidar com erros durante execução", () => {
+        it("deve emitir erro durante execução", () => {
+            const error = new Error("Erro de execução");
             const errorCommand: Command = {
                 execute: () => {
-                    throw new Error("Erro de execução");
+                    throw error;
                 },
                 undo: () => {},
                 description: "Error Command",
                 timestamp: Date.now(),
             };
+            const errorListener = vi.fn();
+            eventBus.on("error", errorListener);
 
             const result = commandStack.execute(errorCommand);
 
             expect(result).toBe(false);
+            expect(errorListener).toHaveBeenCalledWith({
+                source: "CommandStack",
+                error,
+            });
             expect(commandStack.getHistorySize()).toBe(0);
         });
 
-        it("deve lidar com erros durante undo", () => {
+        it("deve emitir erro durante undo", () => {
+            const error = new Error("Erro de undo");
             const errorCommand: Command = {
                 execute: () => true,
                 undo: () => {
-                    throw new Error("Erro de undo");
+                    throw error;
                 },
                 description: "Error Command",
                 timestamp: Date.now(),
             };
 
             commandStack.execute(errorCommand);
+            const errorListener = vi.fn();
+            eventBus.on("error", errorListener);
+
             const result = commandStack.undo();
 
             expect(result).toBe(false);
+            expect(errorListener).toHaveBeenCalledWith({
+                source: "CommandStack",
+                error,
+            });
         });
 
-        it("deve lidar com erros durante redo", () => {
+        it("deve emitir erro durante redo", () => {
+            const error = new Error("Erro de redo");
             const errorCommand: Command = {
                 execute: () => {
-                    throw new Error("Erro de redo");
+                    throw error;
                 },
                 undo: () => {},
                 description: "Error Command",
                 timestamp: Date.now(),
             };
+            const errorListener = vi.fn();
+            eventBus.on("error", errorListener);
 
             commandStack.execute(errorCommand);
             commandStack.undo();
+
             const result = commandStack.redo();
 
             expect(result).toBe(false);
+            expect(errorListener).toHaveBeenCalledWith({
+                source: "CommandStack",
+                error,
+            });
         });
     });
 });
