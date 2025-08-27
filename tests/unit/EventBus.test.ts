@@ -216,6 +216,7 @@ describe("EventBus", () => {
             expect(errorListener).toHaveBeenCalledWith({
                 message: expect.stringContaining("Erro no listener do evento pointerMove"),
                 code: "LISTENER_ERROR",
+                timestamp: expect.any(Number),
             });
         });
 

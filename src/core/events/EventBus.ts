@@ -80,6 +80,7 @@ export class EventBus {
                 this.emit("error", {
                     message: `Erro no listener do evento ${eventType}: ${error}`,
                     code: "LISTENER_ERROR",
+                    timestamp: Date.now(),
                 });
             }
         }

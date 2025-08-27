@@ -47,7 +47,7 @@ export class Application {
      * Inicializa o container de dependências
      */
     private initializeContainer(eventBus: EventBus): DependencyMap {
-        const commandStack = new CommandStack();
+        const commandStack = new CommandStack(eventBus);
         const entityManager = EntityManager.getInstance({}, { eventBus });
         const renderObjectManager = RenderObjectManager.getInstance(eventBus);
         const cameraSystem = CameraSystem.getInstance({}, { eventBus });
@@ -83,7 +83,7 @@ export class Application {
             cameraController,
             renderSystem,
             renderSync,
-        };
+        } as DependencyMap;
     }
 
     /**
