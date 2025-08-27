@@ -143,6 +143,19 @@ describe("CameraController", () => {
                 { camera: payload.camera },
             ]);
         });
+
+        it("deve atualizar a câmera interna ao trocar modo", () => {
+            const controller = new CameraController({ eventBus, cameraSystem });
+            const oldCamera = cameraSystem.getCamera();
+            cameraSystem.setMode("ortho");
+            const payload = emit.mock.calls.find(([type]) => type === "cameraModeChanged")![1];
+            modeHandler!(payload);
+            emit.mockClear();
+            controller.pan({ x: 1, y: 0, z: 0 });
+            expect(oldCamera.position.x).toBe(0);
+            expect(payload.camera.position.x).toBe(1);
+            expect(emit).toHaveBeenCalledWith("cameraUpdated", { camera: payload.camera });
+        });
     });
 
     describe("cameraControlsToggled", () => {
