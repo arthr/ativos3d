@@ -6,7 +6,7 @@
  */
 import React from "react";
 import { createRoot } from "react-dom/client";
-import App from "./App";
+import { App } from "@presentation/App";
 export { application } from "./applicationInstance";
 
 // TODO: Configurar injeção de dependência
