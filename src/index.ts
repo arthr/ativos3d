@@ -6,11 +6,8 @@
  */
 import React from "react";
 import { createRoot } from "react-dom/client";
-import { EventBus } from "@core/events/EventBus";
-import { Application } from "./Application";
-
-const eventBus = new EventBus();
-export const application = new Application(eventBus);
+import App from "./App";
+export { application } from "./applicationInstance";
 
 // TODO: Configurar injeção de dependência
 // TODO: Inicializar sistemas principais
@@ -19,7 +16,13 @@ export const application = new Application(eventBus);
 const rootElement = document.getElementById("root") as HTMLElement;
 if (rootElement) {
     const root = createRoot(rootElement);
-    root.render(React.createElement(React.StrictMode, null, "Ativos3D"));
+    root.render(
+        React.createElement(
+            React.StrictMode,
+            null,
+            React.createElement(App, null),
+        ),
+    );
 } else {
     console.error('Elemento com id "root" não encontrado.');
 }
