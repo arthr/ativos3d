@@ -8,6 +8,8 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import { EventBus } from "@core/events/EventBus";
 import { Application } from "./Application";
+import { ApplicationProvider } from "@presentation/ApplicationProvider";
+import { App } from "@presentation/App";
 
 const eventBus = new EventBus();
 export const application = new Application(eventBus);
@@ -16,10 +18,20 @@ export const application = new Application(eventBus);
 // TODO: Inicializar sistemas principais
 // TODO: Montar interface do usuário
 
+application.resolve("renderSystem").start();
+
 const rootElement = document.getElementById("root") as HTMLElement;
 if (rootElement) {
     const root = createRoot(rootElement);
-    root.render(React.createElement(React.StrictMode, null, "Ativos3D"));
+    root.render(
+        React.createElement(
+            React.StrictMode,
+            null,
+            <ApplicationProvider application={application}>
+                <App />
+            </ApplicationProvider>,
+        ),
+    );
 } else {
     console.error('Elemento com id "root" não encontrado.');
 }
