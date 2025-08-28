@@ -97,6 +97,9 @@ export function DeveloperPanel(): JSX.Element | null {
     const [showStats, setShowStats] = useLocalStorage<boolean>("devpanel:showStats", false);
     const [statsPanel, setStatsPanel] = useLocalStorage<0 | 1 | 2>("devpanel:statsPanel", 0 as 0);
     const statsLabel = statsPanel === 0 ? "FPS" : statsPanel === 1 ? "MS" : "MB";
+    // Grid flags
+    const [gridFollow, setGridFollow] = useLocalStorage<boolean>("devpanel:grid:followCamera", false);
+    const [gridInfinite, setGridInfinite] = useLocalStorage<boolean>("devpanel:grid:infiniteGrid", true);
 
     /** Comandos */
     const [history, setHistory] = useState(() => commandStack.getHistory());
@@ -248,6 +251,22 @@ export function DeveloperPanel(): JSX.Element | null {
         setShowGizmo(next);
         eventBus.emit("gizmoVisibilityChanged", { show: next });
     }
+    function emitGridConfig(nextFollow?: boolean, nextInfinite?: boolean): void {
+        eventBus.emit("gridConfigChanged", {
+            followCamera: typeof nextFollow === "boolean" ? nextFollow : gridFollow,
+            infiniteGrid: typeof nextInfinite === "boolean" ? nextInfinite : gridInfinite,
+        });
+    }
+    function handleToggleGridFollow(): void {
+        const next = !gridFollow;
+        setGridFollow(next);
+        emitGridConfig(next, undefined);
+    }
+    function handleToggleGridInfinite(): void {
+        const next = !gridInfinite;
+        setGridInfinite(next);
+        emitGridConfig(undefined, next);
+    }
     function handleToggleStats(): void {
         setShowStats((v) => !v);
     }
@@ -357,6 +376,26 @@ export function DeveloperPanel(): JSX.Element | null {
                             aria-label="Toggle gizmo"
                         >
                             <FiAperture size={14} />
+                        </button>
+                        {/* Grid controls */}
+                        <span className="ml-2 hidden sm:inline text-[11px] text-slate-500">Grid</span>
+                        <button
+                            onClick={handleToggleGridFollow}
+                            className={`rounded-md p-1 ${gridFollow ? "bg-emerald-600 text-white hover:bg-emerald-700" : "bg-slate-100 text-slate-700 hover:bg-slate-200"}`}
+                            title="Toggle grid follow camera"
+                            aria-label="Toggle grid follow camera"
+                        >
+                            {/* Crosshair icon (follow) */}
+                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="22" y1="12" x2="18" y2="12"></line><line x1="6" y1="12" x2="2" y2="12"></line><line x1="12" y1="6" x2="12" y2="2"></line><line x1="12" y1="22" x2="12" y2="18"></line><circle cx="12" cy="12" r="1"></circle></svg>
+                        </button>
+                        <button
+                            onClick={handleToggleGridInfinite}
+                            className={`rounded-md p-1 ${gridInfinite ? "bg-emerald-600 text-white hover:bg-emerald-700" : "bg-slate-100 text-slate-700 hover:bg-slate-200"}`}
+                            title="Toggle infinite grid"
+                            aria-label="Toggle infinite grid"
+                        >
+                            {/* Grid icon */}
+                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
                         </button>
                         {/* Camera mode */}
                         <span className="ml-2 hidden sm:inline text-[11px] text-slate-500">

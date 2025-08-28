@@ -26,10 +26,47 @@ export function App(): JSX.Element {
         }
     }, [showDebug]);
     const [showGizmo, setShowGizmo] = useState<boolean>(initialGizmo);
+    // Grid config (persisted defaults)
+    const initialGridFollow = useMemo(() => {
+        try {
+            const raw = globalThis.localStorage.getItem("devpanel:grid:followCamera");
+            return raw ? Boolean(JSON.parse(raw)) : false;
+        } catch {
+            return false;
+        }
+    }, []);
+    const initialGridInfinite = useMemo(() => {
+        try {
+            const raw = globalThis.localStorage.getItem("devpanel:grid:infiniteGrid");
+            return raw ? Boolean(JSON.parse(raw)) : true;
+        } catch {
+            return true;
+        }
+    }, []);
+    const [gridFollowCamera, setGridFollowCamera] = useState<boolean>(initialGridFollow);
+    const [gridInfiniteGrid, setGridInfiniteGrid] = useState<boolean>(initialGridInfinite);
 
     useEffect(() => {
-        const off = eventBus.on("gizmoVisibilityChanged", ({ show }: { show: boolean }) => setShowGizmo(show));
-        return off;
+        const off1 = eventBus.on("gizmoVisibilityChanged", ({ show }: { show: boolean }) =>
+            setShowGizmo(show),
+        );
+        const off2 = eventBus.on(
+            "gridConfigChanged",
+            ({
+                followCamera,
+                infiniteGrid,
+            }: {
+                followCamera?: boolean;
+                infiniteGrid?: boolean;
+            }) => {
+                if (typeof followCamera === "boolean") setGridFollowCamera(followCamera);
+                if (typeof infiniteGrid === "boolean") setGridInfiniteGrid(infiniteGrid);
+            },
+        );
+        return (): void => {
+            off1();
+            off2();
+        };
     }, [eventBus]);
     return (
         <>
@@ -39,7 +76,9 @@ export function App(): JSX.Element {
                 <CameraLayer />
                 <ControlsLayer />
                 <GizmoLayer show={showGizmo} />
-                <GridLayer size={50} divisions={50} />
+                <GridLayer
+                    config={{ followCamera: gridFollowCamera, infiniteGrid: gridInfiniteGrid }}
+                />
                 <ambientLight />
                 <ObjectsLayer />
             </Canvas>

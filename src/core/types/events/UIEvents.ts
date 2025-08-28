@@ -30,4 +30,12 @@ export interface UIEvents {
     gizmoVisibilityChanged: {
         show: boolean;
     };
+
+    /**
+     * Configuração da Grid alterada via UI (DeveloperPanel)
+     */
+    gridConfigChanged: {
+        followCamera?: boolean;
+        infiniteGrid?: boolean;
+    };
 }

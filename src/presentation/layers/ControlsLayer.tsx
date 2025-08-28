@@ -19,8 +19,12 @@ export function ControlsLayer(): JSX.Element {
     const [enabled, setEnabled] = useState<boolean>(() => cameraSystem.isControlsEnabled());
 
     useEffect(() => {
-        const u1 = eventBus.on("cameraModeChanged", ({ mode }: { mode: CameraMode }) => setMode(mode));
-        const u2 = eventBus.on("cameraControlsToggled", ({ enabled }: { enabled: boolean }) => setEnabled(enabled));
+        const u1 = eventBus.on("cameraModeChanged", ({ mode }: { mode: CameraMode }) =>
+            setMode(mode),
+        );
+        const u2 = eventBus.on("cameraControlsToggled", ({ enabled }: { enabled: boolean }) =>
+            setEnabled(enabled),
+        );
         return (): void => {
             u1();
             u2();
@@ -34,8 +38,8 @@ export function ControlsLayer(): JSX.Element {
             enableRotate={mode === "persp"}
             enablePan
             enableZoom
+            screenSpacePanning={false}
             onChange={() => eventBus.emit("cameraUpdated", { camera })}
         />
     );
 }
-
