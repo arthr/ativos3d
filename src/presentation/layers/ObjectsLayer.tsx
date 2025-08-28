@@ -12,7 +12,7 @@ import { useApplication } from "@presentation/hooks/useApplication";
  * ObjectsLayer: materializa RenderComponents do domínio em nós R3F.
  * - Usa TransformComponent se disponível para posição/rotação/escala.
  * - Suporta modelo via GLTF (modelUrl) ou geometria primitiva.
- * - Emite eventos de interação no EventBus: objectSelected / objectHovered.
+ * - Emite eventos de interação no EventBus: entitySelected / entityHovered / entityUnhovered.
  */
 export function ObjectsLayer(): JSX.Element {
     const { list } = useRenderObjects();
@@ -33,10 +33,13 @@ export function ObjectsLayer(): JSX.Element {
 
                 const matProps = materialProps(render.material);
                 const handleDown = useCallback(() => {
-                    eventBus.emit("objectSelected", { entityId });
+                    eventBus.emit("entitySelected", { entityId });
                 }, [eventBus, entityId]);
                 const handleOver = useCallback(() => {
-                    eventBus.emit("objectHovered", { entityId });
+                    eventBus.emit("entityHovered", { entityId });
+                }, [eventBus, entityId]);
+                const handleOut = useCallback(() => {
+                    eventBus.emit("entityUnhovered", { entityId });
                 }, [eventBus, entityId]);
 
                 return (
@@ -51,6 +54,7 @@ export function ObjectsLayer(): JSX.Element {
                                     visible={render.visible}
                                     onPointerDown={handleDown}
                                     onPointerOver={handleOver}
+                                    onPointerOut={handleOut}
                                 />
                             ) : (
                                 <BoxNode
@@ -59,6 +63,7 @@ export function ObjectsLayer(): JSX.Element {
                                     visible={render.visible}
                                     onPointerDown={handleDown}
                                     onPointerOver={handleOver}
+                                    onPointerOut={handleOut}
                                 />
                             )}
                         </Suspense>
@@ -100,12 +105,14 @@ function BoxNode({
     visible,
     onPointerDown,
     onPointerOver,
+    onPointerOut,
 }: {
     readonly color: string;
     readonly material: Record<string, unknown>;
     readonly visible: boolean;
     readonly onPointerDown: () => void;
     readonly onPointerOver: () => void;
+    readonly onPointerOut: () => void;
 }): JSX.Element {
     return (
         <mesh
@@ -114,6 +121,7 @@ function BoxNode({
             receiveShadow
             onPointerDown={onPointerDown}
             onPointerOver={onPointerOver}
+            onPointerOut={onPointerOut}
         >
             <boxGeometry />
             <meshStandardMaterial color={color} {...material} />
@@ -132,6 +140,7 @@ function ModelNode({
     visible,
     onPointerDown,
     onPointerOver,
+    onPointerOut,
 }: {
     readonly url: string;
     readonly color: string;
@@ -140,6 +149,7 @@ function ModelNode({
     readonly visible: boolean;
     readonly onPointerDown: () => void;
     readonly onPointerOver: () => void;
+    readonly onPointerOut: () => void;
 }): JSX.Element {
     const gltf = useGLTF(url, true);
     const map = textureUrl ? useTexture(textureUrl) : undefined;
@@ -149,6 +159,7 @@ function ModelNode({
             visible={visible}
             onPointerDown={onPointerDown}
             onPointerOver={onPointerOver}
+            onPointerOut={onPointerOut}
         >
             {/* Aplica material básico na raiz se possível */}
             {/* Em modelos complexos, materiais específicos dos meshes prevalecem */}
