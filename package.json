@@ -16,9 +16,11 @@
   "dependencies": {
     "@react-three/drei": "^10.7.3",
     "@react-three/fiber": "^9.3.0",
+    "@tailwindcss/vite": "^4.1.12",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-icons": "^5.5.0",
+    "tailwindcss": "^4.1.12",
     "three": "^0.179.1",
     "zod": "^4.0.17",
     "zustand": "^4.5.2"

@@ -8,6 +8,7 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import { App } from "@presentation/App";
 import { application } from "./applicationInstance";
+import "./index.css";
 
 // TODO: Configurar injeção de dependência
 // TODO: Inicializar sistemas principais
