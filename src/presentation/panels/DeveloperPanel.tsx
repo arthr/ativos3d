@@ -45,39 +45,39 @@ export function DeveloperPanel(): JSX.Element | null {
     // Loga todos os eventos emitidos
     useEffect(() => {
         const originalEmit: EventBus["emit"] = eventBus.emit.bind(eventBus);
-        eventBus.emit = ((type, payload) => {
+        eventBus.emit = ((type, payload): void => {
             setEvents((prev) =>
                 [...prev, `${String(type)}: ${JSON.stringify(payload)}`].slice(-100),
             );
             originalEmit(type, payload);
         }) as EventBus["emit"];
-        return () => {
+        return (): void => {
             eventBus.emit = originalEmit;
         };
     }, [eventBus]);
 
     // Atualiza histórico de comandos
     useEffect(() => {
-        const update = () => setHistory(commandStack.getHistory());
+        const update = (): void => setHistory(commandStack.getHistory());
         const exec = commandStack.execute.bind(commandStack);
-        commandStack.execute = (cmd: Command) => {
+        commandStack.execute = (cmd: Command): boolean => {
             const ok = exec(cmd);
             update();
             return ok;
         };
         const undo = commandStack.undo.bind(commandStack);
-        commandStack.undo = () => {
+        commandStack.undo = (): boolean => {
             const ok = undo();
             update();
             return ok;
         };
         const redo = commandStack.redo.bind(commandStack);
-        commandStack.redo = () => {
+        commandStack.redo = (): boolean => {
             const ok = redo();
             update();
             return ok;
         };
-        return () => {
+        return (): void => {
             commandStack.execute = exec;
             commandStack.undo = undo;
             commandStack.redo = redo;
@@ -86,10 +86,10 @@ export function DeveloperPanel(): JSX.Element | null {
 
     // Atualiza lista de entidades
     useEffect(() => {
-        const update = () => setEntities(entityManager.getAllEntityIds());
+        const update = (): void => setEntities(entityManager.getAllEntityIds());
         const unsubCreated = eventBus.on("entityCreated", update);
         const unsubDestroyed = eventBus.on("entityDestroyed", update);
-        return () => {
+        return (): void => {
             unsubCreated();
             unsubDestroyed();
         };
@@ -97,14 +97,14 @@ export function DeveloperPanel(): JSX.Element | null {
 
     // Atualiza modo da câmera
     useEffect(() => {
-        const unsub = eventBus.on("cameraModeChanged", ({ mode }) => setCameraMode(mode));
-        return () => unsub();
+        const unsub = eventBus.on("cameraModeChanged", ({ mode }): void => setCameraMode(mode));
+        return (): void => unsub();
     }, [eventBus]);
 
     /**
      * Altera a aba ativa
      */
-    function handleTabChange(next: "events" | "commands" | "entities") {
+    function handleTabChange(next: "events" | "commands" | "entities"): void {
         setTab(next);
     }
 
