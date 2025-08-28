@@ -1,4 +1,3 @@
-import React from "react";
 import type { JSX } from "react";
 import { Canvas } from "@react-three/fiber";
 import { GridLayer } from "@presentation/layers/GridLayer";

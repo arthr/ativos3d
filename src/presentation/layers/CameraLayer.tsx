@@ -1,6 +1,9 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { JSX } from "react";
-import { PerspectiveCamera as DreiPerspectiveCamera, OrthographicCamera as DreiOrthographicCamera } from "@react-three/drei";
+import {
+    PerspectiveCamera as DreiPerspectiveCamera,
+    OrthographicCamera as DreiOrthographicCamera,
+} from "@react-three/drei";
 import { useThree } from "@react-three/fiber";
 import { application } from "@/applicationInstance";
 import type { CameraMode } from "@core/types/camera";
@@ -32,7 +35,9 @@ export function CameraLayer({
     const [mode, setMode] = useState<CameraMode>(() => cameraSystem.getMode());
 
     useEffect(() => {
-        const off = eventBus.on("cameraModeChanged", ({ mode }: { mode: CameraMode }) => setMode(mode));
+        const off = eventBus.on("cameraModeChanged", ({ mode }: { mode: CameraMode }) =>
+            setMode(mode),
+        );
         return off;
     }, [eventBus]);
 
@@ -50,9 +55,16 @@ export function CameraLayer({
         () => ({ position: perspPosition as [number, number, number], fov: perspFov }),
         [perspPosition, perspFov],
     );
-    const orthoZoom = useMemo(() => (size.height > 0 ? size.height / orthoUnitsVisibleY : 60), [size.height, orthoUnitsVisibleY]);
+    const orthoZoom = useMemo(
+        () => (size.height > 0 ? size.height / orthoUnitsVisibleY : 60),
+        [size.height, orthoUnitsVisibleY],
+    );
     const orthoProps = useMemo(
-        () => ({ position: orthoPosition as [number, number, number], zoom: orthoZoom, rotation: [-Math.PI / 2, 0, 0] as [number, number, number] }),
+        () => ({
+            position: orthoPosition as [number, number, number],
+            zoom: orthoZoom,
+            rotation: [-Math.PI / 2, 0, 0] as [number, number, number],
+        }),
         [orthoPosition, orthoZoom],
     );
 

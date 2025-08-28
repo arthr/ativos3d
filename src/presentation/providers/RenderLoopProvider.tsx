@@ -1,4 +1,3 @@
-import React from "react";
 import type { JSX } from "react";
 import { useFrame } from "@react-three/fiber";
 import { application } from "@/applicationInstance";
@@ -11,6 +10,5 @@ export function RenderLoopProvider(): JSX.Element {
     useFrame((_, delta) => {
         renderLoop.tick(delta);
     });
-    return null;
+    return <></>;
 }
-

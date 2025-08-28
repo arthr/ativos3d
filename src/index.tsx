@@ -7,19 +7,16 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { App } from "@presentation/App";
-//import { application } from "./applicationInstance";
 import "./index.css";
 
 // TODO: Configurar injeção de dependência
 // TODO: Inicializar sistemas principais
 // TODO: Montar interface do usuário
 
-//application.resolve("renderSystem").start();
-
 const rootElement = document.getElementById("root") as HTMLElement;
 if (rootElement) {
     const root = createRoot(rootElement);
     root.render(React.createElement(React.StrictMode, null, React.createElement(App, null)));
 } else {
-    console.error('Elemento com id "root" não encontrado.');
+    throw new Error('Elemento com id "root" não encontrado.');
 }

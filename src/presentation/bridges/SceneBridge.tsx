@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
 import type { JSX } from "react";
+import { useEffect } from "react";
 import { useThree } from "@react-three/fiber";
 import { application } from "@/applicationInstance";
 
@@ -16,6 +16,5 @@ export function SceneBridge(): JSX.Element {
         eventBus.emit("sceneStateChanged", { action: "loaded", sceneId: "r3f-scene" });
         // Nenhum cleanup necessário aqui
     }, [camera, scene]);
-    return null;
+    return <></>;
 }
-
