@@ -118,6 +118,28 @@ pnpm lint
 pnpm vitest --run
 ```
 
+## **Arquitetura de Renderização (R3F Owner)**
+
+- Canvas: a renderização 3D é controlada exclusivamente pelo React Three Fiber (R3F) e Drei.
+- Ciclo de frame: `useFrame` dirige um loop headless para métricas via `RenderLoopProvider` (`src/presentation/providers/RenderLoopProvider.tsx`).
+- Câmera e controles: camadas R3F dedicadas (`CameraLayer`, `ControlsLayer`) integram com o `EventBus` e `CameraSystem`.
+- Bridge: `SceneBridge` publica estado de cena/câmera para o ecossistema da aplicação.
+- Headless: Core/Domain/Application permanecem desacoplados de React/Three, comunicando por eventos.
+- Sem WebGL manual: não há `WebGLRenderer` manual na UI; R3F/Drei são os donos do ciclo de vida dos recursos Three.
+
+Arquivos úteis:
+- `src/presentation/App.tsx`
+- `src/presentation/layers/CameraLayer.tsx`
+- `src/presentation/layers/ControlsLayer.tsx`
+- `src/presentation/bridges/SceneBridge.tsx`
+- `src/presentation/providers/RenderLoopProvider.tsx`
+
+## **Headless (Lógica) e Artefatos**
+
+- Headless de lógica (Vitest): opcional. Quando priorizado, adicionar um runtime headless para executar comandos, validações e sistemas sem `<Canvas>`.
+- Diretriz: definir uma interface de runtime (ex.: `SceneRuntime`) e uma implementação headless isolada de WebGL/DOM.
+- Imagens/artefatos (Playwright): gerar screenshots (thumbnails/golden tests) abrindo a cena no browser em jobs específicos do CI (fase final do refactor).
+
 ## **Projecto Legacy (Legado)**
 
 O código antigo está preservado em `legacy/` para referência durante a migração.

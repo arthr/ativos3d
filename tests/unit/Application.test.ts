@@ -3,12 +3,12 @@ import { Application } from "@/Application";
 import { EventBus } from "@core/events/EventBus";
 import { CommandStack } from "@core/commands";
 import { EntityManager } from "@domain/entities";
-import { RenderObjectManager, CameraSystem } from "@infrastructure/render";
+import { CameraSystem } from "@infrastructure/render";
 
 describe("Application", () => {
     beforeEach(() => {
         EntityManager.resetInstance();
-        RenderObjectManager.resetInstance();
+        // RenderObjectManager removido no caminho R3F-only
         CameraSystem.resetInstance();
     });
 

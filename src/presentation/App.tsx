@@ -5,6 +5,7 @@ import { RenderLoopProvider } from "@presentation/providers/RenderLoopProvider";
 import { SceneBridge } from "@presentation/bridges/SceneBridge";
 import { CameraLayer } from "@presentation/layers/CameraLayer";
 import { ControlsLayer } from "@presentation/layers/ControlsLayer";
+import { ObjectsLayer } from "@presentation/layers/ObjectsLayer";
 import { DeveloperPanel } from "./panels/DeveloperPanel";
 
 /**
@@ -21,10 +22,7 @@ export function App(): JSX.Element {
                 <ControlsLayer />
                 <GridLayer size={50} divisions={50} />
                 <ambientLight />
-                <mesh>
-                    <boxGeometry />
-                    <meshBasicMaterial color="orange" />
-                </mesh>
+                <ObjectsLayer />
             </Canvas>
             {showDebug && <DeveloperPanel />}
         </>

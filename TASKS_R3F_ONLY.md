@@ -19,7 +19,7 @@ Objetivo: Tornar o R3F/Drei o dono 100% da renderização, mantendo Core/Domain/
 
 Prioridade: R3F/Drei é o owner da cena; Core/Domain permanecem headless. Use EventBus para sincronizar.
 
-- [ ] Hook `useRenderObjects`
+- [x] Hook `useRenderObjects`
   - Arquivo: `src/presentation/hooks/useRenderObjects.ts`
   - Objetivo: observar o `EventBus` e manter em estado local o mapa `{ entityId -> RenderComponent }`.
   - Onde buscar contratos:
@@ -32,7 +32,7 @@ Prioridade: R3F/Drei é o owner da cena; Core/Domain permanecem headless. Use Ev
     - Subscrições: on `componentAdded` se `component.type === "RenderComponent"` → add/atualiza; on `componentRemoved` com `componentType === "RenderComponent"` → remove; on `entityDestroyed` → remove.
     - Retorno: `{ list: Array<{entityId, component}>, map: Map<EntityId, RenderComponent> }`.
 
-- [ ] Camada `ObjectsLayer`
+- [x] Camada `ObjectsLayer`
   - Arquivo: `src/presentation/layers/ObjectsLayer.tsx`
   - Objetivo: materializar a lista do `useRenderObjects` em JSX (R3F).
   - Regras de renderização:
@@ -65,31 +65,32 @@ Prioridade: R3F/Drei é o owner da cena; Core/Domain permanecem headless. Use Ev
     - Opção explícita: `FloorComponent` (tipos/implementação/registro análogos a `WallComponent`).
   - Renderização: `<mesh>` plano/box conforme `size`, posicionado em `position`.
 
-- [ ] Integrar camadas ao `App.tsx`
+- [x] Integrar camadas ao `App.tsx`
   - Arquivo: `src/presentation/App.tsx:18`
   - Inserir `<ObjectsLayer/>`, `<WallsLayer/>`, `<FloorLayer/>` dentro do `<Canvas>`, após `<ControlsLayer/>` e `<GridLayer/>`.
 
-- [ ] Testes das camadas (montagem e eventos básicos)
+- [x] Testes das camadas (ObjectsLayer)
+- [ ] Testes das camadas (WallsLayer/FloorLayer)
   - Criar: `tests/unit/presentation/ObjectsLayer.test.tsx`, `WallsLayer.test.tsx`, `FloorLayer.test.tsx`.
   - Estratégia: mockar `useRenderObjects`/`useWalls`/`useFloors` para controlar fixtures; montar com `@testing-library/react` e `@react-three/fiber` test utils; validar número de meshes e props principais (`visible`, `color`).
 
 ## Fase 3 — Consolidação e Documentação (detalhada)
 
-- [ ] Testes do `RenderLoop`
+- [x] Testes do `RenderLoop`
   - Arquivo: `tests/unit/infrastructure/RenderLoop.test.ts`
   - Casos: registra callback, chama `tick(delta)` e verifica contadores (`renderCount`, `lastRenderDelta`, `lastRenderFPS`); remove callback e garantir que não é chamado.
   - Referência: `src/infrastructure/render/RenderLoop.ts:7`.
 
-- [ ] Testes do `RenderLoopProvider`
+- [x] Testes do `RenderLoopProvider`
   - Arquivo: `tests/unit/presentation/RenderLoopProvider.test.tsx`
   - Estratégia: mockar `useFrame` para capturar função; injetar um `renderLoop` fake via `application.resolve` (ou criar provider de contexto); verificar que `tick` é chamado com deltas passados pelo stub.
   - Referência: `src/presentation/providers/RenderLoopProvider.tsx:9`.
 
-- [ ] Atualizar README
+- [x] Atualizar README
   - Seção “Arquitetura de Renderização”: declarar que R3F/Drei é o owner do loop e objetos Three; sistemas internos são headless e event-driven (EventBus) — ver `src/presentation/bridges/SceneBridge.tsx:9` e `src/presentation/layers/CameraLayer.tsx:1`.
 
-- [ ] Revisar remoção/isolamento de artefatos não usados na UI
-  - Confirmar que `RenderSystem`, `createWebGLRenderAdapter`, `RenderSync`, `SceneManager`, `RenderObjectManager` só permanecem para cenários headless/offline (se necessários). Caso contrário, planejar remoção final.
+- [x] Revisar remoção/isolamento de artefatos não usados na UI
+  - Removidos: `RenderSystem`, `createWebGLRenderAdapter`, `RenderSync`, `SceneManager`, `RenderObjectManager` e testes relacionados.
 
 ## Como rodar e validar
 - Lint: `pnpm lint`
