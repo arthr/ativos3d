@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type JSX } from "react";
 import type { Command } from "@core/types";
 import type { EventBus } from "@core/events/EventBus";
 import { useApplication } from "@presentation/hooks/useApplication";
@@ -6,16 +6,24 @@ import { useApplication } from "@presentation/hooks/useApplication";
 /**
  * Cria um comando de depuração que emite eventos ao executar e desfazer
  */
-function createDebugCommand(bus: EventBus, description: string): Command {
+function createDebugCommand(eventBus: EventBus, description: string): Command {
     return {
         description,
         timestamp: Date.now(),
-        execute() {
-            bus.emit("debugCommand", { stage: "execute", description });
+        execute(): boolean {
+            eventBus.emit("commandExecuted", {
+                commandId: description,
+                description,
+                timestamp: Date.now(),
+            });
             return true;
         },
-        undo() {
-            bus.emit("debugCommand", { stage: "undo", description });
+        undo(): void {
+            eventBus.emit("commandUndone", {
+                commandId: description,
+                description,
+                timestamp: Date.now(),
+            });
         },
     };
 }
@@ -23,7 +31,7 @@ function createDebugCommand(bus: EventBus, description: string): Command {
 /**
  * Painel de desenvolvedor com abas de eventos, comandos e entidades
  */
-export function DeveloperPanel() {
+export function DeveloperPanel(): JSX.Element | null {
     const { eventBus, commandStack, entityManager, cameraSystem } = useApplication();
     const [tab, setTab] = useState<"events" | "commands" | "entities">("events");
     const [events, setEvents] = useState<string[]>([]);
@@ -193,7 +201,11 @@ export function DeveloperPanel() {
                         />
                         <button onClick={handleEmitEvent}>Emit</button>
                     </div>
-                    <ul>{events.map((e, i) => <li key={i}>{e}</li>)}</ul>
+                    <ul>
+                        {events.map((e, i) => (
+                            <li key={i}>{e}</li>
+                        ))}
+                    </ul>
                 </div>
             )}
             {tab === "commands" && (
