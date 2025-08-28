@@ -6,17 +6,7 @@
 import { EventBus } from "@core/events/EventBus";
 import { CommandStack } from "@core/commands";
 import { EntityManager } from "@domain/entities";
-import {
-    createWebGLRenderAdapter,
-    RenderSystem,
-    RenderObjectManager,
-    RenderSync,
-    CameraSystem,
-    CameraController,
-    RenderLoop,
-} from "@infrastructure/render";
-
-import { Scene } from "three";
+import { CameraSystem, CameraController, RenderLoop } from "@infrastructure/render";
 
 /**
  * Classe principal da aplicação
@@ -50,23 +40,8 @@ export class Application {
     private initializeContainer(eventBus: EventBus): DependencyMap {
         const commandStack = new CommandStack(eventBus);
         const entityManager = EntityManager.getInstance({}, { eventBus });
-        const renderObjectManager = RenderObjectManager.getInstance(eventBus);
         const cameraSystem = CameraSystem.getInstance({}, { eventBus });
         const cameraController = new CameraController({ eventBus, cameraSystem });
-
-        // Sincroniza o RenderObjectManager com o resto do lifecycle da aplicação
-        const renderSync = new RenderSync(eventBus, renderObjectManager);
-
-        // Inicializa o RenderSystem (headless)
-        const renderSystem = RenderSystem.getInstance(
-            {},
-            {
-                eventBus,
-                adapter: createWebGLRenderAdapter(),
-                scene: new Scene(),
-                cameraSystem,
-            },
-        );
         // Inicializa o RenderLoop (usado pelo R3F)
         const renderLoop = new RenderLoop();
 
@@ -75,8 +50,6 @@ export class Application {
         this.container.set("entityManager", entityManager);
         this.container.set("cameraSystem", cameraSystem);
         this.container.set("cameraController", cameraController);
-        this.container.set("renderSystem", renderSystem);
-        this.container.set("renderSync", renderSync);
         this.container.set("renderLoop", renderLoop);
 
         return {
@@ -85,8 +58,6 @@ export class Application {
             entityManager,
             cameraSystem,
             cameraController,
-            renderSystem,
-            renderSync,
             renderLoop,
         } as DependencyMap;
     }
@@ -97,10 +68,7 @@ export class Application {
     dispose(): void {
         const cameraController = this.resolve("cameraController");
         cameraController.dispose();
-        const renderSync = this.resolve("renderSync");
-        renderSync.dispose();
-        const renderSystem = this.resolve("renderSystem");
-        renderSystem.stop();
+        // RenderLoop é conduzido pelo R3F; nada a limpar aqui
     }
 }
 
@@ -113,8 +81,6 @@ type DependencyMap = {
     entityManager: EntityManager;
     cameraSystem: CameraSystem;
     cameraController: CameraController;
-    renderSystem: RenderSystem;
-    renderSync: RenderSync;
     renderLoop: RenderLoop;
 };
 
