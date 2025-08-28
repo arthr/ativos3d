@@ -1,6 +1,6 @@
 import React from "react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, waitFor, cleanup } from "@testing-library/react";
+import { render, screen, waitFor, cleanup, act } from "@testing-library/react";
 
 // Fake EventBus com API mínima
 type Handler = (payload: any) => void;
@@ -43,22 +43,24 @@ const fakeEntity = (id: string) => ({
     },
 });
 
+// Mantém referências estáveis para evitar re-render loops pelo useEffect depender de objetos
+const entityManagerMock = {
+    getEntitiesWithComponent: (componentType: string) => {
+        if (componentType !== "RenderComponent") return [];
+        return [fakeEntity("e1")];
+    },
+};
+const app = { eventBus: bus as any, entityManager: entityManagerMock as any };
 vi.mock("@presentation/hooks/useApplication", () => ({
-    useApplication: () => ({
-        eventBus: bus,
-        entityManager: {
-            getEntitiesWithComponent: (componentType: string) => {
-                if (componentType !== "RenderComponent") return [];
-                return [fakeEntity("e1")];
-            },
-        },
-    }),
+    useApplication: () => app,
 }));
 
 describe("useRenderObjects", () => {
     beforeEach(() => {
         cleanup();
         bus = new FakeBus();
+        // Atualiza o app mantendo a mesma referência
+        app.eventBus = bus as any;
     });
 
     it("hidrata estado inicial e reage a remoções", async () => {
@@ -79,11 +81,12 @@ describe("useRenderObjects", () => {
         expect(screen.getByTestId("count").textContent).toBe("1");
 
         // remove RenderComponent
-        bus.emit("componentRemoved", { entityId: "e1", componentType: "RenderComponent" });
+        await act(async () => {
+            bus.emit("componentRemoved", { entityId: "e1", componentType: "RenderComponent" });
+        });
 
         await waitFor(() => {
             expect(screen.getByTestId("count").textContent).toBe("0");
         });
     });
 });
-
