@@ -74,4 +74,9 @@ export interface CameraSystemProvider {
      * Verifica se os controles estão habilitados
      */
     isControlsEnabled(): boolean;
+
+    /**
+     * Injeta uma câmera externa (ex.: R3F) para uso no modo UI.
+     */
+    setExternalCamera(camera: Camera): void;
 }

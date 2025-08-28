@@ -13,6 +13,7 @@ import {
     RenderSync,
     CameraSystem,
     CameraController,
+    RenderLoop,
 } from "@infrastructure/render";
 
 import { Scene } from "three";
@@ -56,7 +57,7 @@ export class Application {
         // Sincroniza o RenderObjectManager com o resto do lifecycle da aplicação
         const renderSync = new RenderSync(eventBus, renderObjectManager);
 
-        // Inicializa o RenderSystem
+        // Inicializa o RenderSystem (headless)
         const renderSystem = RenderSystem.getInstance(
             {},
             {
@@ -66,6 +67,8 @@ export class Application {
                 cameraSystem,
             },
         );
+        // Inicializa o RenderLoop (usado pelo R3F)
+        const renderLoop = new RenderLoop();
 
         this.container.set("eventBus", eventBus);
         this.container.set("commandStack", commandStack);
@@ -74,6 +77,7 @@ export class Application {
         this.container.set("cameraController", cameraController);
         this.container.set("renderSystem", renderSystem);
         this.container.set("renderSync", renderSync);
+        this.container.set("renderLoop", renderLoop);
 
         return {
             eventBus,
@@ -83,6 +87,7 @@ export class Application {
             cameraController,
             renderSystem,
             renderSync,
+            renderLoop,
         } as DependencyMap;
     }
 
@@ -110,6 +115,7 @@ type DependencyMap = {
     cameraController: CameraController;
     renderSystem: RenderSystem;
     renderSync: RenderSync;
+    renderLoop: RenderLoop;
 };
 
 /**

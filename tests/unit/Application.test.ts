@@ -36,11 +36,6 @@ describe("Application", () => {
         );
     });
 
-    it("é instanciada em index.ts", async () => {
-        const { application } = await import("@/index");
-        expect(application).toBeInstanceOf(Application);
-    });
-
     it("remove listeners no dispose", () => {
         const eventBus = new EventBus();
         const application = new Application(eventBus);

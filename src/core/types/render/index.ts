@@ -8,3 +8,4 @@ export type {
     RenderStats,
     RenderSystemDependencies,
 } from "./RenderSystem";
+export type { RenderLoopProvider } from "./RenderLoop";

@@ -86,7 +86,7 @@ Perfeito! Vou elaborar um planejamento estruturado para reconstruir o projeto de
 - [x] Testes para renderização
 
 #### **3.2 Camadas de Renderização**
-- [ ] Implementar GridLayer
+- [x] Implementar GridLayer
 - [ ] Implementar ObjectsLayer
 - [ ] Implementar WallsLayer
 - [ ] Implementar FloorLayer
