@@ -1,4 +1,4 @@
-import React, { Suspense, useCallback } from "react";
+import { Suspense, useCallback } from "react";
 import type { JSX } from "react";
 import { useGLTF, useTexture } from "@react-three/drei";
 import { useRenderObjects } from "@presentation/hooks/useRenderObjects";
@@ -108,7 +108,13 @@ function BoxNode({
     readonly onPointerOver: () => void;
 }): JSX.Element {
     return (
-        <mesh visible={visible} castShadow receiveShadow onPointerDown={onPointerDown} onPointerOver={onPointerOver}>
+        <mesh
+            visible={visible}
+            castShadow
+            receiveShadow
+            onPointerDown={onPointerDown}
+            onPointerOver={onPointerOver}
+        >
             <boxGeometry />
             <meshStandardMaterial color={color} {...material} />
         </mesh>
