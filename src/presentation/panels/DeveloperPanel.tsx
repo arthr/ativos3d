@@ -78,6 +78,9 @@ export function DeveloperPanel(): JSX.Element | null {
     const [eventType, setEventType] = useState("");
     const [eventPayload, setEventPayload] = useState("");
 
+    /** UI flags persistidos */
+    const [showGizmo, setShowGizmo] = useLocalStorage<boolean>("devpanel:showGizmo", false);
+
     /** Comandos */
     const [history, setHistory] = useState(() => commandStack.getHistory());
     const [commandDesc, setCommandDesc] = useState("");
@@ -222,6 +225,11 @@ export function DeveloperPanel(): JSX.Element | null {
     }
     function handleToggleCameraMode(): void {
         cameraSystem.setMode(cameraMode === "persp" ? "ortho" : "persp");
+    }
+    function handleToggleGizmo(): void {
+        const next = !showGizmo;
+        setShowGizmo(next);
+        eventBus.emit("gizmoVisibilityChanged", { show: next });
     }
 
     const filteredEvents = useMemo(() => {
@@ -474,11 +482,18 @@ export function DeveloperPanel(): JSX.Element | null {
 
                 {/* Footer */}
                 <div className="flex items-center justify-between border-t border-slate-200 px-3 py-2">
-                    <span>
+                    <span className="flex items-center gap-2">
                         Camera:{" "}
                         <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[11px]">
                             {cameraMode}
                         </span>
+                        <span className="ml-3">Gizmo:</span>
+                        <button
+                            onClick={handleToggleGizmo}
+                            className={`rounded-md px-2 py-0.5 text-[11px] ${showGizmo ? "bg-emerald-600 text-white hover:bg-emerald-700" : "bg-slate-100 text-slate-700 hover:bg-slate-200"}`}
+                        >
+                            {showGizmo ? "On" : "Off"}
+                        </button>
                     </span>
                     <button
                         onClick={handleToggleCameraMode}

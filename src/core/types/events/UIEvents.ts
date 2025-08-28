@@ -23,4 +23,11 @@ export interface UIEvents {
         panelId: string;
         opened: boolean;
     };
+
+    /**
+     * Visibilidade do Gizmo (orientação) alterada via UI
+     */
+    gizmoVisibilityChanged: {
+        show: boolean;
+    };
 }
