@@ -6,13 +6,8 @@
  */
 import React from "react";
 import { createRoot } from "react-dom/client";
-import { EventBus } from "@core/events/EventBus";
-import { Application } from "./Application";
-import { ApplicationProvider } from "@presentation/ApplicationProvider";
 import { App } from "@presentation/App";
-
-const eventBus = new EventBus();
-export const application = new Application(eventBus);
+import { application } from "./applicationInstance";
 
 // TODO: Configurar injeção de dependência
 // TODO: Inicializar sistemas principais
@@ -23,15 +18,7 @@ application.resolve("renderSystem").start();
 const rootElement = document.getElementById("root") as HTMLElement;
 if (rootElement) {
     const root = createRoot(rootElement);
-    root.render(
-        React.createElement(
-            React.StrictMode,
-            null,
-            <ApplicationProvider application={application}>
-                <App />
-            </ApplicationProvider>,
-        ),
-    );
+    root.render(React.createElement(React.StrictMode, null, React.createElement(App, null)));
 } else {
     console.error('Elemento com id "root" não encontrado.');
 }
