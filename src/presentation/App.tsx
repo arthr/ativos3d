@@ -19,11 +19,12 @@ export function App(): JSX.Element {
     const initialGizmo = useMemo(() => {
         try {
             const raw = globalThis.localStorage.getItem("devpanel:showGizmo");
-            return raw ? Boolean(JSON.parse(raw)) : false;
+            // Se não houver valor persistido, usa `showDebug` como padrão inicial
+            return raw ? Boolean(JSON.parse(raw)) : showDebug;
         } catch {
-            return false;
+            return showDebug;
         }
-    }, []);
+    }, [showDebug]);
     const [showGizmo, setShowGizmo] = useState<boolean>(initialGizmo);
 
     useEffect(() => {
@@ -37,7 +38,7 @@ export function App(): JSX.Element {
                 <SceneBridge />
                 <CameraLayer />
                 <ControlsLayer />
-                <GizmoLayer show={showDebug || showGizmo} />
+                <GizmoLayer show={showGizmo} />
                 <GridLayer size={50} divisions={50} />
                 <ambientLight />
                 <ObjectsLayer />

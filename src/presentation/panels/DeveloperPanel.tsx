@@ -1,7 +1,21 @@
 import { useEffect, useMemo, useRef, useState, type JSX } from "react";
+import {
+    FiChevronDown,
+    FiChevronUp,
+    FiActivity,
+    FiRefreshCcw,
+    FiAperture,
+    FiCamera,
+    FiSend,
+    FiPause,
+    FiPlay,
+    FiChevronsDown,
+    FiTrash2,
+} from "react-icons/fi";
 import type { Command } from "@core/types";
 import type { EventBus } from "@core/events/EventBus";
 import { useApplication } from "@presentation/hooks/useApplication";
+import { DeveloperStats } from "@presentation/panels/components/DeveloperStats";
 
 /** Utils */
 const fmt = (ts: number): string =>
@@ -80,6 +94,9 @@ export function DeveloperPanel(): JSX.Element | null {
 
     /** UI flags persistidos */
     const [showGizmo, setShowGizmo] = useLocalStorage<boolean>("devpanel:showGizmo", false);
+    const [showStats, setShowStats] = useLocalStorage<boolean>("devpanel:showStats", false);
+    const [statsPanel, setStatsPanel] = useLocalStorage<0 | 1 | 2>("devpanel:statsPanel", 0 as 0);
+    const statsLabel = statsPanel === 0 ? "FPS" : statsPanel === 1 ? "MS" : "MB";
 
     /** Comandos */
     const [history, setHistory] = useState(() => commandStack.getHistory());
@@ -231,6 +248,12 @@ export function DeveloperPanel(): JSX.Element | null {
         setShowGizmo(next);
         eventBus.emit("gizmoVisibilityChanged", { show: next });
     }
+    function handleToggleStats(): void {
+        setShowStats((v) => !v);
+    }
+    function handleCycleStatsPanel(): void {
+        setStatsPanel(((statsPanel + 1) % 3) as 0 | 1 | 2);
+    }
 
     const filteredEvents = useMemo(() => {
         if (!eventFilter) return events;
@@ -256,22 +279,27 @@ export function DeveloperPanel(): JSX.Element | null {
     if (!import.meta.env.DEV) return null;
 
     return (
-        <div className={`absolute left-0 w-full text-xs ${open ? "bottom-0" : "bottom-[-1px]"}`}>
+        <div
+            className={`absolute left-0 w-full text-xs md:w-2/3 ${open ? "bottom-0" : "bottom-[-1px]"}`}
+        >
             {/* Handle de resize e toggle */}
             <div ref={dragRef} className="mx-auto h-2 w-full cursor-ns-resize bg-transparent" />
             <div
                 className="mx-2 rounded-t-lg border border-slate-300 bg-white/95 shadow-xl backdrop-blur"
                 style={{ height: open ? height : undefined, overflow: "hidden" }}
             >
+                {/* Footer removido: controles reposicionados para o header */}
+
                 {/* Header */}
-                <div className="sticky top-0 z-10 flex items-center justify-between gap-2 border-b border-slate-200 bg-white/90 px-3 py-2">
+                <div className="sticky top-0 z-10 flex items-center justify-between gap-2 border-b border-slate-200 bg-white/90 font-medium px-3 py-2">
                     <div className="flex items-center gap-2">
                         <button
                             onClick={() => setOpen((v) => !v)}
-                            className="rounded-md border border-slate-300 px-2 py-1 hover:bg-slate-50"
+                            className="rounded-md border border-slate-300 p-1 hover:bg-slate-50"
                             title={open ? "Collapse (Esc)" : "Expand"}
+                            aria-label={open ? "Collapse" : "Expand"}
                         >
-                            {open ? "▾" : "▴"}
+                            {open ? <FiChevronDown size={14} /> : <FiChevronUp size={14} />}
                         </button>
                         <Tab
                             label={`Events (${events.length})`}
@@ -293,11 +321,63 @@ export function DeveloperPanel(): JSX.Element | null {
                         <span className="hidden sm:block text-[11px] text-slate-500">
                             Dev Panel
                         </span>
+                        {/* Stats embutido */}
+                        <DeveloperStats
+                            show={showStats}
+                            panel={statsPanel}
+                            onCyclePanel={() => setStatsPanel(((statsPanel + 1) % 3) as 0 | 1 | 2)}
+                        />
+                        <button
+                            onClick={handleToggleStats}
+                            className={`rounded-md p-1 ${showStats ? "bg-emerald-600 text-white hover:bg-emerald-700" : "bg-slate-100 text-slate-700 hover:bg-slate-200"}`}
+                            title="Toggle performance stats"
+                            aria-label="Toggle performance stats"
+                        >
+                            <FiActivity size={14} />
+                        </button>
+                        <button
+                            onClick={handleCycleStatsPanel}
+                            className="rounded-md bg-slate-800 p-1 text-white hover:bg-black"
+                            title={`Cycle stats panel (${statsLabel})`}
+                            aria-label="Cycle stats panel"
+                        >
+                            <FiRefreshCcw size={14} />
+                        </button>
+                        <span className="rounded size-6 bg-slate-100 text-[10px] flex items-center justify-center">
+                            {statsLabel}
+                        </span>
+                        {/* Gizmo toggle */}
+                        <span className="ml-2 hidden sm:inline text-[11px] text-slate-500">
+                            Gizmo
+                        </span>
+                        <button
+                            onClick={handleToggleGizmo}
+                            className={`rounded-md p-1 ${showGizmo ? "bg-emerald-600 text-white hover:bg-emerald-700" : "bg-slate-100 text-slate-700 hover:bg-slate-200"}`}
+                            title="Toggle gizmo"
+                            aria-label="Toggle gizmo"
+                        >
+                            <FiAperture size={14} />
+                        </button>
+                        {/* Camera mode */}
+                        <span className="ml-2 hidden sm:inline text-[11px] text-slate-500">
+                            Camera
+                        </span>
+                        <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[11px]">
+                            {cameraMode}
+                        </span>
+                        <button
+                            onClick={handleToggleCameraMode}
+                            className="rounded-md bg-indigo-600 p-1 text-white hover:bg-indigo-700"
+                            title="Toggle camera mode"
+                            aria-label="Toggle camera mode"
+                        >
+                            <FiCamera size={14} />
+                        </button>
                     </div>
                 </div>
 
                 {!open ? null : (
-                    <div className="h-[calc(100%-40px)] overflow-hidden">
+                    <div className="h-[calc(100%-80px)] overflow-hidden">
                         {tab === "events" && (
                             <div className="flex h-full flex-col">
                                 {/* Controls */}
@@ -322,28 +402,36 @@ export function DeveloperPanel(): JSX.Element | null {
                                     />
                                     <button
                                         onClick={handleEmitEvent}
-                                        className="rounded-md bg-emerald-600 px-3 py-1 text-[11px] text-white hover:bg-emerald-700"
+                                        className="rounded-md bg-emerald-600 p-1 text-white hover:bg-emerald-700"
+                                        title="Emit event"
+                                        aria-label="Emit event"
                                     >
-                                        Emit
+                                        <FiSend size={14} />
                                     </button>
                                     <div className="mx-2 h-5 w-px bg-slate-200" />
                                     <button
                                         onClick={() => setPaused((v) => !v)}
-                                        className={`rounded-md px-3 py-1 text-[11px] ${paused ? "bg-amber-500 text-white hover:bg-amber-600" : "bg-slate-100 text-slate-700 hover:bg-slate-200"}`}
+                                        className={`rounded-md p-1 ${paused ? "bg-amber-500 text-white hover:bg-amber-600" : "bg-slate-100 text-slate-700 hover:bg-slate-200"}`}
+                                        title={paused ? "Resume logging" : "Pause logging"}
+                                        aria-label={paused ? "Resume logging" : "Pause logging"}
                                     >
-                                        {paused ? "Resume" : "Pause"}
+                                        {paused ? <FiPlay size={14} /> : <FiPause size={14} />}
                                     </button>
                                     <button
                                         onClick={() => setAutoscroll((v) => !v)}
-                                        className={`rounded-md px-3 py-1 text-[11px] ${autoscroll ? "bg-slate-800 text-white hover:bg-black" : "bg-slate-100 text-slate-700 hover:bg-slate-200"}`}
+                                        className={`rounded-md p-1 ${autoscroll ? "bg-slate-800 text-white hover:bg-black" : "bg-slate-100 text-slate-700 hover:bg-slate-200"}`}
+                                        title={autoscroll ? "Auto-scroll" : "Manual scroll"}
+                                        aria-label={autoscroll ? "Auto-scroll" : "Manual scroll"}
                                     >
-                                        {autoscroll ? "Auto-scroll" : "Manual"}
+                                        <FiChevronsDown size={14} />
                                     </button>
                                     <button
                                         onClick={() => setEvents([])}
-                                        className="rounded-md bg-rose-600 px-3 py-1 text-[11px] text-white hover:bg-rose-700"
+                                        className="rounded-md bg-rose-600 p-1 text-white hover:bg-rose-700"
+                                        title="Clear events"
+                                        aria-label="Clear events"
                                     >
-                                        Clear
+                                        <FiTrash2 size={14} />
                                     </button>
                                 </div>
                                 {/* Stream */}
@@ -479,29 +567,6 @@ export function DeveloperPanel(): JSX.Element | null {
                         )}
                     </div>
                 )}
-
-                {/* Footer */}
-                <div className="flex items-center justify-between border-t border-slate-200 px-3 py-2">
-                    <span className="flex items-center gap-2">
-                        Camera:{" "}
-                        <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[11px]">
-                            {cameraMode}
-                        </span>
-                        <span className="ml-3">Gizmo:</span>
-                        <button
-                            onClick={handleToggleGizmo}
-                            className={`rounded-md px-2 py-0.5 text-[11px] ${showGizmo ? "bg-emerald-600 text-white hover:bg-emerald-700" : "bg-slate-100 text-slate-700 hover:bg-slate-200"}`}
-                        >
-                            {showGizmo ? "On" : "Off"}
-                        </button>
-                    </span>
-                    <button
-                        onClick={handleToggleCameraMode}
-                        className="rounded-md bg-indigo-600 px-3 py-1 text-[11px] text-white hover:bg-indigo-700"
-                    >
-                        Toggle
-                    </button>
-                </div>
             </div>
         </div>
     );
