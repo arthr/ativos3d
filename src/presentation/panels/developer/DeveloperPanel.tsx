@@ -84,7 +84,10 @@ export function DeveloperPanel(): JSX.Element | null {
     const [eventFilter, setEventFilter] = useLocalStorage<string>("devpanel:eventFilter", "");
     const [eventType, setEventType] = useState("");
     const [eventPayload, setEventPayload] = useState("");
-    const [eventTypeWhitelist, setEventTypeWhitelist] = useLocalStorage<string[]>("devpanel:events:types", []);
+    const [eventTypeWhitelist, setEventTypeWhitelist] = useLocalStorage<string[]>(
+        "devpanel:events:types",
+        [],
+    );
 
     /** UI flags persistidos */
     const [showGizmo, setShowGizmo] = useLocalStorage<boolean>("devpanel:showGizmo", false);
@@ -283,12 +286,15 @@ export function DeveloperPanel(): JSX.Element | null {
             const set = new Set(eventTypeWhitelist.map(String));
             base = base.filter((e) => set.has(String(e.type)));
         }
+
         if (!eventFilter) return base;
         const q = eventFilter.toLowerCase();
         return base.filter(
             (e) =>
                 e.type.toLowerCase().includes(q) ||
-                JSON.stringify(e.payload ?? "").toLowerCase().includes(q),
+                JSON.stringify(e.payload ?? "")
+                    .toLowerCase()
+                    .includes(q),
         );
     }, [events, eventFilter, eventTypeWhitelist]);
 
