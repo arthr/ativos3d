@@ -15,12 +15,14 @@ export class WallComponent extends BaseComponent implements IWallComponent {
     public readonly start: Vec3;
     public readonly end: Vec3;
     public readonly height: number;
+    public readonly thickness?: number;
 
     constructor(data: WallComponentData) {
         super("WallComponent");
         this.start = data.start ?? Vec3Factory.create(0, 0, 0);
         this.end = data.end ?? Vec3Factory.create(1, 0, 0);
         this.height = data.height ?? 2.5;
+        this.thickness = data.thickness ?? 0.12;
     }
 
     /** Define novo ponto inicial (imutável) */
@@ -36,6 +38,11 @@ export class WallComponent extends BaseComponent implements IWallComponent {
     /** Define nova altura (imutável) */
     public setHeight(height: number): WallComponent {
         return this.withChanges({ height });
+    }
+
+    /** Define nova espessura (imutável) */
+    public setThickness(thickness: number): WallComponent {
+        return this.withChanges({ thickness });
     }
 
     /** Retorna se os dados da parede são válidos */
@@ -63,6 +70,13 @@ export class WallComponent extends BaseComponent implements IWallComponent {
             errors.push("Pontos de parede não podem ser coincidentes");
         }
 
+        // Validação de espessura (se definida)
+        if (this.thickness !== undefined) {
+            if (!(typeof this.thickness === "number") || !isFinite(this.thickness) || this.thickness <= 0) {
+                errors.push("Espessura da parede deve ser > 0");
+            }
+        }
+
         const result: ValidationResult = { isValid: errors.length === 0, errors };
         if (warnings.length) result.warnings = warnings;
         return result;
@@ -79,7 +93,8 @@ export class WallComponent extends BaseComponent implements IWallComponent {
             super.equals(other) &&
             this.areVec3Equal(this.start, other.start) &&
             this.areVec3Equal(this.end, other.end) &&
-            this.height === other.height
+            this.height === other.height &&
+            this.thickness === other.thickness
         );
     }
 
@@ -93,6 +108,7 @@ export class WallComponent extends BaseComponent implements IWallComponent {
             start: changes.start ?? this.start,
             end: changes.end ?? this.end,
             height: changes.height ?? this.height,
+            thickness: changes.thickness ?? this.thickness,
         });
     }
 

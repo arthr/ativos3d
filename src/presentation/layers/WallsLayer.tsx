@@ -1,7 +1,8 @@
 import type { JSX } from "react";
-import { useMemo, useCallback } from "react";
+import { useCallback } from "react";
 import { useWalls } from "@presentation/hooks/useWalls";
 import { useApplication } from "@presentation/hooks/useApplication";
+import type { RenderComponent as IRenderComponent } from "@core/types/components/RenderComponent";
 
 /**
  * WallsLayer: renderiza paredes do domínio usando geometria box.
@@ -13,7 +14,7 @@ export function WallsLayer({ thickness = 0.12, color = "#b8b8b8" }: {
     readonly color?: string;
 }): JSX.Element | null {
     const { list } = useWalls();
-    const { eventBus } = useApplication();
+    const { eventBus, entityManager } = useApplication();
 
     if (list.length === 0) return null;
 
@@ -31,7 +32,14 @@ export function WallsLayer({ thickness = 0.12, color = "#b8b8b8" }: {
                 ] as const;
 
                 const rotation: [number, number, number] = [0, yaw, 0];
-                const scale: [number, number, number] = [length, wall.height, thickness];
+                const t = wall.thickness ?? thickness;
+                const scale: [number, number, number] = [length, wall.height, t];
+
+                // Tenta obter cor do RenderComponent da mesma entidade
+                const rc = entityManager
+                    .getEntity(entityId)
+                    ?.getComponent<IRenderComponent>("RenderComponent");
+                const colorToUse = rc?.color ?? color;
 
                 const handleDown = useCallback(() => {
                     eventBus.emit("entitySelected", { entityId });
@@ -54,7 +62,7 @@ export function WallsLayer({ thickness = 0.12, color = "#b8b8b8" }: {
                             onPointerOut={handleOut}
                         >
                             <boxGeometry />
-                            <meshStandardMaterial color={color} roughness={0.9} metalness={0.0} />
+                            <meshStandardMaterial color={colorToUse} roughness={0.9} metalness={0.0} />
                         </mesh>
                     </group>
                 );
@@ -62,4 +70,3 @@ export function WallsLayer({ thickness = 0.12, color = "#b8b8b8" }: {
         </>
     );
 }
-

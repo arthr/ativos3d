@@ -18,6 +18,9 @@ export interface WallComponent extends Component {
     /** Altura da parede (em unidades do mundo) */
     readonly height: number;
 
+    /** Espessura da parede (em unidades do mundo) */
+    readonly thickness?: number;
+
     /** Define novo ponto inicial (imutável) */
     setStart(start: Vec3): WallComponent;
 
@@ -26,6 +29,9 @@ export interface WallComponent extends Component {
 
     /** Define nova altura (imutável) */
     setHeight(height: number): WallComponent;
+
+    /** Define nova espessura (imutável) */
+    setThickness(thickness: number): WallComponent;
 
     /** Retorna se os dados da parede são válidos */
     isValid(): boolean;
@@ -38,5 +44,5 @@ export interface WallComponentData {
     start: Vec3;
     end: Vec3;
     height: number;
+    thickness?: number;
 }
-

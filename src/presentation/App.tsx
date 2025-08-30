@@ -8,7 +8,7 @@ import { ControlsLayer } from "@presentation/layers/ControlsLayer";
 import { ObjectsLayer } from "@presentation/layers/ObjectsLayer";
 import { WallsLayer } from "@presentation/layers/WallsLayer";
 import { GizmoLayer } from "@presentation/layers/GizmoLayer";
-import { DeveloperPanel } from "./panels/DeveloperPanel";
+import { DeveloperPanel } from "@/presentation/panels/developer/DeveloperPanel";
 import { useApplication } from "@presentation/hooks/useApplication";
 
 /**
