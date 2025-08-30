@@ -1,5 +1,5 @@
 import type { JSX } from "react";
-import { Grid as DreiGrid } from "@react-three/drei";
+import { Grid } from "@react-three/drei";
 
 /**
  * GridLayer: renderiza uma grade de referência no plano XZ.
@@ -41,5 +41,5 @@ export function GridLayer({
 
     const props = { ...defaults, ...(config ?? {}) };
 
-    return <DreiGrid position={[0, y, 0]} {...props} />;
+    return <Grid position={[0, y, 0]} {...props} />;
 }
