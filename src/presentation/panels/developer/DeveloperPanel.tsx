@@ -15,6 +15,7 @@ import { Tab } from "@/presentation/panels/developer/components/Tab";
 import { InspectorTab } from "@presentation/panels/developer/tabs/InspectorTab";
 import { ViewTab } from "@presentation/panels/developer/tabs/ViewTab";
 import { PerformanceTab } from "@/presentation/panels/developer/tabs/PerformanceTab";
+import { SettingsTab } from "@/presentation/panels/developer/tabs/SettingsTab";
 
 /** Utils */
 const fmt = (ts: number): string =>
@@ -67,7 +68,14 @@ function createDebugCommand(eventBus: EventBus, description: string): Command {
     };
 }
 
-type TabKey = "events" | "commands" | "entities" | "inspector" | "view" | "performance";
+type TabKey =
+    | "events"
+    | "commands"
+    | "entities"
+    | "inspector"
+    | "view"
+    | "performance"
+    | "settings";
 
 export function DeveloperPanel(): JSX.Element | null {
     const { eventBus, commandStack, entityManager, cameraSystem } = useApplication();
@@ -354,6 +362,11 @@ export function DeveloperPanel(): JSX.Element | null {
                             active={tab === "performance"}
                             onClick={() => setTab("performance")}
                         />
+                        <Tab
+                            label="Settings"
+                            active={tab === "settings"}
+                            onClick={() => setTab("settings")}
+                        />
                     </div>
                     <div className="flex items-center gap-2 text-[11px] text-slate-500">
                         Dev Panel
@@ -578,6 +591,30 @@ export function DeveloperPanel(): JSX.Element | null {
                                 statsLabel={statsLabel}
                                 onToggleStats={handleToggleStats}
                                 onCyclePanel={handleCycleStatsPanel}
+                            />
+                        )}
+                        {tab === "settings" && (
+                            <SettingsTab
+                                open={open}
+                                onToggleOpenDefault={() => setOpen((v) => !v)}
+                                onResetPanelSize={() => setHeight(280)}
+                                onClearDevStorage={() => {
+                                    try {
+                                        const keys: string[] = [];
+                                        for (let i = 0; i < globalThis.localStorage.length; i++) {
+                                            const k = globalThis.localStorage.key(i);
+                                            if (k && k.startsWith("devpanel:")) keys.push(k);
+                                        }
+                                        keys.forEach((k) => globalThis.localStorage.removeItem(k));
+                                    } catch {
+                                        /* noop */
+                                    }
+                                }}
+                                onResetViewDefaults={() => {
+                                    setShowGizmo(false);
+                                    setGridFollow(false);
+                                    setGridInfinite(true);
+                                }}
                             />
                         )}
                     </div>
