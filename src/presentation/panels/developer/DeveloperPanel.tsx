@@ -1,30 +1,16 @@
-import { useEffect, useMemo, useRef, useState, type JSX } from "react";
-import {
-    FiChevronDown,
-    FiChevronUp,
-    FiSend,
-    FiPause,
-    FiPlay,
-    FiChevronsDown,
-    FiTrash2,
-} from "react-icons/fi";
 import type { Command } from "@core/types";
 import type { EventBus } from "@core/events/EventBus";
+import { useEffect, useMemo, useRef, useState, type JSX } from "react";
+import { FiChevronDown, FiChevronUp } from "react-icons/fi";
 import { useApplication } from "@presentation/hooks/useApplication";
-import { Tab } from "@/presentation/panels/developer/components/Tab";
+import { Tab } from "@presentation/panels/developer/components/Tab";
 import { InspectorTab } from "@presentation/panels/developer/tabs/InspectorTab";
+import { EventsTab } from "@presentation/panels/developer/tabs/EventsTab";
+import { EntitiesTab } from "@presentation/panels/developer/tabs/EntitiesTab";
 import { ViewTab } from "@presentation/panels/developer/tabs/ViewTab";
-import { PerformanceTab } from "@/presentation/panels/developer/tabs/PerformanceTab";
-import { SettingsTab } from "@/presentation/panels/developer/tabs/SettingsTab";
-
-/** Utils */
-const fmt = (ts: number): string =>
-    new Date(ts).toLocaleTimeString([], {
-        hour12: false,
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-    });
+import { PerformanceTab } from "@presentation/panels/developer/tabs/PerformanceTab";
+import { SettingsTab } from "@presentation/panels/developer/tabs/SettingsTab";
+import { CommandsTab } from "@presentation/panels/developer/tabs/CommandsTab";
 
 function useLocalStorage<T>(key: string, initial: T): [T, (val: T | ((prev: T) => T)) => void] {
     const [val, setVal] = useState<T>(() => {
@@ -302,11 +288,7 @@ export function DeveloperPanel(): JSX.Element | null {
         );
     }, [events, eventFilter]);
 
-    const filteredEntities = useMemo(() => {
-        if (!entityFilter) return entities;
-        const q = entityFilter.toLowerCase();
-        return entities.filter((id) => id.toLowerCase().includes(q));
-    }, [entities, entityFilter]);
+    // Entities filtering is handled inside EntitiesTab
 
     const canUndo = history.length > 0;
     const canRedo = commandStack.canRedo ? commandStack.canRedo() : true;
@@ -374,201 +356,55 @@ export function DeveloperPanel(): JSX.Element | null {
                 </div>
 
                 {!open ? null : (
-                    <div className="h-[calc(100%-80px)] overflow-hidden">
+                    <div className="h-[calc(100%-40px)] overflow-hidden">
                         {tab === "events" && (
-                            <div className="flex h-full flex-col">
-                                {/* Controls */}
-                                <div className="flex items-center gap-2 border-b border-slate-100 px-3 py-2">
-                                    <input
-                                        placeholder="filter by type/payload…"
-                                        value={eventFilter}
-                                        onChange={(e) => setEventFilter(e.target.value)}
-                                        className="min-w-40 flex-1 rounded-md border border-slate-300 bg-white px-2 py-1 outline-none focus:ring-2 focus:ring-slate-400"
-                                    />
-                                    <input
-                                        placeholder='emit: type (ex: "entityCreated")'
-                                        value={eventType}
-                                        onChange={(e) => setEventType(e.target.value)}
-                                        className="w-48 rounded-md border border-slate-300 bg-white px-2 py-1 outline-none focus:ring-2 focus:ring-slate-400"
-                                    />
-                                    <input
-                                        placeholder="emit: payload JSON (opcional)"
-                                        value={eventPayload}
-                                        onChange={(e) => setEventPayload(e.target.value)}
-                                        className="w-64 rounded-md border border-slate-300 bg-white px-2 py-1 outline-none focus:ring-2 focus:ring-slate-400"
-                                    />
-                                    <button
-                                        onClick={handleEmitEvent}
-                                        className="rounded-md bg-emerald-600 p-1 text-white hover:bg-emerald-700"
-                                        title="Emit event"
-                                        aria-label="Emit event"
-                                    >
-                                        <FiSend size={14} />
-                                    </button>
-                                    <div className="mx-2 h-5 w-px bg-slate-200" />
-                                    <button
-                                        onClick={() => setPaused((v) => !v)}
-                                        className={`rounded-md p-1 ${paused ? "bg-amber-500 text-white hover:bg-amber-600" : "bg-slate-100 text-slate-700 hover:bg-slate-200"}`}
-                                        title={paused ? "Resume logging" : "Pause logging"}
-                                        aria-label={paused ? "Resume logging" : "Pause logging"}
-                                    >
-                                        {paused ? <FiPlay size={14} /> : <FiPause size={14} />}
-                                    </button>
-                                    <button
-                                        onClick={() => setAutoscroll((v) => !v)}
-                                        className={`rounded-md p-1 ${autoscroll ? "bg-slate-800 text-white hover:bg-black" : "bg-slate-100 text-slate-700 hover:bg-slate-200"}`}
-                                        title={autoscroll ? "Auto-scroll" : "Manual scroll"}
-                                        aria-label={autoscroll ? "Auto-scroll" : "Manual scroll"}
-                                    >
-                                        <FiChevronsDown size={14} />
-                                    </button>
-                                    <button
-                                        onClick={() => setEvents([])}
-                                        className="rounded-md bg-rose-600 p-1 text-white hover:bg-rose-700"
-                                        title="Clear events"
-                                        aria-label="Clear events"
-                                    >
-                                        <FiTrash2 size={14} />
-                                    </button>
-                                </div>
-                                {/* Stream */}
-                                <div className="h-full overflow-auto px-3 py-2 font-mono">
-                                    <ul className="space-y-1">
-                                        {filteredEvents.map((e, i) => (
-                                            <LogRow
-                                                key={`${e.t}-${i}`}
-                                                type={e.type}
-                                                timestamp={e.t}
-                                                payload={e.payload}
-                                                autoscroll={
-                                                    autoscroll && i === filteredEvents.length - 1
-                                                }
-                                            />
-                                        ))}
-                                    </ul>
-                                </div>
-                            </div>
+                            <EventsTab
+                                events={events}
+                                filtered={filteredEvents}
+                                eventFilter={eventFilter}
+                                onChangeEventFilter={setEventFilter}
+                                eventType={eventType}
+                                onChangeEventType={setEventType}
+                                eventPayload={eventPayload}
+                                onChangeEventPayload={setEventPayload}
+                                onEmit={handleEmitEvent}
+                                paused={paused}
+                                onTogglePaused={() => setPaused((v) => !v)}
+                                autoscroll={autoscroll}
+                                onToggleAutoscroll={() => setAutoscroll((v) => !v)}
+                                onClear={() => setEvents([])}
+                            />
                         )}
 
                         {tab === "commands" && (
-                            <div className="flex h-full flex-col">
-                                <div className="flex items-center gap-2 border-b border-slate-100 px-3 py-2">
-                                    <input
-                                        placeholder="new command description"
-                                        value={commandDesc}
-                                        onChange={(e) => setCommandDesc(e.target.value)}
-                                        className="flex-1 rounded-md border border-slate-300 bg-white px-2 py-1 outline-none focus:ring-2 focus:ring-slate-400"
-                                    />
-                                    <button
-                                        onClick={handleExecuteCommand}
-                                        className="rounded-md bg-slate-800 px-3 py-1 text-[11px] text-white hover:bg-black"
-                                    >
-                                        Exec
-                                    </button>
-                                    <button
-                                        onClick={handleUndo}
-                                        disabled={!canUndo}
-                                        className={`rounded-md px-3 py-1 text-[11px] ${canUndo ? "bg-slate-100 text-slate-700 hover:bg-slate-200" : "bg-slate-50 text-slate-300 cursor-not-allowed"}`}
-                                    >
-                                        Undo
-                                    </button>
-                                    <button
-                                        onClick={handleRedo}
-                                        disabled={!canRedo}
-                                        className={`rounded-md px-3 py-1 text-[11px] ${canRedo ? "bg-slate-100 text-slate-700 hover:bg-slate-200" : "bg-slate-50 text-slate-300 cursor-not-allowed"}`}
-                                    >
-                                        Redo
-                                    </button>
-                                    <button
-                                        onClick={() => setHistory([])}
-                                        className="rounded-md bg-rose-600 px-3 py-1 text-[11px] text-white hover:bg-rose-700"
-                                    >
-                                        Clear history
-                                    </button>
-                                </div>
-                                <ul className="max-h-full space-y-1 overflow-auto px-3 py-2">
-                                    {history.map((c, i) => (
-                                        <li
-                                            key={c.timestamp + i}
-                                            className="rounded border border-slate-200 bg-slate-50 px-2 py-1"
-                                        >
-                                            <div className="flex items-center justify-between">
-                                                <span className="text-[11px]">{c.description}</span>
-                                                <span className="text-[10px] text-slate-500">
-                                                    {fmt(c.timestamp)}
-                                                </span>
-                                            </div>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
+                            <CommandsTab
+                                history={history as any}
+                                canUndo={canUndo}
+                                canRedo={canRedo}
+                                commandDesc={commandDesc}
+                                onChangeCommandDesc={setCommandDesc}
+                                onExec={handleExecuteCommand}
+                                onUndo={handleUndo}
+                                onRedo={handleRedo}
+                                onClearHistory={() => setHistory([])}
+                            />
                         )}
 
                         {tab === "entities" && (
-                            <div className="flex h-full flex-col">
-                                <div className="flex items-center gap-2 border-b border-slate-100 px-3 py-2">
-                                    <input
-                                        placeholder="search by id…"
-                                        value={entityFilter}
-                                        onChange={(e) => setEntityFilter(e.target.value)}
-                                        className="flex-1 rounded-md border border-slate-300 bg-white px-2 py-1 outline-none focus:ring-2 focus:ring-slate-400"
-                                    />
-                                    <button
-                                        onClick={handleCreateEntity}
-                                        className="rounded-md bg-blue-600 px-3 py-1 text-[11px] text-white hover:bg-blue-700"
-                                    >
-                                        Create
-                                    </button>
-                                    <button
-                                        onClick={handleDestroySelected}
-                                        disabled={!Object.values(selected).some(Boolean)}
-                                        className={`rounded-md px-3 py-1 text-[11px] ${Object.values(selected).some(Boolean) ? "bg-rose-600 text-white hover:bg-rose-700" : "bg-slate-50 text-slate-300 cursor-not-allowed"}`}
-                                    >
-                                        Remove selected
-                                    </button>
-                                </div>
-                                <ul className="max-h-full space-y-1 overflow-auto px-3 py-2">
-                                    {filteredEntities.map((id) => {
-                                        const checked = !!selected[id];
-                                        return (
-                                            <li
-                                                key={id}
-                                                className={`flex items-center justify-between rounded border px-2 py-1 ${activeEntityId === id ? "border-blue-400 bg-blue-50" : "border-slate-200 bg-slate-50"}`}
-                                            >
-                                                <label className="flex items-center gap-2">
-                                                    <input
-                                                        type="checkbox"
-                                                        checked={checked}
-                                                        onChange={(e) =>
-                                                            setSelected((s) => ({
-                                                                ...s,
-                                                                [id]: e.target.checked,
-                                                            }))
-                                                        }
-                                                    />
-                                                    <span className="font-mono text-[11px]">
-                                                        {id}
-                                                    </span>
-                                                </label>
-                                                <div className="flex items-center gap-2">
-                                                    <button
-                                                        onClick={() => setActiveEntityId(id)}
-                                                        className="rounded bg-slate-200 px-2 py-0.5 text-[11px] hover:bg-slate-300"
-                                                    >
-                                                        Inspect
-                                                    </button>
-                                                    <button
-                                                        onClick={() => handleDestroyEntity(id)}
-                                                        className="rounded bg-rose-600 px-2 py-0.5 text-[11px] text-white hover:bg-rose-700"
-                                                    >
-                                                        Remove
-                                                    </button>
-                                                </div>
-                                            </li>
-                                        );
-                                    })}
-                                </ul>
-                            </div>
+                            <EntitiesTab
+                                entities={entities}
+                                entityFilter={entityFilter}
+                                onChangeEntityFilter={setEntityFilter}
+                                selected={selected}
+                                onToggleSelected={(id, checked) =>
+                                    setSelected((s) => ({ ...s, [id]: checked }))
+                                }
+                                activeEntityId={activeEntityId}
+                                onInspect={setActiveEntityId}
+                                onCreateEntity={handleCreateEntity}
+                                onDestroyEntity={handleDestroyEntity}
+                                onDestroySelected={handleDestroySelected}
+                            />
                         )}
 
                         {tab === "inspector" && <InspectorTab activeEntityId={activeEntityId} />}
@@ -614,6 +450,15 @@ export function DeveloperPanel(): JSX.Element | null {
                                     setShowGizmo(false);
                                     setGridFollow(false);
                                     setGridInfinite(true);
+                                    try {
+                                        eventBus.emit("gizmoVisibilityChanged", { show: false });
+                                        eventBus.emit("gridConfigChanged", {
+                                            followCamera: false,
+                                            infiniteGrid: true,
+                                        });
+                                    } catch {
+                                        /* noop */
+                                    }
                                 }}
                             />
                         )}
@@ -625,53 +470,6 @@ export function DeveloperPanel(): JSX.Element | null {
 }
 
 /** Sub-componentes */
-// Tab foi extraído para src/presentation/panels/components/Tab.tsx
+// Tab foi extraído para src/presentation/panels/developer/components/Tab.tsx
 
-function LogRow({
-    type,
-    timestamp,
-    payload,
-    autoscroll,
-}: {
-    type: string;
-    timestamp: number;
-    payload?: unknown;
-    autoscroll: boolean;
-}): JSX.Element {
-    const ref = useRef<HTMLLIElement | null>(null);
-    const [open, setOpen] = useState(false);
-    useEffect(() => {
-        if (autoscroll) ref.current?.scrollIntoView({ behavior: "smooth", block: "end" });
-    }, [autoscroll]);
-    return (
-        <li ref={ref} className="rounded border border-slate-200 bg-slate-50">
-            <div className="flex items-center justify-between gap-2 px-2 py-1">
-                <div className="flex items-center gap-2">
-                    <span className="rounded bg-slate-800 px-1.5 py-0.5 text-[10px] font-medium text-white">
-                        {type}
-                    </span>
-                    <span className="text-[10px] text-slate-500">{fmt(timestamp)}</span>
-                </div>
-                <button
-                    onClick={() => setOpen((v) => !v)}
-                    className="text-[11px] text-slate-600 hover:underline"
-                >
-                    {open ? "Hide" : "Show"} payload
-                </button>
-            </div>
-            {open && (
-                <pre className="max-h-52 overflow-auto whitespace-pre-wrap break-words bg-white px-2 py-2 text-[11px] text-slate-800">
-                    {safePretty(payload)}
-                </pre>
-            )}
-        </li>
-    );
-}
-
-function safePretty(v: unknown): string {
-    try {
-        return JSON.stringify(v, null, 2);
-    } catch {
-        return String(v);
-    }
-}
+// LogRow movido para src/presentation/panels/developer/components/LogRow.tsx

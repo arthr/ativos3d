@@ -1,6 +1,7 @@
 import type { JSX } from "react";
-import { DeveloperStats } from "@/presentation/panels/developer/components/DeveloperStats";
+import { DeveloperStats } from "@presentation/panels/developer/components/DeveloperStats";
 import { FiActivity, FiRefreshCcw } from "react-icons/fi";
+import { DevButton } from "@presentation/panels/developer/components/DevButton";
 
 /**
  * PerformanceTab: mostra métricas e oferece toggles de stats.
@@ -21,22 +22,27 @@ export function PerformanceTab({
     return (
         <div className="flex h-full flex-col">
             <div className="border-b border-slate-100 px-3 py-2 flex items-center gap-2">
-                <button
+                <DevButton
                     onClick={onToggleStats}
-                    className={`inline-flex items-center gap-1 rounded-md px-2 py-1 text-[11px] ${show ? "bg-emerald-600 text-white hover:bg-emerald-700" : "bg-slate-100 text-slate-700 hover:bg-slate-200"}`}
+                    variant="toggle"
+                    active={show}
                     title="Toggle performance stats"
                     aria-label="Toggle performance stats"
                 >
-                    <FiActivity size={12} /> {show ? "Hide" : "Show"} stats
-                </button>
-                <button
+                    <span className="inline-flex items-center gap-1">
+                        <FiActivity size={12} /> {show ? "Hide" : "Show"} stats
+                    </span>
+                </DevButton>
+                <DevButton
                     onClick={onCyclePanel}
-                    className="inline-flex items-center gap-1 rounded-md bg-slate-800 px-2 py-1 text-[11px] text-white hover:bg-black"
+                    variant="primary"
                     title={`Cycle stats panel (${statsLabel})`}
                     aria-label="Cycle stats panel"
                 >
-                    <FiRefreshCcw size={12} /> Next panel
-                </button>
+                    <span className="inline-flex items-center gap-1">
+                        <FiRefreshCcw size={12} /> Next panel
+                    </span>
+                </DevButton>
                 <span className="rounded size-6 bg-slate-100 text-[10px] flex items-center justify-center">
                     {statsLabel}
                 </span>
