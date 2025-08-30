@@ -98,7 +98,7 @@ A renderização é controlada por React Three Fiber (R3F) com Drei. Cada parte 
 
 #### **3.3 Sistema de Câmera**
 - [x] Implementar CameraController
-- [ ] Implementar CameraModes (persp/ortho)
+- [x] Implementar CameraModes (persp/ortho)
 - [ ] Implementar controles de câmera
 - [ ] Testes para câmera
 

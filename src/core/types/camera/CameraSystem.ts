@@ -46,6 +46,11 @@ export interface CameraSystemProvider {
     getMode(): CameraMode;
 
     /**
+     * Define o modo da câmera
+     */
+    setMode(mode: CameraMode): void;
+
+    /**
      * Retorna os gestos habilitados
      */
     getGestures(): Set<CameraGesture>;
