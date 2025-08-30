@@ -84,6 +84,7 @@ export function DeveloperPanel(): JSX.Element | null {
     const [eventFilter, setEventFilter] = useLocalStorage<string>("devpanel:eventFilter", "");
     const [eventType, setEventType] = useState("");
     const [eventPayload, setEventPayload] = useState("");
+    const [eventTypeWhitelist, setEventTypeWhitelist] = useLocalStorage<string[]>("devpanel:events:types", []);
 
     /** UI flags persistidos */
     const [showGizmo, setShowGizmo] = useLocalStorage<boolean>("devpanel:showGizmo", false);
@@ -277,16 +278,25 @@ export function DeveloperPanel(): JSX.Element | null {
     }
 
     const filteredEvents = useMemo(() => {
-        if (!eventFilter) return events;
+        let base = events;
+        if (eventTypeWhitelist.length > 0) {
+            const set = new Set(eventTypeWhitelist.map(String));
+            base = base.filter((e) => set.has(String(e.type)));
+        }
+        if (!eventFilter) return base;
         const q = eventFilter.toLowerCase();
-        return events.filter(
+        return base.filter(
             (e) =>
                 e.type.toLowerCase().includes(q) ||
-                JSON.stringify(e.payload ?? "")
-                    .toLowerCase()
-                    .includes(q),
+                JSON.stringify(e.payload ?? "").toLowerCase().includes(q),
         );
-    }, [events, eventFilter]);
+    }, [events, eventFilter, eventTypeWhitelist]);
+
+    const knownEventTypes = useMemo<string[]>(() => {
+        const fromEvents = Array.from(new Set(events.map((e) => String(e.type))));
+        const fromBus = eventBus.getEventTypes ? (eventBus.getEventTypes() as string[]) : [];
+        return Array.from(new Set([...fromEvents, ...fromBus])).sort();
+    }, [events, eventBus]);
 
     // Entities filtering is handled inside EntitiesTab
 
@@ -442,6 +452,7 @@ export function DeveloperPanel(): JSX.Element | null {
                                             if (k && k.startsWith("devpanel:")) keys.push(k);
                                         }
                                         keys.forEach((k) => globalThis.localStorage.removeItem(k));
+                                        setEventTypeWhitelist([]);
                                     } catch {
                                         /* noop */
                                     }
@@ -460,6 +471,9 @@ export function DeveloperPanel(): JSX.Element | null {
                                         /* noop */
                                     }
                                 }}
+                                knownEventTypes={knownEventTypes}
+                                selectedEventTypes={eventTypeWhitelist}
+                                onUpdateEventTypes={setEventTypeWhitelist}
                             />
                         )}
                     </div>
