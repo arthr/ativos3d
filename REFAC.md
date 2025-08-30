@@ -89,7 +89,7 @@ Perfeito! Vou elaborar um planejamento estruturado para reconstruir o projeto de
 - [x] Implementar GridLayer
 - [x] Implementar ObjectsLayer
 - [x] Implementar WallsLayer
-- [ ] Implementar FloorLayer
+- [x] Implementar FloorLayer
 
 #### **3.3 Sistema de Câmera**
 - [x] Implementar CameraController
