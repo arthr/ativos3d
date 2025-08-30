@@ -18,9 +18,10 @@ export function FloorLayer({ color = "#cccccc" }: { readonly color?: string }): 
     return (
         <>
             {list.map(({ entityId, floor }) => {
+                // Anchor vertical na base: centerY = position.y + size.y/2
                 const position: [number, number, number] = [
                     floor.position.x,
-                    floor.position.y,
+                    floor.position.y + floor.size.y / 2,
                     floor.position.z,
                 ];
                 const scale: [number, number, number] = [
@@ -64,4 +65,3 @@ export function FloorLayer({ color = "#cccccc" }: { readonly color?: string }): 
         </>
     );
 }
-
