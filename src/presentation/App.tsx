@@ -6,6 +6,7 @@ import { SceneBridge } from "@presentation/bridges/SceneBridge";
 import { CameraLayer } from "@presentation/layers/CameraLayer";
 import { ControlsLayer } from "@presentation/layers/ControlsLayer";
 import { ObjectsLayer } from "@presentation/layers/ObjectsLayer";
+import { WallsLayer } from "@presentation/layers/WallsLayer";
 import { GizmoLayer } from "@presentation/layers/GizmoLayer";
 import { DeveloperPanel } from "./panels/DeveloperPanel";
 import { useApplication } from "@presentation/hooks/useApplication";
@@ -80,6 +81,7 @@ export function App(): JSX.Element {
                     config={{ followCamera: gridFollowCamera, infiniteGrid: gridInfiniteGrid }}
                 />
                 <ambientLight />
+                <WallsLayer />
                 <ObjectsLayer />
             </Canvas>
             {showDebug && <DeveloperPanel />}

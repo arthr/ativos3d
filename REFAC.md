@@ -87,8 +87,8 @@ Perfeito! Vou elaborar um planejamento estruturado para reconstruir o projeto de
 
 #### **3.2 Camadas de Renderização**
 - [x] Implementar GridLayer
-- [ ] Implementar ObjectsLayer
-- [ ] Implementar WallsLayer
+- [x] Implementar ObjectsLayer
+- [x] Implementar WallsLayer
 - [ ] Implementar FloorLayer
 
 #### **3.3 Sistema de Câmera**

@@ -11,6 +11,7 @@ import type {
 import { TransformComponent } from "./TransformComponent";
 import { PhysicsComponent } from "./PhysicsComponent";
 import { RenderComponent } from "./RenderComponent";
+import { WallComponent } from "./WallComponent";
 
 /**
  * Sistema de Componentes seguindo Domain-Driven Design
@@ -213,6 +214,11 @@ export class ComponentSystem {
             {
                 type: "PhysicsComponent",
                 factory: (data): PhysicsComponent => PhysicsComponent.create(data),
+                validator: (component): ValidationResult => component.validate(),
+            },
+            {
+                type: "WallComponent",
+                factory: (data): WallComponent => WallComponent.create(data),
                 validator: (component): ValidationResult => component.validate(),
             },
         ]);

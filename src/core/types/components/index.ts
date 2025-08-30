@@ -24,3 +24,5 @@ export type {
     ToolComponentData,
     DEFAULT_TOOL,
 } from "./ToolComponent";
+
+export type { WallComponent, WallComponentData } from "./WallComponent";
