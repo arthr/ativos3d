@@ -378,7 +378,7 @@ export function DeveloperPanel(): JSX.Element | null {
 
                         {tab === "commands" && (
                             <CommandsTab
-                                history={history as any}
+                                history={history}
                                 canUndo={canUndo}
                                 canRedo={canRedo}
                                 commandDesc={commandDesc}

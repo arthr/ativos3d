@@ -31,6 +31,7 @@ export function DeveloperStats({
             {/* Override de posicionamento: usa absolute no contexto do container */}
             <Stats
                 showPanel={p}
+                // @ts-ignore
                 parent={containerRef}
                 className="!relative !left-0 !top-0 !right-auto !bottom-auto"
             />

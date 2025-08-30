@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState, type JSX } from "react";
 import { useApplication } from "@presentation/hooks/useApplication";
 import type { WallComponent as IWallComponent } from "@core/types/components/WallComponent";
 import type { RenderComponent as IRenderComponent } from "@core/types/components/RenderComponent";
+import { DevButton } from "@presentation/panels/developer/components/DevButton";
+import { DevInput } from "@presentation/panels/developer/components/DevInput";
 
 /**
  * InspectorTab: edita propriedades da entidade selecionada (paredes/cores).
@@ -49,50 +51,50 @@ export function InspectorTab({ activeEntityId }: { readonly activeEntityId?: str
                         <div className="grid grid-cols-2 gap-2 items-center">
                             <label className="text-[11px] text-slate-600">Height</label>
                             <div className="flex gap-2">
-                                <input
+                                <DevInput
                                     type="number"
                                     step="0.01"
                                     min="0.01"
-                                    value={height}
+                                    value={height as number | string}
                                     onChange={(e) => setHeight(e.target.value === "" ? "" : Number(e.target.value))}
-                                    className="w-28 rounded border border-slate-300 px-2 py-1 text-[11px]"
+                                    className="w-28"
                                 />
-                                <button
+                                <DevButton
                                     disabled={height === ""}
                                     onClick={() => {
                                         if (height === "") return;
                                         const updated = wall.setHeight(height as number);
                                         entityManager.addComponent(entity.id, updated);
                                     }}
-                                    className="rounded bg-slate-800 px-2 py-1 text-[11px] text-white disabled:bg-slate-200"
+                                    variant="primary"
                                 >
                                     Apply
-                                </button>
+                                </DevButton>
                             </div>
 
                             <label className="text-[11px] text-slate-600">Thickness</label>
                             <div className="flex gap-2">
-                                <input
+                                <DevInput
                                     type="number"
                                     step="0.01"
                                     min="0.01"
-                                    value={thickness}
+                                    value={thickness as number | string}
                                     onChange={(e) =>
                                         setThickness(e.target.value === "" ? "" : Number(e.target.value))
                                     }
-                                    className="w-28 rounded border border-slate-300 px-2 py-1 text-[11px]"
+                                    className="w-28"
                                 />
-                                <button
+                                <DevButton
                                     disabled={thickness === ""}
                                     onClick={() => {
                                         if (thickness === "") return;
                                         const updated = wall.setThickness(thickness as number);
                                         entityManager.addComponent(entity.id, updated);
                                     }}
-                                    className="rounded bg-slate-800 px-2 py-1 text-[11px] text-white disabled:bg-slate-200"
+                                    variant="primary"
                                 >
                                     Apply
-                                </button>
+                                </DevButton>
                             </div>
                         </div>
                     </section>
@@ -108,20 +110,16 @@ export function InspectorTab({ activeEntityId }: { readonly activeEntityId?: str
                         <div className="grid grid-cols-2 gap-2 items-center">
                             <label className="text-[11px] text-slate-600">Color</label>
                             <div className="flex gap-2 items-center">
-                                <input
-                                    type="color"
-                                    value={color}
-                                    onChange={(e) => setColor(e.target.value)}
-                                />
-                                <button
+                                <DevInput type="color" value={color} onChange={(e) => setColor(e.target.value)} />
+                                <DevButton
                                     onClick={() => {
                                         const updated = render.setColor(color);
                                         entityManager.addComponent(entity.id, updated);
                                     }}
-                                    className="rounded bg-slate-800 px-2 py-1 text-[11px] text-white"
+                                    variant="primary"
                                 >
                                     Apply
-                                </button>
+                                </DevButton>
                             </div>
                         </div>
                     </section>

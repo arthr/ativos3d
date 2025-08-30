@@ -2,10 +2,7 @@ import type { JSX } from "react";
 import { DevInput } from "@presentation/panels/developer/components/DevInput";
 import { DevButton } from "@presentation/panels/developer/components/DevButton";
 
-export interface DevCommandItem {
-    description: string;
-    timestamp: number;
-}
+import type { Command } from "@core/types";
 
 /**
  * CommandsTab: execução, undo/redo e histórico de comandos.
@@ -21,7 +18,7 @@ export function CommandsTab({
     onRedo,
     onClearHistory,
 }: {
-    readonly history: DevCommandItem[];
+    readonly history: readonly Command[];
     readonly canUndo: boolean;
     readonly canRedo: boolean;
     readonly commandDesc: string;
@@ -74,4 +71,3 @@ export function CommandsTab({
         </div>
     );
 }
-
