@@ -10,3 +10,4 @@ export { RenderComponent } from "./RenderComponent";
 export { PhysicsComponent } from "./PhysicsComponent";
 export { ToolComponent } from "./ToolComponent";
 export { WallComponent } from "./WallComponent";
+export { FloorComponent } from "./FloorComponent";

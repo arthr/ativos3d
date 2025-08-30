@@ -26,3 +26,4 @@ export type {
 } from "./ToolComponent";
 
 export type { WallComponent, WallComponentData } from "./WallComponent";
+export type { FloorComponent, FloorComponentData } from "./FloorComponent";

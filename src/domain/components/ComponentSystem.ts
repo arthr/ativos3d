@@ -12,6 +12,7 @@ import { TransformComponent } from "./TransformComponent";
 import { PhysicsComponent } from "./PhysicsComponent";
 import { RenderComponent } from "./RenderComponent";
 import { WallComponent } from "./WallComponent";
+import { FloorComponent } from "./FloorComponent";
 
 /**
  * Sistema de Componentes seguindo Domain-Driven Design
@@ -219,6 +220,11 @@ export class ComponentSystem {
             {
                 type: "WallComponent",
                 factory: (data): WallComponent => WallComponent.create(data),
+                validator: (component): ValidationResult => component.validate(),
+            },
+            {
+                type: "FloorComponent",
+                factory: (data): FloorComponent => FloorComponent.create(data),
                 validator: (component): ValidationResult => component.validate(),
             },
         ]);
