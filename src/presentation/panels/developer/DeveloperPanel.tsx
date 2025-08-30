@@ -496,8 +496,3 @@ export function DeveloperPanel(): JSX.Element | null {
         </div>
     );
 }
-
-/** Sub-componentes */
-// Tab foi extraído para src/presentation/panels/developer/components/Tab.tsx
-
-// LogRow movido para src/presentation/panels/developer/components/LogRow.tsx
