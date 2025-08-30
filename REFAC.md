@@ -79,17 +79,22 @@ Perfeito! Vou elaborar um planejamento estruturado para reconstruir o projeto de
 
 ### **Fase 3: Renderização e Cena**
 
+A renderização é controlada por React Three Fiber (R3F) com Drei. Cada parte da cena é isolada em camadas independentes que são combinadas no `<Canvas>`.
+
 #### **3.1 Sistema de Renderização**
-- [x] Implementar RenderSystem base
-- [x] Implementar SceneManager
+- [x] Canvas R3F/Drei como owner da cena
+- [x] SceneBridge publica estado da cena
 - [x] Implementar CameraSystem
 - [x] Testes para renderização
 
 #### **3.2 Camadas de Renderização**
-- [x] Implementar GridLayer
-- [x] Implementar ObjectsLayer
-- [x] Implementar WallsLayer
-- [x] Implementar FloorLayer
+- [x] GridLayer
+- [x] ObjectsLayer
+- [x] WallsLayer
+- [x] FloorLayer
+- [x] GizmoLayer
+- [x] CameraLayer
+- [x] ControlsLayer
 
 #### **3.3 Sistema de Câmera**
 - [x] Implementar CameraController
