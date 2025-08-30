@@ -131,6 +131,9 @@ export class CameraController implements CameraControllerProvider {
      * Verifica se pode executar um gesto
      */
     private canDoGesture(gesture: CameraGesture): boolean {
-        return this.controlsEnabled && (this.config.gestures?.includes(gesture) ?? true);
+        if (!this.controlsEnabled) return false;
+        if (!(this.config.gestures?.includes(gesture) ?? true)) return false;
+        if (gesture === "rotate" && this.cameraSystem.getMode() !== "persp") return false;
+        return true;
     }
 }

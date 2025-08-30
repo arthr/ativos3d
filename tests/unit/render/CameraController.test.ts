@@ -90,6 +90,19 @@ describe("CameraController", () => {
             expect(camera.rotation.z).toBe(0);
             expect(emit).not.toHaveBeenCalled();
         });
+
+        it("deve ignorar rotate em modo ortho", () => {
+            CameraSystem.resetInstance();
+            cameraSystem = CameraSystem.getInstance({ mode: "ortho" }, { eventBus });
+            const controller = new CameraController(
+                { eventBus, cameraSystem },
+                { gestures: ["rotate"] },
+            );
+            controller.rotate({ x: 0.1, y: 0, z: 0 });
+            const camera = cameraSystem.getCamera();
+            expect(camera.rotation.x).toBe(0);
+            expect(emit).not.toHaveBeenCalled();
+        });
     });
 
     describe("zoom", () => {
