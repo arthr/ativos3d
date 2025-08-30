@@ -14,7 +14,6 @@ export interface DevEventItem {
  * EventsTab: filtros, emissão e stream de eventos.
  */
 export function EventsTab({
-    events,
     filtered,
     eventFilter,
     onChangeEventFilter,
@@ -29,7 +28,6 @@ export function EventsTab({
     onToggleAutoscroll,
     onClear,
 }: {
-    readonly events: DevEventItem[];
     readonly filtered: DevEventItem[];
     readonly eventFilter: string;
     onChangeEventFilter(value: string): void;
