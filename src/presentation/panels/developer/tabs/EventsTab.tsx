@@ -66,7 +66,13 @@ export function EventsTab({
                     onChange={(e) => onChangeEventPayload(e.target.value)}
                     className="w-64"
                 />
-                <DevButton onClick={onEmit} variant="success" title="Emit event" aria-label="Emit event" className="p-1 px-2">
+                <DevButton
+                    onClick={onEmit}
+                    variant="success"
+                    title="Emit event"
+                    aria-label="Emit event"
+                    className="p-1 px-2"
+                >
                     <FiSend size={14} />
                 </DevButton>
                 <div className="mx-2 h-5 w-px bg-slate-200" />
@@ -116,4 +122,3 @@ export function EventsTab({
         </div>
     );
 }
-
