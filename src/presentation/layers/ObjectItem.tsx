@@ -1,11 +1,12 @@
 import { Suspense } from "react";
 import type { JSX } from "react";
 import { useGLTF, useTexture } from "@react-three/drei";
+import { useLoader } from "@react-three/fiber";
 import { useApplication } from "@presentation/hooks/useApplication";
 import type { EntityId } from "@core/types/ecs/EntityId";
 import type { RenderComponent as IRenderComponent } from "@core/types/components/RenderComponent";
 import type { TransformComponent as ITransformComponent } from "@core/types/components/TransformComponent";
-import type { GLTF } from "three/examples/jsm/loaders/GLTFLoader";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import type { Texture } from "three";
 
 /**
@@ -50,9 +51,9 @@ export function ObjectItem({
             <Suspense fallback={null}>
                 {render.modelUrl ? (
                     <ModelNode
-                        url={render.modelUrl}
+                        url={render.modelUrl ?? ""}
                         color={render.color}
-                        textureUrl={render.textureUrl}
+                        textureUrl={render.textureUrl ?? ""}
                         material={matProps}
                         visible={render.visible}
                         onPointerDown={handleDown}
@@ -149,7 +150,7 @@ function ModelNode({
     readonly onPointerOver: () => void;
     readonly onPointerOut: () => void;
 }): JSX.Element {
-    const gltf = useGLTF(url, true) as GLTF;
+    const gltf = useLoader(GLTFLoader, url);
     const loadedMap = useTexture(textureUrl ?? "") as Texture;
     const map = textureUrl ? loadedMap : undefined;
     return (
@@ -160,11 +161,10 @@ function ModelNode({
             onPointerOver={onPointerOver}
             onPointerOut={onPointerOut}
         >
-            <meshStandardMaterial attach="material" color={color} map={map} {...material} />
+            <meshStandardMaterial attach="material" color={color} map={map ?? null} {...material} />
         </primitive>
     );
 }
 
 // Dica de performance: cache GLTF
 useGLTF.preload?.("/models/example.gltf");
-
