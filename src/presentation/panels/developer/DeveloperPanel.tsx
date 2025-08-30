@@ -114,22 +114,30 @@ export function DeveloperPanel(): JSX.Element | null {
     const [entityFilter, setEntityFilter] = useLocalStorage<string>("devpanel:entityFilter", "");
     const [selected, setSelected] = useState<Record<string, boolean>>({});
 
-    /** Intercepta emissões p/ log – limitado a 500 itens */
+    /** Intercepta emissões p/ log – limitado a 500 itens
+     *  Aplica whitelist: se houver tipos selecionados em Settings, apenas
+     *  computa eventos cujo tipo esteja incluso. Se whitelist vazia, não filtra.
+     */
     useEffect(() => {
         const originalEmit = eventBus.emit.bind(eventBus);
         eventBus.emit = ((type, payload): void => {
             if (!paused) {
-                setEvents((prev) => {
-                    const next = [...prev, { t: Date.now(), type: String(type), payload }];
-                    return next.length > 500 ? next.slice(-500) : next;
-                });
+                const t = String(type);
+                const allowAll = eventTypeWhitelist.length === 0;
+                const isAllowed = allowAll || eventTypeWhitelist.includes(t);
+                if (isAllowed) {
+                    setEvents((prev) => {
+                        const next = [...prev, { t: Date.now(), type: t, payload }];
+                        return next.length > 500 ? next.slice(-500) : next;
+                    });
+                }
             }
             originalEmit(type, payload);
         }) as EventBus["emit"];
         return (): void => {
             eventBus.emit = originalEmit;
         };
-    }, [eventBus, paused]);
+    }, [eventBus, paused, eventTypeWhitelist]);
 
     /** Atualiza histórico de comandos */
     useEffect(() => {
