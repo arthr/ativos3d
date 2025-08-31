@@ -56,6 +56,8 @@ export class CameraSystem implements CameraSystemProvider {
      * Define uma câmera externa (ex.: fornecida pelo R3F) para ser gerenciada pelo sistema.
      */
     public setExternalCamera(camera: Camera): void {
+        // Evita reemissão caso a referência não mude
+        if (this.camera === camera) return;
         this.camera = camera;
         this.eventBus.emit("cameraUpdated", { camera });
     }
