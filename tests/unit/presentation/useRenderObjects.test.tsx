@@ -30,7 +30,13 @@ const fakeEntity = (id: string) => ({
                 color: "#fff",
                 visible: true,
                 lodLevel: 0,
-                material: { type: "standard", opacity: 1, transparent: false, receiveShadow: true, castShadow: true },
+                material: {
+                    type: "standard",
+                    opacity: 1,
+                    transparent: false,
+                    receiveShadow: true,
+                    castShadow: true,
+                },
             } as any;
         if (type === "TransformComponent")
             return {
