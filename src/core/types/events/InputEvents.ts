@@ -1,6 +1,7 @@
 import type { Vec3 } from "../../geometry/types/Vec3";
 import type { Vec2 } from "../../geometry/types/Vec2";
 import type { Modifiers } from "../input/Modifiers";
+import type { InputAction } from "../input/InputAction";
 
 /**
  * Eventos de input do sistema
@@ -48,5 +49,9 @@ export interface InputEvents {
     keyUp: {
         code: string;
         modifiers: Modifiers;
+    };
+
+    actionTriggered: {
+        action: InputAction;
     };
 }
