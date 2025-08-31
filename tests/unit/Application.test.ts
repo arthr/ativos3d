@@ -20,7 +20,7 @@ describe("Application", () => {
 
     it("inicializa sistemas principais sem erros", () => {
         const eventBus = new EventBus();
-        const application = new Application(eventBus);
+        const application = new Application(eventBus, { width: 800, height: 600 });
         expect(application.resolve("eventBus")).toBeInstanceOf(EventBus);
         expect(application.resolve("commandStack")).toBeInstanceOf(CommandStack);
         expect(application.resolve("entityManager")).toBeInstanceOf(EntityManager);
@@ -28,7 +28,7 @@ describe("Application", () => {
 
     it("deve lançar erro se dependência não encontrada", () => {
         const eventBus = new EventBus();
-        const application = new Application(eventBus);
+        const application = new Application(eventBus, { width: 800, height: 600 });
         // @ts-expect-error - Testando comportamento com chave inválida
         expect(() => application.resolve("invalidDependency")).toThrow(
             "Dependência não encontrada: invalidDependency",
@@ -37,7 +37,7 @@ describe("Application", () => {
 
     it("remove listeners no dispose", () => {
         const eventBus = new EventBus();
-        const application = new Application(eventBus);
+        const application = new Application(eventBus, { width: 800, height: 600 });
         expect(eventBus.listenerCount("componentAdded")).toBe(0);
         expect(eventBus.listenerCount("componentRemoved")).toBe(0);
         expect(eventBus.listenerCount("entityDestroyed")).toBe(0);

@@ -1,3 +1,4 @@
+import type { CameraDimensions } from "@core/types/camera";
 import { EventBus } from "@core/events/EventBus";
 import { Application } from "./Application";
 
@@ -5,4 +6,5 @@ import { Application } from "./Application";
  * Instância única da aplicação e seu EventBus
  */
 const eventBus = new EventBus();
-export const application = new Application(eventBus);
+const canvasSize: CameraDimensions = { width: window.innerWidth, height: window.innerHeight };
+export const application = new Application(eventBus, canvasSize);

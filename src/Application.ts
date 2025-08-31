@@ -2,7 +2,7 @@
  * TODO: Refatorar para estar de acordo com o Roadmap de Refatoração do projeto.
  * Arquivo `REFAC.md` para mais detalhes.
  */
-
+import type { CameraDimensions } from "@core/types/camera";
 import { EventBus } from "@core/events/EventBus";
 import { CommandStack } from "@core/commands";
 import { EntityManager } from "@domain/entities";
@@ -17,8 +17,8 @@ export class Application {
     /**
      * Inicializa o container de dependências
      */
-    constructor(eventBus: EventBus) {
-        this.initializeContainer(eventBus);
+    constructor(eventBus: EventBus, canvasSize: CameraDimensions) {
+        this.initializeContainer(eventBus, canvasSize);
     }
 
     /**
@@ -37,13 +37,10 @@ export class Application {
     /**
      * Inicializa o container de dependências
      */
-    private initializeContainer(eventBus: EventBus): DependencyMap {
+    private initializeContainer(eventBus: EventBus, canvasSize: CameraDimensions): DependencyMap {
         const commandStack = new CommandStack(eventBus);
         const entityManager = EntityManager.getInstance({}, { eventBus });
-        const cameraSystem = CameraSystem.getInstance(
-            {},
-            { eventBus, canvasSize: { width: 1, height: 1 } },
-        );
+        const cameraSystem = CameraSystem.getInstance({}, { eventBus, canvasSize });
         const cameraController = new CameraController({ eventBus, cameraSystem });
         // Inicializa o RenderLoop (usado pelo R3F)
         const renderLoop = new RenderLoop();
