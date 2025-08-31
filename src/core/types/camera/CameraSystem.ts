@@ -3,6 +3,14 @@ import type { EventBus } from "../../events/EventBus";
 import type { CameraMode, CameraGesture } from "./CameraTypes";
 
 /**
+ * Dimensões do canvas utilizadas para o sistema de câmera
+ */
+export interface CameraDimensions {
+    width: number;
+    height: number;
+}
+
+/**
  * Configurações do CameraSystem
  */
 export interface CameraSystemConfig {
@@ -28,7 +36,12 @@ export interface CameraSystemDependencies {
     /**
      * Função opcional para criação de câmera
      */
-    createCamera?: (mode: CameraMode) => Camera;
+    createCamera?: (mode: CameraMode, size: CameraDimensions) => Camera;
+
+    /**
+     * Dimensões do canvas para calculo da câmera
+     */
+    canvasSize?: CameraDimensions;
 }
 
 /**

@@ -40,7 +40,10 @@ export class Application {
     private initializeContainer(eventBus: EventBus): DependencyMap {
         const commandStack = new CommandStack(eventBus);
         const entityManager = EntityManager.getInstance({}, { eventBus });
-        const cameraSystem = CameraSystem.getInstance({}, { eventBus });
+        const cameraSystem = CameraSystem.getInstance(
+            {},
+            { eventBus, canvasSize: { width: 1, height: 1 } },
+        );
         const cameraController = new CameraController({ eventBus, cameraSystem });
         // Inicializa o RenderLoop (usado pelo R3F)
         const renderLoop = new RenderLoop();

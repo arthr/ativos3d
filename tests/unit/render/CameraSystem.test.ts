@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { CameraSystem } from "@infrastructure/render";
 import { EventBus } from "@core/events/EventBus";
+import { PerspectiveCamera, OrthographicCamera } from "three";
 
 describe("CameraSystem", () => {
     beforeEach(() => {
@@ -75,5 +76,24 @@ describe("CameraSystem", () => {
         expect(system.isGestureActive("pan")).toBe(true);
         system.endGesture("pan");
         expect(system.isGestureActive("pan")).toBe(false);
+    });
+
+    it("deve calcular aspect ratio e bounds baseado nas dimensões", () => {
+        const eventBus = new EventBus();
+        const size = { width: 1920, height: 1080 };
+        const system = CameraSystem.getInstance(
+            { mode: "persp" },
+            {
+                eventBus,
+                canvasSize: size,
+            },
+        );
+        const persp = system.getCamera() as PerspectiveCamera;
+        expect(persp.aspect).toBeCloseTo(1920 / 1080);
+        system.setMode("ortho");
+        const ortho = system.getCamera() as OrthographicCamera;
+        const aspect = 1920 / 1080;
+        expect(ortho.left).toBeCloseTo(-aspect);
+        expect(ortho.right).toBeCloseTo(aspect);
     });
 });

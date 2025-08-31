@@ -4,6 +4,7 @@ import type {
     CameraSystemConfig,
     CameraSystemDependencies,
     CameraSystemProvider,
+    CameraDimensions,
 } from "@core/types/camera/CameraSystem";
 import type { EventBus } from "@core/events/EventBus";
 
@@ -15,18 +16,20 @@ import { PerspectiveCamera, OrthographicCamera } from "three";
 export class CameraSystem implements CameraSystemProvider {
     private static instance: CameraSystem | null = null;
     private readonly eventBus: EventBus;
-    private readonly cameraFactory: (mode: CameraMode) => Camera;
+    private readonly cameraFactory: (mode: CameraMode, size: CameraDimensions) => Camera;
     private readonly gestures = new Set<CameraGesture>();
     private camera: Camera;
     private mode: CameraMode;
     private controlsEnabled: boolean;
+    private readonly canvasSize: CameraDimensions;
 
     private constructor(config: CameraSystemConfig, deps: CameraSystemDependencies) {
         this.mode = config.mode ?? "persp";
         this.controlsEnabled = config.controlsEnabled ?? true;
         this.eventBus = deps.eventBus;
+        this.canvasSize = deps.canvasSize ?? { width: 1, height: 1 };
         this.cameraFactory = deps.createCamera ?? defaultCameraFactory;
-        this.camera = this.cameraFactory(this.mode);
+        this.camera = this.cameraFactory(this.mode, this.canvasSize);
     }
 
     /**
@@ -77,7 +80,7 @@ export class CameraSystem implements CameraSystemProvider {
     public setMode(mode: CameraMode): void {
         if (this.mode === mode) return;
         this.mode = mode;
-        this.camera = this.cameraFactory(mode);
+        this.camera = this.cameraFactory(mode, this.canvasSize);
         this.eventBus.emit("cameraModeChanged", { mode, camera: this.camera });
     }
 
@@ -133,14 +136,15 @@ export class CameraSystem implements CameraSystemProvider {
 }
 
 /**
- * Cria uma câmera
+ * Cria uma câmera com base nas dimensões do canvas
  */
-function defaultCameraFactory(mode: CameraMode): Camera {
+function defaultCameraFactory(mode: CameraMode, size: CameraDimensions): Camera {
+    const aspectRatio = size.width / size.height;
     switch (mode) {
         case "persp":
-            return new PerspectiveCamera(75, 1, 0.1, 2000);
+            return new PerspectiveCamera(75, aspectRatio, 0.1, 2000);
         case "ortho":
-            return new OrthographicCamera(-1, 1, 1, -1, 0.1, 2000);
+            return new OrthographicCamera(-aspectRatio, aspectRatio, 1, -1, 0.1, 2000);
         default:
             throw new Error(`Mode de câmera inválido: ${mode}`);
     }

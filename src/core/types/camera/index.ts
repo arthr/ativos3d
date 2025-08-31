@@ -7,6 +7,7 @@ export type {
     CameraSystemDependencies,
     CameraSystemConfig,
     CameraSystemProvider,
+    CameraDimensions,
 } from "./CameraSystem";
 export type {
     CameraControllerDependencies,
