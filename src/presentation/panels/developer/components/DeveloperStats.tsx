@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from "react";
+import { useRef, type RefObject } from "react";
 import type { JSX } from "react";
 import { Stats } from "@react-three/drei";
 
@@ -17,22 +17,19 @@ export function DeveloperStats({
     /** 0=fps, 1=ms, 2=mb */
     readonly panel?: 0 | 1 | 2;
     readonly className?: string;
+
     /** Chamado quando o usuário clica no Stats (ciclo de painel). */
     readonly onCyclePanel?: () => void;
 }): JSX.Element | null {
     const containerRef = useRef<HTMLDivElement | null>(null);
-    // containerRef é passado diretamente como parent para o <Stats/>
-
-    const p = useMemo(() => panel, [panel]);
     if (!show) return null;
 
     return (
         <div ref={containerRef} className={className} onClick={onCyclePanel}>
             {/* Override de posicionamento: usa absolute no contexto do container */}
             <Stats
-                showPanel={p}
-                // @ts-ignore
-                parent={containerRef}
+                showPanel={panel}
+                parent={containerRef as RefObject<HTMLElement>}
                 className="!relative !left-0 !top-0 !right-auto !bottom-auto"
             />
         </div>
