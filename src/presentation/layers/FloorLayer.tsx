@@ -1,5 +1,5 @@
 import type { JSX } from "react";
-import { useFloors } from "@presentation/hooks/useFloors";
+import { useFloors } from "../hooks/useFloors";
 import { FloorItem } from "./FloorItem";
 
 /**
@@ -19,4 +19,3 @@ export function FloorLayer({ color = "#cccccc" }: { readonly color?: string }): 
         </>
     );
 }
-

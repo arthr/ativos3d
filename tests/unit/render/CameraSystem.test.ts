@@ -35,6 +35,7 @@ describe("CameraSystem", () => {
         eventBus.on("cameraGestureStarted", startListener);
         eventBus.on("cameraGestureEnded", endListener);
         const system = CameraSystem.getInstance({ mode: "persp" }, { eventBus });
+        system.endGesture("pan");
         system.startGesture("pan");
         system.endGesture("pan");
         expect(startListener).toHaveBeenCalledWith({ gesture: "pan" });

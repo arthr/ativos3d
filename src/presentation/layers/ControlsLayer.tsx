@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
 import type { JSX } from "react";
+import type { CameraMode, CameraGesture } from "@core/types/camera";
+import { useEffect, useState } from "react";
 import { OrbitControls } from "@react-three/drei";
 import { useThree } from "@react-three/fiber";
-import { application } from "@/applicationInstance";
-import type { CameraMode, CameraGesture } from "@core/types/camera";
+import { useApplication } from "../hooks/useApplication";
 
 /**
  * ControlsLayer: integra OrbitControls do Drei com o CameraSystem/EventBus.
@@ -12,8 +12,7 @@ import type { CameraMode, CameraGesture } from "@core/types/camera";
  * - Emite cameraUpdated a cada mudança
  */
 export function ControlsLayer(): JSX.Element {
-    const eventBus = application.resolve("eventBus");
-    const cameraSystem = application.resolve("cameraSystem");
+    const { eventBus, cameraSystem } = useApplication();
     const { camera } = useThree();
     const [mode, setMode] = useState<CameraMode>(() => cameraSystem.getMode());
     const [enabled, setEnabled] = useState<boolean>(() => cameraSystem.isControlsEnabled());

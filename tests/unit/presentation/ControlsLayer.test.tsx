@@ -24,14 +24,8 @@ const cameraSystem = {
     getGestures: () => gestures,
 };
 
-vi.mock("@/applicationInstance", () => ({
-    application: {
-        resolve: (key: string) => {
-            if (key === "eventBus") return eventBus;
-            if (key === "cameraSystem") return cameraSystem;
-            throw new Error(`Unexpected resolve for ${key}`);
-        },
-    },
+vi.mock("@presentation/hooks/useApplication", () => ({
+    useApplication: () => ({ eventBus, cameraSystem }),
 }));
 
 describe("ControlsLayer gestures", () => {

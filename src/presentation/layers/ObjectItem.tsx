@@ -6,7 +6,7 @@ import type { Texture } from "three";
 import { Suspense } from "react";
 import { useGLTF, useTexture } from "@react-three/drei";
 import { useLoader } from "@react-three/fiber";
-import { useApplication } from "@presentation/hooks/useApplication";
+import { useApplication } from "../hooks/useApplication";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 
 /**

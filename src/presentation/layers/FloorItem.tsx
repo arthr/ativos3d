@@ -1,5 +1,5 @@
 import type { JSX } from "react";
-import { useApplication } from "@presentation/hooks/useApplication";
+import { useApplication } from "../hooks/useApplication";
 import type { EntityId } from "@core/types/ecs/EntityId";
 import type { FloorComponent as IFloorComponent } from "@core/types/components/FloorComponent";
 import type { RenderComponent as IRenderComponent } from "@core/types/components/RenderComponent";
@@ -23,15 +23,9 @@ export function FloorItem({
         floor.position.y + floor.size.y / 2,
         floor.position.z,
     ];
-    const scale: [number, number, number] = [
-        floor.size.x,
-        floor.size.y,
-        floor.size.z,
-    ];
+    const scale: [number, number, number] = [floor.size.x, floor.size.y, floor.size.z];
 
-    const rc = entityManager
-        .getEntity(entityId)
-        ?.getComponent<IRenderComponent>("RenderComponent");
+    const rc = entityManager.getEntity(entityId)?.getComponent<IRenderComponent>("RenderComponent");
     const colorToUse = rc?.color ?? color;
 
     function handleDown(): void {
@@ -60,4 +54,3 @@ export function FloorItem({
         </group>
     );
 }
-

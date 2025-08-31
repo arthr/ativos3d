@@ -1,12 +1,15 @@
 import type { JSX } from "react";
-import { useWalls } from "@presentation/hooks/useWalls";
+import { useWalls } from "../hooks/useWalls";
 import { WallItem } from "./WallItem";
 
 /**
  * WallsLayer: renderiza paredes do domínio usando geometria box.
  * Orienta cada parede pelo vetor (end - start) no plano XZ.
  */
-export function WallsLayer({ thickness = 0.12, color = "#b8b8b8" }: {
+export function WallsLayer({
+    thickness = 0.12,
+    color = "#b8b8b8",
+}: {
     readonly thickness?: number;
     readonly color?: string;
 }): JSX.Element | null {
@@ -28,4 +31,3 @@ export function WallsLayer({ thickness = 0.12, color = "#b8b8b8" }: {
         </>
     );
 }
-

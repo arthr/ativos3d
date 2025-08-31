@@ -11,13 +11,8 @@ vi.mock("@react-three/fiber", () => ({
 }));
 
 const tick = vi.fn();
-vi.mock("@/applicationInstance", () => ({
-    application: {
-        resolve: (key: string) => {
-            if (key === "renderLoop") return { tick };
-            throw new Error(`Unexpected resolve for ${key}`);
-        },
-    },
+vi.mock("@presentation/hooks/useApplication", () => ({
+    useApplication: () => ({ renderLoop: { tick } }),
 }));
 
 describe("RenderLoopProvider", () => {
@@ -37,4 +32,3 @@ describe("RenderLoopProvider", () => {
         expect(tick).toHaveBeenCalledWith(0.02);
     });
 });
-

@@ -1,13 +1,13 @@
-import { useEffect, useMemo, useRef, useState } from "react";
 import type { JSX } from "react";
+import type { CameraMode } from "@core/types/camera";
+import type { PerspectiveCamera, OrthographicCamera, Camera } from "three";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
     PerspectiveCamera as DreiPerspectiveCamera,
     OrthographicCamera as DreiOrthographicCamera,
 } from "@react-three/drei";
 import { useThree } from "@react-three/fiber";
-import { application } from "@/applicationInstance";
-import type { CameraMode } from "@core/types/camera";
-import type { PerspectiveCamera, OrthographicCamera, Camera } from "three";
+import { useApplication } from "../hooks/useApplication";
 
 /**
  * CameraLayer: alterna entre câmeras persp/ortho do Drei conforme o CameraSystem.
@@ -28,8 +28,7 @@ export function CameraLayer({
     /** Quantidade de unidades do mundo visíveis em Y (altura) para ortho */
     readonly orthoUnitsVisibleY?: number;
 }): JSX.Element {
-    const eventBus = application.resolve("eventBus");
-    const cameraSystem = application.resolve("cameraSystem");
+    const { eventBus, cameraSystem } = useApplication();
     const perspRef = useRef<PerspectiveCamera | null>(null);
     const orthoRef = useRef<OrthographicCamera | null>(null);
     const [mode, setMode] = useState<CameraMode>(() => cameraSystem.getMode());

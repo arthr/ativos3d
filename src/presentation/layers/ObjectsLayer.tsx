@@ -1,5 +1,5 @@
 import type { JSX } from "react";
-import { useRenderObjects } from "@presentation/hooks/useRenderObjects";
+import { useRenderObjects } from "../hooks/useRenderObjects";
 import { ObjectItem } from "./ObjectItem";
 
 /**

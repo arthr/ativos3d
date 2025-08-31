@@ -1,4 +1,3 @@
-import React from "react";
 import type { JSX } from "react";
 import { GizmoHelper, GizmoViewport } from "@react-three/drei";
 

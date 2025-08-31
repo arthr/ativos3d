@@ -1,8 +1,8 @@
 import type { JSX } from "react";
-import { useApplication } from "@presentation/hooks/useApplication";
 import type { EntityId } from "@core/types/ecs/EntityId";
 import type { WallComponent as IWallComponent } from "@core/types/components/WallComponent";
 import type { RenderComponent as IRenderComponent } from "@core/types/components/RenderComponent";
+import { useApplication } from "../hooks/useApplication";
 
 /**
  * Item responsável por renderizar uma parede e emitir eventos de interação.
@@ -33,9 +33,7 @@ export function WallItem({
     const t = wall.thickness ?? thickness;
     const scale: [number, number, number] = [length, wall.height, t];
 
-    const rc = entityManager
-        .getEntity(entityId)
-        ?.getComponent<IRenderComponent>("RenderComponent");
+    const rc = entityManager.getEntity(entityId)?.getComponent<IRenderComponent>("RenderComponent");
     const colorToUse = rc?.color ?? color;
 
     function handleDown(): void {
@@ -64,4 +62,3 @@ export function WallItem({
         </group>
     );
 }
-
