@@ -84,9 +84,9 @@ export interface CameraSystemProvider {
     isGestureActive(gesture: CameraGesture): boolean;
 
     /**
-     * Define se os controles estão habilitados
+     * Define explicitamente se os controles estão habilitados
      */
-    toggleControls(): void;
+    setControlsEnabled(enabled: boolean): void;
 
     /**
      * Verifica se os controles estão habilitados

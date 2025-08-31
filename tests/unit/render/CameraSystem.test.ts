@@ -41,13 +41,15 @@ describe("CameraSystem", () => {
         expect(endListener).toHaveBeenCalledWith({ gesture: "pan" });
     });
 
-    it("deve alternar controles de câmera", () => {
+    it("deve definir explicitamente se os controles estão habilitados", () => {
         const eventBus = new EventBus();
         const listener = vi.fn();
         eventBus.on("cameraControlsToggled", listener);
         const system = CameraSystem.getInstance({ mode: "persp" }, { eventBus });
-        system.toggleControls();
-        system.toggleControls();
+        system.setControlsEnabled(false);
+        expect(system.isControlsEnabled()).toBe(false);
+        system.setControlsEnabled(true);
+        expect(system.isControlsEnabled()).toBe(true);
         expect(listener).toHaveBeenNthCalledWith(1, { enabled: false });
         expect(listener).toHaveBeenNthCalledWith(2, { enabled: true });
     });

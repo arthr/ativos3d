@@ -199,7 +199,7 @@ describe("CameraController", () => {
                 { eventBus, cameraSystem },
                 { gestures: ["pan"] },
             );
-            cameraSystem.toggleControls();
+            cameraSystem.setControlsEnabled(false);
             controlsHandler!({ enabled: false });
             emit.mockClear();
             controller.pan({ x: 1, y: 0, z: 0 });

@@ -7,7 +7,7 @@ import type { CameraMode } from "@core/types/camera";
 
 /**
  * ControlsLayer: integra OrbitControls do Drei com o CameraSystem/EventBus.
- * - Habilita/Desabilita conforme CameraSystem.toggleControls
+ * - Habilita/Desabilita conforme CameraSystem.setControlsEnabled
  * - Ajusta comportamento por modo (persp pode rotacionar; ortho foca em pan/zoom)
  * - Emite cameraUpdated a cada mudança
  */

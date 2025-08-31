@@ -120,10 +120,11 @@ export class CameraSystem implements CameraSystemProvider {
     }
 
     /**
-     * Define se os controles estão habilitados
+     * Define explicitamente se os controles estão habilitados
      */
-    public toggleControls(): void {
-        this.controlsEnabled = !this.controlsEnabled;
+    public setControlsEnabled(enabled: boolean): void {
+        if (this.controlsEnabled === enabled) return;
+        this.controlsEnabled = enabled;
         this.eventBus.emit("cameraControlsToggled", { enabled: this.controlsEnabled });
     }
 
