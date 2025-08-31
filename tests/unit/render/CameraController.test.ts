@@ -4,6 +4,7 @@ import type { Unsubscribe } from "@core/types/Events";
 import type { EventBus } from "@core/events/EventBus";
 import type { Camera } from "@react-three/fiber";
 import type { OrthographicCamera } from "three";
+import { PerspectiveCamera } from "three";
 
 describe("CameraController", () => {
     let emit: ReturnType<typeof vi.fn>;
@@ -11,17 +12,22 @@ describe("CameraController", () => {
     let off: ReturnType<typeof vi.fn>;
     let eventBus: EventBus;
     let cameraSystem: CameraSystem;
+    let updatedHandler: ((payload: { camera: Camera }) => void) | undefined;
     let modeHandler: ((payload: { mode: string; camera: Camera }) => void) | undefined;
     let controlsHandler: ((payload: { enabled: boolean }) => void) | undefined;
     let unsubscribe: Unsubscribe;
 
     beforeEach(() => {
         emit = vi.fn();
+        updatedHandler = undefined;
         modeHandler = undefined;
         controlsHandler = undefined;
         unsubscribe = vi.fn();
         // @ts-expect-error - Mocking eventBus.on
         on = vi.fn((eventType, handler) => {
+            if (eventType === "cameraUpdated") {
+                updatedHandler = handler as typeof updatedHandler;
+            }
             if (eventType === "cameraModeChanged") {
                 modeHandler = handler as typeof modeHandler;
             }
@@ -206,6 +212,20 @@ describe("CameraController", () => {
             const camera = cameraSystem.getCamera();
             expect(camera.position.x).toBe(0);
             expect(emit).not.toHaveBeenCalled();
+        });
+
+        describe("cameraUpdated", () => {
+            it("deve atualizar a câmera interna ao receber cameraUpdated", () => {
+                const controller = new CameraController({ eventBus, cameraSystem });
+                const oldCamera = cameraSystem.getCamera();
+                const newCamera = new PerspectiveCamera();
+                updatedHandler!({ camera: newCamera });
+                emit.mockClear();
+                controller.pan({ x: 1, y: 0, z: 0 });
+                expect(oldCamera.position.x).toBe(0);
+                expect(newCamera.position.x).toBe(1);
+                expect(emit).toHaveBeenCalledWith("cameraUpdated", { camera: newCamera });
+            });
         });
     });
 

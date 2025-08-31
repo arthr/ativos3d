@@ -32,6 +32,7 @@ export class CameraController implements CameraControllerProvider {
         this.eventBus = this.dependencies.eventBus;
         this.camera = this.cameraSystem.getCamera();
         this.controlsEnabled = this.cameraSystem.isControlsEnabled();
+        this.unsubscribeCameraUpdated = this.eventBus.on("cameraUpdated", this.handleCameraUpdated);
         this.unsubscribeModeChanged = this.eventBus.on(
             "cameraModeChanged",
             this.handleCameraModeChanged,
@@ -107,9 +108,17 @@ export class CameraController implements CameraControllerProvider {
      * Remove listeners do controlador
      */
     dispose(): void {
+        this.unsubscribeCameraUpdated();
         this.unsubscribeModeChanged();
         this.unsubscribeControlsToggled();
     }
+
+    /**
+     * Atualiza a câmera interna ao receber o evento de atualização
+     */
+    private handleCameraUpdated = ({ camera }: { camera: Camera }): void => {
+        this.camera = camera;
+    };
 
     /**
      * Reemite o evento de atualização quando o modo da câmera é alterado
