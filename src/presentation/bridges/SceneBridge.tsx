@@ -12,7 +12,6 @@ export function SceneBridge(): JSX.Element {
         const eventBus = application.resolve("eventBus");
         const cameraSystem = application.resolve("cameraSystem");
         cameraSystem.setExternalCamera(camera);
-        eventBus.emit("cameraUpdated", { camera });
         eventBus.emit("sceneStateChanged", { action: "loaded", sceneId: "r3f-scene" });
         // Nenhum cleanup necessário aqui
     }, [camera, scene]);
