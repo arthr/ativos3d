@@ -173,13 +173,16 @@ export class EntityManager {
             return undefined;
         }
 
+        const exists = entity.hasComponent(component.type);
         const updatedEntity = entity.addComponent(component);
         this.entities.set(entityId, updatedEntity);
         this.updateEntityInfo(entityId, updatedEntity);
 
         // Emite evento se habilitado
         if (this.config.enableEvents) {
-            this.eventBus.emit("componentAdded", { entityId, component });
+            if (exists) this.eventBus.emit("componentUpdated", { entityId, component });
+            else this.eventBus.emit("componentAdded", { entityId, component });
+
             this.eventBus.emit("entityUpdated", { entityId });
         }
 

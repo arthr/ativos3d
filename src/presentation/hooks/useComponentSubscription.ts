@@ -33,6 +33,16 @@ export function useComponentSubscription<T extends Component>(
             }
         });
 
+        const offUpdated = eventBus.on("componentUpdated", ({ entityId, component }) => {
+            if (component.type === componentType) {
+                setComponentsById((prev) => {
+                    const next = new Map(prev);
+                    next.set(entityId, component as T);
+                    return next;
+                });
+            }
+        });
+
         const offRemoved = eventBus.on(
             "componentRemoved",
             ({ entityId, componentType: removed }) => {
@@ -58,6 +68,7 @@ export function useComponentSubscription<T extends Component>(
 
         return (): void => {
             offAdded();
+            offUpdated();
             offRemoved();
             offDestroyed();
         };
