@@ -140,11 +140,19 @@ export class CameraSystem implements CameraSystemProvider {
  */
 function defaultCameraFactory(mode: CameraMode, size: CameraDimensions): Camera {
     const aspectRatio = size.width / size.height;
+    const orthoHeight = size.height / size.width;
     switch (mode) {
         case "persp":
             return new PerspectiveCamera(75, aspectRatio, 0.1, 2000);
         case "ortho":
-            return new OrthographicCamera(-aspectRatio, aspectRatio, 1, -1, 0.1, 2000);
+            return new OrthographicCamera(
+                -aspectRatio,
+                aspectRatio,
+                orthoHeight,
+                -orthoHeight,
+                0.1,
+                2000,
+            );
         default:
             throw new Error(`Mode de câmera inválido: ${mode}`);
     }
