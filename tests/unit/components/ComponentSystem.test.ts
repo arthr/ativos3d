@@ -186,6 +186,22 @@ describe("ComponentSystem", () => {
             expect(validator).toHaveBeenCalledWith(transformComponent);
         });
 
+        it("deve retornar undefined para componente inválido", () => {
+            const transformComponent = new TransformComponent();
+            const entity = Entity.create("test-entity").addComponent(transformComponent);
+            const validator = vi.fn().mockReturnValue({ isValid: false, errors: ["invalid"] });
+
+            componentSystem.registerComponentValidator("TransformComponent", validator);
+
+            const retrievedComponent = componentSystem.getComponentFromEntity<TransformComponent>(
+                entity,
+                "TransformComponent",
+            );
+
+            expect(retrievedComponent).toBeUndefined();
+            expect(validator).toHaveBeenCalledWith(transformComponent);
+        });
+
         it("deve validar entidade completa", () => {
             // Criar componentes com tipos diferentes para que ambos sejam mantidos
             const component1 = new TransformComponent({

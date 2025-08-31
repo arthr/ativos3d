@@ -170,12 +170,11 @@ export class ComponentSystem {
         componentType: string,
     ): T | undefined {
         const component = entity.getComponent<T>(componentType);
-        if (component) {
-            const validation = this.validateComponent(component);
-            if (!validation.isValid) {
-                console.warn(`Componente inválido encontrado: ${componentType}`, validation.errors);
-            }
-        }
+        if (!component) return undefined;
+
+        const validation = this.validateComponent(component);
+        if (!validation.isValid) return undefined;
+
         return component;
     }
 
