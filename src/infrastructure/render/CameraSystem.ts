@@ -87,8 +87,8 @@ export class CameraSystem implements CameraSystemProvider {
     /**
      * Retorna os gestos habilitados
      */
-    public getGestures(): Set<CameraGesture> {
-        return this.gestures;
+    public getGestures(): ReadonlySet<CameraGesture> {
+        return new Set(this.gestures);
     }
 
     /**

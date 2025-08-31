@@ -28,12 +28,6 @@ export class CameraController implements CameraControllerProvider {
 
     constructor(dependencies: CameraControllerDependencies, config?: CameraControllerConfig) {
         this.dependencies = dependencies;
-        this.config = {
-            gestures: ["pan", "rotate", "zoom"],
-            maxDistance: Infinity,
-            minDistance: 0.01,
-            ...config,
-        };
         this.cameraSystem = this.dependencies.cameraSystem;
         this.eventBus = this.dependencies.eventBus;
         this.camera = this.cameraSystem.getCamera();
@@ -46,6 +40,13 @@ export class CameraController implements CameraControllerProvider {
             "cameraControlsToggled",
             this.handleCameraControlsToggled,
         );
+
+        this.config = {
+            gestures: ["pan", "rotate", "zoom"],
+            maxDistance: this.camera.far,
+            minDistance: this.camera.near + 0.01,
+            ...config,
+        };
     }
 
     /**

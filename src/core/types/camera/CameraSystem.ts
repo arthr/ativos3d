@@ -66,7 +66,7 @@ export interface CameraSystemProvider {
     /**
      * Retorna os gestos habilitados
      */
-    getGestures(): Set<CameraGesture>;
+    getGestures(): ReadonlySet<CameraGesture>;
 
     /**
      * Inicia um gesto de câmera
