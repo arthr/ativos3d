@@ -80,6 +80,19 @@ export function DeveloperPanel(): JSX.Element | null {
     const [gestures, setGestures] = useState<ReadonlySet<CameraGesture>>(() =>
         cameraSystem.getGestures(),
     );
+    const [controlsEnabled, setControlsEnabled] = useState(() => cameraSystem.isControlsEnabled());
+    const [panEnabled, setPanEnabled] = useLocalStorage<boolean>(
+        "devpanel:gesture:pan",
+        gestures.has("pan"),
+    );
+    const [rotateEnabled, setRotateEnabled] = useLocalStorage<boolean>(
+        "devpanel:gesture:rotate",
+        gestures.has("rotate"),
+    );
+    const [zoomEnabled, setZoomEnabled] = useLocalStorage<boolean>(
+        "devpanel:gesture:zoom",
+        gestures.has("zoom"),
+    );
 
     /** Eventos */
     const [events, setEvents] = useState<Array<{ t: number; type: string; payload?: unknown }>>([]);
@@ -182,6 +195,9 @@ export function DeveloperPanel(): JSX.Element | null {
             setGestures(cameraSystem.getGestures()),
         );
         const u6 = eventBus.on("cameraGestureEnded", () => setGestures(cameraSystem.getGestures()));
+        const u7 = eventBus.on("cameraControlsToggled", ({ enabled }) =>
+            setControlsEnabled(enabled),
+        );
         return (): void => {
             u1();
             u2();
@@ -189,8 +205,27 @@ export function DeveloperPanel(): JSX.Element | null {
             u4();
             u5();
             u6();
+            u7();
         };
-    }, [eventBus, entityManager]);
+    }, [eventBus, entityManager, cameraSystem]);
+
+    useEffect(() => {
+        const hasPan = gestures.has("pan");
+        if (panEnabled && !hasPan) cameraSystem.startGesture("pan");
+        if (!panEnabled && hasPan) cameraSystem.endGesture("pan");
+    }, [panEnabled, gestures, cameraSystem]);
+
+    useEffect(() => {
+        const hasZoom = gestures.has("zoom");
+        if (zoomEnabled && !hasZoom) cameraSystem.startGesture("zoom");
+        if (!zoomEnabled && hasZoom) cameraSystem.endGesture("zoom");
+    }, [zoomEnabled, gestures, cameraSystem]);
+
+    useEffect(() => {
+        const hasRotate = gestures.has("rotate");
+        if (rotateEnabled && !hasRotate) cameraSystem.startGesture("rotate");
+        if (!rotateEnabled && hasRotate) cameraSystem.endGesture("rotate");
+    }, [rotateEnabled, gestures, cameraSystem]);
 
     /** Atalhos */
     useEffect(() => {
@@ -271,16 +306,17 @@ export function DeveloperPanel(): JSX.Element | null {
         cameraSystem.setMode(cameraMode === "persp" ? "ortho" : "persp");
     }
     function handleTogglePan(): void {
-        if (gestures.has("pan")) cameraSystem.endGesture("pan");
-        else cameraSystem.startGesture("pan");
+        setPanEnabled((v) => !v);
     }
     function handleToggleRotate(): void {
-        if (gestures.has("rotate")) cameraSystem.endGesture("rotate");
-        else cameraSystem.startGesture("rotate");
+        setRotateEnabled((v) => !v);
     }
     function handleToggleZoom(): void {
-        if (gestures.has("zoom")) cameraSystem.endGesture("zoom");
-        else cameraSystem.startGesture("zoom");
+        setZoomEnabled((v) => !v);
+    }
+    function handleToggleControls(): void {
+        if (controlsEnabled) cameraSystem.setControlsEnabled(false);
+        else cameraSystem.setControlsEnabled(true);
     }
     function handleToggleGizmo(): void {
         const next = !showGizmo;
@@ -461,6 +497,7 @@ export function DeveloperPanel(): JSX.Element | null {
                                 gridInfinite={gridInfinite}
                                 cameraMode={cameraMode}
                                 gestures={gestures}
+                                controlsEnabled={controlsEnabled}
                                 onTogglePan={handleTogglePan}
                                 onToggleRotate={handleToggleRotate}
                                 onToggleZoom={handleToggleZoom}
@@ -468,6 +505,7 @@ export function DeveloperPanel(): JSX.Element | null {
                                 onToggleGridFollow={handleToggleGridFollow}
                                 onToggleGridInfinite={handleToggleGridInfinite}
                                 onToggleCameraMode={handleToggleCameraMode}
+                                onToggleControls={handleToggleControls}
                             />
                         )}
                         {tab === "performance" && (

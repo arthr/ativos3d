@@ -8,6 +8,7 @@ import {
     FiMove,
     FiZoomIn,
     FiRotateCw,
+    FiTarget,
 } from "react-icons/fi";
 import { DevButton } from "@presentation/panels/developer/components/DevButton";
 
@@ -20,6 +21,7 @@ export function ViewTab({
     gridInfinite,
     cameraMode,
     gestures,
+    controlsEnabled,
     onTogglePan,
     onToggleRotate,
     onToggleZoom,
@@ -27,12 +29,14 @@ export function ViewTab({
     onToggleGridFollow,
     onToggleGridInfinite,
     onToggleCameraMode,
+    onToggleControls,
 }: {
     readonly showGizmo: boolean;
     readonly gridFollow: boolean;
     readonly gridInfinite: boolean;
     readonly cameraMode: CameraMode | string;
     readonly gestures: ReadonlySet<CameraGesture>;
+    readonly controlsEnabled: boolean;
     onTogglePan(): void;
     onToggleRotate(): void;
     onToggleZoom(): void;
@@ -40,6 +44,7 @@ export function ViewTab({
     onToggleGridFollow(): void;
     onToggleGridInfinite(): void;
     onToggleCameraMode(): void;
+    onToggleControls(): void;
 }): JSX.Element {
     return (
         <div className="flex h-full flex-col">
@@ -100,6 +105,15 @@ export function ViewTab({
                         >
                             <span className="inline-flex items-center gap-1">
                                 <FiRotateCw size={12} /> Rotate
+                            </span>
+                        </DevButton>
+                        <DevButton
+                            onClick={onToggleControls}
+                            variant="toggle"
+                            active={controlsEnabled}
+                        >
+                            <span className="inline-flex items-center gap-1">
+                                <FiTarget size={12} /> Controls
                             </span>
                         </DevButton>
                     </div>
