@@ -67,6 +67,10 @@ vi.mock("@presentation/hooks/useRenderObjects", () => ({
     }),
 }));
 
+vi.mock("@presentation/hooks/useApplication", () => ({
+    useApplication: () => ({ eventBus: { emit: vi.fn() } }),
+}));
+
 describe("ObjectsLayer", () => {
     beforeEach(() => {
         cleanup();

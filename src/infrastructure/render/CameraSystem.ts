@@ -21,7 +21,7 @@ export class CameraSystem implements CameraSystemProvider {
     private camera: Camera;
     private mode: CameraMode;
     private controlsEnabled: boolean;
-    private readonly canvasSize: CameraDimensions;
+    private canvasSize: CameraDimensions;
 
     private constructor(config: CameraSystemConfig, deps: CameraSystemDependencies) {
         this.mode = config.mode ?? "persp";
@@ -84,6 +84,15 @@ export class CameraSystem implements CameraSystemProvider {
         this.mode = mode;
         this.camera = this.cameraFactory(mode, this.canvasSize);
         this.eventBus.emit("cameraModeChanged", { mode, camera: this.camera });
+    }
+
+    /**
+     * Atualiza as dimensões do canvas e ajusta a câmera existente.
+     */
+    public resize(size: CameraDimensions): void {
+        this.canvasSize = size;
+        updateCameraSize(this.camera, this.canvasSize);
+        this.eventBus.emit("cameraUpdated", { camera: this.camera });
     }
 
     /**
@@ -159,4 +168,23 @@ function defaultCameraFactory(mode: CameraMode, size: CameraDimensions): Camera 
         default:
             throw new Error(`Mode de câmera inválido: ${mode}`);
     }
+}
+
+/**
+ * Atualiza propriedades da câmera com base nas dimensões do canvas.
+ */
+function updateCameraSize(camera: Camera, size: CameraDimensions): void {
+    const aspectRatio = size.width / size.height;
+    if (camera instanceof PerspectiveCamera) {
+        camera.aspect = aspectRatio;
+    } else if (camera instanceof OrthographicCamera) {
+        const orthoHeight = size.height / size.width;
+        camera.left = -aspectRatio;
+        camera.right = aspectRatio;
+        camera.top = orthoHeight;
+        camera.bottom = -orthoHeight;
+    } else {
+        return;
+    }
+    camera.updateProjectionMatrix();
 }

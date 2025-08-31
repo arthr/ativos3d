@@ -97,4 +97,9 @@ export interface CameraSystemProvider {
      * Injeta uma câmera externa (ex.: R3F) para uso no modo UI.
      */
     setExternalCamera(camera: Camera): void;
+
+    /**
+     * Atualiza as dimensões do canvas e recria a câmera
+     */
+    resize(size: CameraDimensions): void;
 }

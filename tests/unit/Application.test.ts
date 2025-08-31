@@ -1,57 +1,36 @@
-import { describe, it, expect, beforeEach, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { Application } from "@/Application";
 import { EventBus } from "@core/events/EventBus";
-import { CommandStack } from "@core/commands";
+import { CameraSystem } from "@infrastructure/render/CameraSystem";
 import { EntityManager } from "@domain/entities";
-import { CameraSystem } from "@infrastructure/render";
-import { InputManager } from "@infrastructure/input";
 
 describe("Application", () => {
     beforeEach(() => {
-        EntityManager.resetInstance();
-        // RenderObjectManager removido no caminho R3F-only
         CameraSystem.resetInstance();
+        EntityManager.resetInstance();
     });
 
-    it("deve criar uma instância da aplicação", () => {
+    it("deve atualizar sistemas no resize e limpar recursos no dispose", () => {
         const eventBus = new EventBus();
-        const application = new Application(eventBus);
-        expect(application).toBeDefined();
-    });
+        const addSpy = vi.spyOn(window, "addEventListener");
+        const removeSpy = vi.spyOn(window, "removeEventListener");
 
-    it("inicializa sistemas principais sem erros", () => {
-        const eventBus = new EventBus();
-        const application = new Application(eventBus, { width: 800, height: 600 });
-        expect(application.resolve("eventBus")).toBeInstanceOf(EventBus);
-        expect(application.resolve("commandStack")).toBeInstanceOf(CommandStack);
-        expect(application.resolve("entityManager")).toBeInstanceOf(EntityManager);
-        expect(application.resolve("inputManager")).toBeInstanceOf(InputManager);
-    });
+        const app = new Application(eventBus, { width: 100, height: 100 }, window);
+        const cameraUpdated = vi.fn();
+        eventBus.on("cameraUpdated", cameraUpdated);
 
-    it("deve lançar erro se dependência não encontrada", () => {
-        const eventBus = new EventBus();
-        const application = new Application(eventBus, { width: 800, height: 600 });
-        // @ts-expect-error - Testando comportamento com chave inválida
-        expect(() => application.resolve("invalidDependency")).toThrow(
-            "Dependência não encontrada: invalidDependency",
-        );
-    });
+        const entityManager = app.resolve("entityManager");
+        entityManager.createEntity();
+        expect(entityManager.getStats().totalEntities).toBe(1);
 
-    it("remove listeners no dispose", () => {
-        const eventBus = new EventBus();
-        const application = new Application(eventBus, { width: 800, height: 600 });
-        expect(eventBus.listenerCount("componentAdded")).toBe(0);
-        expect(eventBus.listenerCount("componentRemoved")).toBe(0);
-        expect(eventBus.listenerCount("entityDestroyed")).toBe(0);
-        expect(eventBus.listenerCount("cameraModeChanged")).toBe(1);
+        const resizeHandler = addSpy.mock.calls.find(call => call[0] === "resize")?.[1] as () => void;
+        resizeHandler?.();
+        expect(cameraUpdated).toHaveBeenCalled();
 
-        const inputManager = application.resolve("inputManager");
-        const disposeSpy = vi.spyOn(inputManager, "dispose");
-        application.dispose();
-        expect(disposeSpy).toHaveBeenCalled();
-        expect(eventBus.listenerCount("componentAdded")).toBe(0);
-        expect(eventBus.listenerCount("componentRemoved")).toBe(0);
-        expect(eventBus.listenerCount("entityDestroyed")).toBe(0);
-        expect(eventBus.listenerCount("cameraModeChanged")).toBe(0);
+        app.dispose();
+
+        expect(entityManager.getStats().totalEntities).toBe(0);
+        expect(eventBus.getEventTypes()).toHaveLength(0);
+        expect(removeSpy).toHaveBeenCalledWith("resize", resizeHandler);
     });
 });

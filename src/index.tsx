@@ -8,6 +8,7 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import { App } from "@presentation/App";
 import "./index.css";
+import { initializeApplication } from "./applicationInstance";
 
 // TODO: Configurar injeção de dependência
 // TODO: Inicializar sistemas principais
@@ -15,6 +16,7 @@ import "./index.css";
 
 const rootElement = document.getElementById("root") as HTMLElement;
 if (rootElement) {
+    initializeApplication({ width: window.innerWidth, height: window.innerHeight }, window);
     const root = createRoot(rootElement);
     root.render(React.createElement(React.StrictMode, null, React.createElement(App, null)));
 } else {
