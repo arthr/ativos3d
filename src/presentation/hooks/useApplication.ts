@@ -3,6 +3,8 @@ import type { EntityManager } from "@domain/entities/EntityManager";
 import type { CommandStack } from "@core/commands";
 import type { EventBus } from "@core/events/EventBus";
 import type { CameraSystem } from "@infrastructure/render/CameraSystem";
+import type { CameraController } from "@infrastructure/render/CameraController";
+import type { RenderLoop } from "@infrastructure/render/RenderLoop";
 
 /**
  * Hook que expõe dependências principais da aplicação
@@ -12,11 +14,15 @@ export function useApplication(): {
     commandStack: CommandStack;
     entityManager: EntityManager;
     cameraSystem: CameraSystem;
+    cameraController: CameraController;
+    renderLoop: RenderLoop;
 } {
     return {
         eventBus: application.resolve("eventBus"),
         commandStack: application.resolve("commandStack"),
         entityManager: application.resolve("entityManager"),
         cameraSystem: application.resolve("cameraSystem"),
+        cameraController: application.resolve("cameraController"),
+        renderLoop: application.resolve("renderLoop"),
     };
 }
