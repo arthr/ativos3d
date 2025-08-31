@@ -2,9 +2,17 @@ import type { CameraDimensions } from "@core/types/camera";
 import { EventBus } from "@core/events/EventBus";
 import { Application } from "./Application";
 
+let instance: Application;
+
 /**
- * Instância única da aplicação e seu EventBus
+ * Inicializa a aplicação
  */
-const eventBus = new EventBus();
-const canvasSize: CameraDimensions = { width: window.innerWidth, height: window.innerHeight };
-export const application = new Application(eventBus, canvasSize, window);
+export function initializeApplication(
+    size: CameraDimensions,
+    target: HTMLElement | Window = window,
+): Application {
+    instance = new Application(new EventBus(), size, target);
+    return instance;
+}
+
+export { instance as application };

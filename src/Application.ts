@@ -14,6 +14,8 @@ import { InputManager } from "@infrastructure/input";
  */
 export class Application {
     private readonly container = new Map<DependencyKey, DependencyMap[DependencyKey]>();
+    private readonly resizeTarget: Window;
+    private readonly handleResize: () => void;
 
     /**
      * Inicializa o container de dependências
@@ -23,7 +25,16 @@ export class Application {
         canvasSize?: CameraDimensions,
         inputTarget: HTMLElement | Window = window,
     ) {
+        this.resizeTarget = inputTarget instanceof Window ? inputTarget : window;
         this.initializeContainer(eventBus, canvasSize, inputTarget);
+        this.handleResize = () => {
+            const cameraSystem = this.resolve("cameraSystem");
+            cameraSystem.resize({
+                width: this.resizeTarget.innerWidth,
+                height: this.resizeTarget.innerHeight,
+            });
+        };
+        this.resizeTarget.addEventListener("resize", this.handleResize);
     }
 
     /**
@@ -78,11 +89,11 @@ export class Application {
      * Remove listeners e finaliza sistemas ativos
      */
     dispose(): void {
-        const cameraController = this.resolve("cameraController");
-        cameraController.dispose();
-        const inputManager = this.resolve("inputManager");
-        inputManager.dispose();
-        // RenderLoop é conduzido pelo R3F; nada a limpar aqui
+        this.resolve("cameraController").dispose();
+        this.resolve("inputManager").dispose();
+        this.resolve("entityManager").clear();
+        this.resolve("eventBus").clearAll();
+        this.resizeTarget.removeEventListener("resize", this.handleResize);
     }
 }
 

@@ -99,4 +99,19 @@ describe("CameraSystem", () => {
         expect(ortho.left).toBeCloseTo(-aspect);
         expect(ortho.right).toBeCloseTo(aspect);
     });
+
+    it("deve atualizar a câmera ao redimensionar", () => {
+        const eventBus = new EventBus();
+        const listener = vi.fn();
+        eventBus.on("cameraUpdated", listener);
+        const system = CameraSystem.getInstance(
+            { mode: "persp" },
+            { eventBus, canvasSize: { width: 100, height: 100 } },
+        );
+        const firstCamera = system.getCamera();
+        system.resize({ width: 200, height: 150 });
+        const secondCamera = system.getCamera();
+        expect(secondCamera).not.toBe(firstCamera);
+        expect(listener).toHaveBeenCalledWith({ camera: secondCamera });
+    });
 });

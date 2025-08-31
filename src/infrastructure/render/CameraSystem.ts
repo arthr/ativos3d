@@ -21,7 +21,7 @@ export class CameraSystem implements CameraSystemProvider {
     private camera: Camera;
     private mode: CameraMode;
     private controlsEnabled: boolean;
-    private readonly canvasSize: CameraDimensions;
+    private canvasSize: CameraDimensions;
 
     private constructor(config: CameraSystemConfig, deps: CameraSystemDependencies) {
         this.mode = config.mode ?? "persp";
@@ -84,6 +84,15 @@ export class CameraSystem implements CameraSystemProvider {
         this.mode = mode;
         this.camera = this.cameraFactory(mode, this.canvasSize);
         this.eventBus.emit("cameraModeChanged", { mode, camera: this.camera });
+    }
+
+    /**
+     * Atualiza as dimensões do canvas e recria a câmera
+     */
+    public resize(size: CameraDimensions): void {
+        this.canvasSize = size;
+        this.camera = this.cameraFactory(this.mode, this.canvasSize);
+        this.eventBus.emit("cameraUpdated", { camera: this.camera });
     }
 
     /**
