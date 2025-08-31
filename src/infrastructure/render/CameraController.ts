@@ -25,6 +25,7 @@ export class CameraController implements CameraControllerProvider {
     private controlsEnabled: boolean;
     private unsubscribeModeChanged: Unsubscribe;
     private unsubscribeControlsToggled: Unsubscribe;
+    private unsubscribeCameraUpdated: Unsubscribe;
 
     constructor(dependencies: CameraControllerDependencies, config?: CameraControllerConfig) {
         this.dependencies = dependencies;
