@@ -1,13 +1,13 @@
-import { Suspense } from "react";
 import type { JSX } from "react";
-import { useGLTF, useTexture } from "@react-three/drei";
-import { useLoader } from "@react-three/fiber";
-import { useApplication } from "@presentation/hooks/useApplication";
 import type { EntityId } from "@core/types/ecs/EntityId";
 import type { RenderComponent as IRenderComponent } from "@core/types/components/RenderComponent";
 import type { TransformComponent as ITransformComponent } from "@core/types/components/TransformComponent";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import type { Texture } from "three";
+import { Suspense } from "react";
+import { useGLTF, useTexture } from "@react-three/drei";
+import { useLoader } from "@react-three/fiber";
+import { useApplication } from "@presentation/hooks/useApplication";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 
 /**
  * Item que representa um objeto renderizável na cena.
@@ -151,8 +151,7 @@ function ModelNode({
     readonly onPointerOut: () => void;
 }): JSX.Element {
     const gltf = useLoader(GLTFLoader, url);
-    const loadedMap = useTexture(textureUrl ?? "") as Texture;
-    const map = textureUrl ? loadedMap : undefined;
+    const [map] = useTexture(textureUrl ? [textureUrl] : []) as Texture[];
     return (
         <primitive
             object={gltf.scene.clone()}
