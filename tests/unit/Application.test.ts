@@ -1,9 +1,10 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import { Application } from "@/Application";
 import { EventBus } from "@core/events/EventBus";
 import { CommandStack } from "@core/commands";
 import { EntityManager } from "@domain/entities";
 import { CameraSystem } from "@infrastructure/render";
+import { InputManager } from "@infrastructure/input";
 
 describe("Application", () => {
     beforeEach(() => {
@@ -24,6 +25,7 @@ describe("Application", () => {
         expect(application.resolve("eventBus")).toBeInstanceOf(EventBus);
         expect(application.resolve("commandStack")).toBeInstanceOf(CommandStack);
         expect(application.resolve("entityManager")).toBeInstanceOf(EntityManager);
+        expect(application.resolve("inputManager")).toBeInstanceOf(InputManager);
     });
 
     it("deve lançar erro se dependência não encontrada", () => {
@@ -43,8 +45,10 @@ describe("Application", () => {
         expect(eventBus.listenerCount("entityDestroyed")).toBe(0);
         expect(eventBus.listenerCount("cameraModeChanged")).toBe(1);
 
+        const inputManager = application.resolve("inputManager");
+        const disposeSpy = vi.spyOn(inputManager, "dispose");
         application.dispose();
-
+        expect(disposeSpy).toHaveBeenCalled();
         expect(eventBus.listenerCount("componentAdded")).toBe(0);
         expect(eventBus.listenerCount("componentRemoved")).toBe(0);
         expect(eventBus.listenerCount("entityDestroyed")).toBe(0);

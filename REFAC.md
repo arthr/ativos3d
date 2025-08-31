@@ -105,7 +105,7 @@ A renderização é controlada por React Three Fiber (R3F) com Drei. Cada parte 
 ### **Fase 4: Input e Interação**
 
 #### **4.1 Sistema de Input**
-- [ ] Implementar InputManager
+- [x] Implementar InputManager
 - [ ] Implementar InputMapping
 - [ ] Implementar InputEvents
 - [ ] Testes para input

@@ -7,6 +7,7 @@ import { EventBus } from "@core/events/EventBus";
 import { CommandStack } from "@core/commands";
 import { EntityManager } from "@domain/entities";
 import { CameraSystem, CameraController, RenderLoop } from "@infrastructure/render";
+import { InputManager } from "@infrastructure/input";
 
 /**
  * Classe principal da aplicação
@@ -17,8 +18,12 @@ export class Application {
     /**
      * Inicializa o container de dependências
      */
-    constructor(eventBus: EventBus, canvasSize: CameraDimensions) {
-        this.initializeContainer(eventBus, canvasSize);
+    constructor(
+        eventBus: EventBus,
+        canvasSize?: CameraDimensions,
+        inputTarget: HTMLElement | Window = window,
+    ) {
+        this.initializeContainer(eventBus, canvasSize, inputTarget);
     }
 
     /**
@@ -37,13 +42,18 @@ export class Application {
     /**
      * Inicializa o container de dependências
      */
-    private initializeContainer(eventBus: EventBus, canvasSize: CameraDimensions): DependencyMap {
+    private initializeContainer(
+        eventBus: EventBus,
+        canvasSize: CameraDimensions | undefined,
+        inputTarget: HTMLElement | Window,
+    ): DependencyMap {
         const commandStack = new CommandStack(eventBus);
         const entityManager = EntityManager.getInstance({}, { eventBus });
         const cameraSystem = CameraSystem.getInstance({}, { eventBus, canvasSize });
         const cameraController = new CameraController({ eventBus, cameraSystem });
         // Inicializa o RenderLoop (usado pelo R3F)
         const renderLoop = new RenderLoop();
+        const inputManager = new InputManager({ eventBus, cameraSystem, target: inputTarget });
 
         this.container.set("eventBus", eventBus);
         this.container.set("commandStack", commandStack);
@@ -51,6 +61,7 @@ export class Application {
         this.container.set("cameraSystem", cameraSystem);
         this.container.set("cameraController", cameraController);
         this.container.set("renderLoop", renderLoop);
+        this.container.set("inputManager", inputManager);
 
         return {
             eventBus,
@@ -59,6 +70,7 @@ export class Application {
             cameraSystem,
             cameraController,
             renderLoop,
+            inputManager,
         } as DependencyMap;
     }
 
@@ -68,6 +80,8 @@ export class Application {
     dispose(): void {
         const cameraController = this.resolve("cameraController");
         cameraController.dispose();
+        const inputManager = this.resolve("inputManager");
+        inputManager.dispose();
         // RenderLoop é conduzido pelo R3F; nada a limpar aqui
     }
 }
@@ -82,6 +96,7 @@ type DependencyMap = {
     cameraSystem: CameraSystem;
     cameraController: CameraController;
     renderLoop: RenderLoop;
+    inputManager: InputManager;
 };
 
 /**
