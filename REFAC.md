@@ -19,9 +19,9 @@ Perfeito! Vou elaborar um planejamento estruturado para reconstruir o projeto de
 - [x] Revisar e refatorar estrutura de tipos seguindo princípios de design
 - [x] Revisão final completa da pasta types - todos os princípios respeitados
 - [x] Refatoração da pasta geometry - separação de tipos e implementações
-- [ ] Definir tipos de geometria avançada
-  - [ ] Implementar interface AABB (Axis-Aligned Bounding Box)
-  - [ ] Implementar interface Transform completa (posição, rotação, escala)
+- [x] Definir tipos de geometria avançada
+  - [x] Implementar interface AABB (Axis-Aligned Bounding Box)
+  - [x] Implementar interface Transform completa (posição, rotação, escala)
 
 #### **1.3 Sistema de Eventos**
 - [x] Implementar EventBus base
@@ -99,8 +99,8 @@ A renderização é controlada por React Three Fiber (R3F) com Drei. Cada parte 
 #### **3.3 Sistema de Câmera**
 - [x] Implementar CameraController
 - [x] Implementar CameraModes (persp/ortho)
-- [ ] Implementar controles de câmera
-- [ ] Testes para câmera
+- [x] Implementar controles de câmera
+- [x] Testes para câmera
 
 ### **Fase 4: Input e Interação**
 
