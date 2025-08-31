@@ -74,29 +74,4 @@ export class Vec3Operations {
     static equals(a: Vec3, b: Vec3): boolean {
         return a.x === b.x && a.y === b.y && a.z === b.z;
     }
-
-    /**
-     * Calcula a magnitude (comprimento) de um vetor
-     */
-    static magnitude(vec: Vec3): number {
-        return Math.sqrt(vec.x * vec.x + vec.y * vec.y + vec.z * vec.z);
-    }
-
-    /**
-     * Calcula a distância entre dois pontos
-     */
-    static distance(a: Vec3, b: Vec3): number {
-        return this.magnitude(this.subtract(a, b));
-    }
-
-    /**
-     * Normaliza um vetor (torna sua magnitude = 1)
-     */
-    static normalize(vec: Vec3): Vec3 {
-        const mag = this.magnitude(vec);
-        if (mag === 0) {
-            return { x: 0, y: 0, z: 0 };
-        }
-        return this.divide(vec, mag);
-    }
 }

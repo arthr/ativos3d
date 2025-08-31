@@ -17,6 +17,7 @@ import type {
 import { DEFAULT_COLLISION_CONFIG } from "../types/Collision";
 import { Vec3Factory } from "../factories/Vec3Factory";
 import { Vec3Operations } from "./Vec3Operations";
+import { Vec3Math } from "../math/Vec3Math";
 import { AABBOperations } from "./AABBOperations";
 
 /**
@@ -45,7 +46,7 @@ export class CollisionDetection {
 
             if (finalConfig.calculateSeparation) {
                 result.separationVector = this.calculateSeparationVector(boxA, boxB, overlap);
-                result.penetrationDepth = Vec3Operations.magnitude(result.separationVector);
+                result.penetrationDepth = Vec3Math.magnitude(result.separationVector);
             }
 
             if (finalConfig.calculateContact) {
@@ -102,7 +103,7 @@ export class CollisionDetection {
         const closestPoint = this.closestPointOnAABB(sphere.center, box);
 
         // Calcula a distância entre o centro da esfera e o ponto mais próximo
-        const distance = Vec3Operations.distance(sphere.center, closestPoint);
+        const distance = Vec3Math.distance(sphere.center, closestPoint);
 
         if (distance > sphere.radius + finalConfig.tolerance) {
             return { hasCollision: false };
@@ -112,7 +113,7 @@ export class CollisionDetection {
 
         if (finalConfig.calculateSeparation) {
             const direction = Vec3Operations.subtract(sphere.center, closestPoint);
-            const directionNormalized = Vec3Operations.normalize(direction);
+            const directionNormalized = Vec3Math.normalize(direction);
             const penetration = sphere.radius - distance;
 
             result.penetrationDepth = penetration;
