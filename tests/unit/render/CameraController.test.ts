@@ -142,6 +142,28 @@ describe("CameraController", () => {
             expect(camera.position.z).toBe(0);
             expect(emit).not.toHaveBeenCalled();
         });
+
+        it("deve limitar zoom pela distância máxima", () => {
+            const controller = new CameraController(
+                { eventBus, cameraSystem },
+                { gestures: ["zoom"], maxDistance: 10 },
+            );
+            controller.zoom(15);
+            const camera = cameraSystem.getCamera();
+            expect(camera.position.z).toBe(0);
+            expect(emit).not.toHaveBeenCalled();
+        });
+
+        it("deve limitar zoom pela distância mínima", () => {
+            const controller = new CameraController(
+                { eventBus, cameraSystem },
+                { gestures: ["zoom"], maxDistance: 10 },
+            );
+            controller.zoom(-1);
+            const camera = cameraSystem.getCamera();
+            expect(camera.position.z).toBe(0);
+            expect(emit).not.toHaveBeenCalled();
+        });
     });
 
     describe("cameraModeChanged", () => {

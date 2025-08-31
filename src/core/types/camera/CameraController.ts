@@ -11,6 +11,16 @@ export interface CameraControllerConfig {
      * Gestos habilitados para controle da câmera
      */
     readonly gestures?: CameraGesture[];
+
+    /**
+     * Distância máxima permitida para a câmera no eixo Z
+     */
+    readonly maxDistance?: number;
+
+    /**
+     * Distância mínima permitida para a câmera no eixo Z
+     */
+    readonly minDistance?: number;
 }
 
 /**

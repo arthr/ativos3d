@@ -10,7 +10,7 @@ import type { Unsubscribe } from "@core/types/Events";
 import type { EventBus } from "@core/events/EventBus";
 import type { Vec3 } from "@core/geometry";
 import type { Camera } from "@react-three/fiber";
-import type { OrthographicCamera } from "three";
+import type { OrthographicCamera, PerspectiveCamera } from "three";
 
 /**
  * Controlador básico de câmera
@@ -30,6 +30,8 @@ export class CameraController implements CameraControllerProvider {
         this.dependencies = dependencies;
         this.config = {
             gestures: ["pan", "rotate", "zoom"],
+            maxDistance: Infinity,
+            minDistance: 0.01,
             ...config,
         };
         this.cameraSystem = this.dependencies.cameraSystem;
@@ -86,9 +88,16 @@ export class CameraController implements CameraControllerProvider {
             camera.zoom += delta;
             camera.zoom = Math.max(0.1, camera.zoom); // Previne zoom negativo
             camera.updateProjectionMatrix();
-        } else {
-            this.camera.position.z += delta;
+            this.update();
+            return;
         }
+
+        const camera = this.camera as PerspectiveCamera;
+        const minDistance = this.config.minDistance ?? camera.near + 0.01;
+        const maxDistance = this.config.maxDistance ?? Infinity;
+        const newDistance = this.camera.position.z + delta;
+        if (newDistance < minDistance || newDistance > maxDistance) return;
+        this.camera.position.z = newDistance;
 
         this.update();
     }
