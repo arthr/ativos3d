@@ -17,7 +17,7 @@ export class CameraSystem implements CameraSystemProvider {
     private static instance: CameraSystem | null = null;
     private readonly eventBus: EventBus;
     private readonly cameraFactory: (mode: CameraMode, size: CameraDimensions) => Camera;
-    private readonly gestures = new Set<CameraGesture>();
+    private readonly gestures = new Set<CameraGesture>(["pan", "rotate", "zoom"]);
     private camera: Camera;
     private mode: CameraMode;
     private controlsEnabled: boolean;

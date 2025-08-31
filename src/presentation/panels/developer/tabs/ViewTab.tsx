@@ -1,6 +1,14 @@
 import type { JSX } from "react";
-import type { CameraMode } from "@core/types/camera/CameraTypes";
-import { FiAperture, FiGrid, FiCrosshair, FiCamera } from "react-icons/fi";
+import type { CameraMode, CameraGesture } from "@core/types/camera/CameraTypes";
+import {
+    FiAperture,
+    FiGrid,
+    FiCrosshair,
+    FiCamera,
+    FiMove,
+    FiZoomIn,
+    FiRotateCw,
+} from "react-icons/fi";
 import { DevButton } from "@presentation/panels/developer/components/DevButton";
 
 /**
@@ -11,6 +19,10 @@ export function ViewTab({
     gridFollow,
     gridInfinite,
     cameraMode,
+    gestures,
+    onTogglePan,
+    onToggleRotate,
+    onToggleZoom,
     onToggleGizmo,
     onToggleGridFollow,
     onToggleGridInfinite,
@@ -20,6 +32,10 @@ export function ViewTab({
     readonly gridFollow: boolean;
     readonly gridInfinite: boolean;
     readonly cameraMode: CameraMode | string;
+    readonly gestures: ReadonlySet<CameraGesture>;
+    onTogglePan(): void;
+    onToggleRotate(): void;
+    onToggleZoom(): void;
     onToggleGizmo(): void;
     onToggleGridFollow(): void;
     onToggleGridInfinite(): void;
@@ -53,18 +69,62 @@ export function ViewTab({
                     </DevButton>
                 </section>
 
+                {/* Gestures */}
+                <section className="rounded border border-slate-200 bg-white p-2">
+                    <div className="mb-1 text-[11px] font-semibold flex items-center gap-1">
+                        <FiMove size={12} /> Gestures
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <DevButton
+                            onClick={onTogglePan}
+                            variant="toggle"
+                            active={gestures.has("pan")}
+                        >
+                            <span className="inline-flex items-center gap-1">
+                                <FiMove size={12} /> Pan
+                            </span>
+                        </DevButton>
+                        <DevButton
+                            onClick={onToggleZoom}
+                            variant="toggle"
+                            active={gestures.has("zoom")}
+                        >
+                            <span className="inline-flex items-center gap-1">
+                                <FiZoomIn size={12} /> Zoom
+                            </span>
+                        </DevButton>
+                        <DevButton
+                            onClick={onToggleRotate}
+                            variant="toggle"
+                            active={gestures.has("rotate")}
+                        >
+                            <span className="inline-flex items-center gap-1">
+                                <FiRotateCw size={12} /> Rotate
+                            </span>
+                        </DevButton>
+                    </div>
+                </section>
+
                 {/* Grid */}
                 <section className="rounded border border-slate-200 bg-white p-2">
                     <div className="mb-1 text-[11px] font-semibold flex items-center gap-1">
                         <FiGrid size={12} /> Grid
                     </div>
                     <div className="flex items-center gap-2">
-                        <DevButton onClick={onToggleGridFollow} variant="toggle" active={gridFollow}>
+                        <DevButton
+                            onClick={onToggleGridFollow}
+                            variant="toggle"
+                            active={gridFollow}
+                        >
                             <span className="inline-flex items-center gap-1">
                                 <FiCrosshair size={12} /> Follow: {gridFollow ? "on" : "off"}
                             </span>
                         </DevButton>
-                        <DevButton onClick={onToggleGridInfinite} variant="toggle" active={gridInfinite}>
+                        <DevButton
+                            onClick={onToggleGridInfinite}
+                            variant="toggle"
+                            active={gridInfinite}
+                        >
                             <span className="inline-flex items-center gap-1">
                                 <FiGrid size={12} /> Infinite: {gridInfinite ? "on" : "off"}
                             </span>

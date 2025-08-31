@@ -1,5 +1,6 @@
 import type { Command } from "@core/types";
 import type { EventBus } from "@core/events/EventBus";
+import type { CameraGesture } from "@core/types/camera";
 import { useEffect, useMemo, useRef, useState, type JSX } from "react";
 import { FiChevronDown, FiChevronUp } from "react-icons/fi";
 import { useApplication } from "@presentation/hooks/useApplication";
@@ -76,6 +77,9 @@ export function DeveloperPanel(): JSX.Element | null {
     /** Estado geral */
     const [tab, setTab] = useLocalStorage<TabKey>("devpanel:tab", "events");
     const [cameraMode, setCameraMode] = useState(() => cameraSystem.getMode());
+    const [gestures, setGestures] = useState<ReadonlySet<CameraGesture>>(() =>
+        cameraSystem.getGestures(),
+    );
 
     /** Eventos */
     const [events, setEvents] = useState<Array<{ t: number; type: string; payload?: unknown }>>([]);
@@ -174,11 +178,17 @@ export function DeveloperPanel(): JSX.Element | null {
         const u2 = eventBus.on("entityDestroyed", upd);
         const u3 = eventBus.on("cameraModeChanged", ({ mode }) => setCameraMode(mode));
         const u4 = eventBus.on("entitySelected", ({ entityId }) => setActiveEntityId(entityId));
+        const u5 = eventBus.on("cameraGestureStarted", () =>
+            setGestures(cameraSystem.getGestures()),
+        );
+        const u6 = eventBus.on("cameraGestureEnded", () => setGestures(cameraSystem.getGestures()));
         return (): void => {
             u1();
             u2();
             u3();
             u4();
+            u5();
+            u6();
         };
     }, [eventBus, entityManager]);
 
@@ -259,6 +269,18 @@ export function DeveloperPanel(): JSX.Element | null {
     }
     function handleToggleCameraMode(): void {
         cameraSystem.setMode(cameraMode === "persp" ? "ortho" : "persp");
+    }
+    function handleTogglePan(): void {
+        if (gestures.has("pan")) cameraSystem.endGesture("pan");
+        else cameraSystem.startGesture("pan");
+    }
+    function handleToggleRotate(): void {
+        if (gestures.has("rotate")) cameraSystem.endGesture("rotate");
+        else cameraSystem.startGesture("rotate");
+    }
+    function handleToggleZoom(): void {
+        if (gestures.has("zoom")) cameraSystem.endGesture("zoom");
+        else cameraSystem.startGesture("zoom");
     }
     function handleToggleGizmo(): void {
         const next = !showGizmo;
@@ -438,6 +460,10 @@ export function DeveloperPanel(): JSX.Element | null {
                                 gridFollow={gridFollow}
                                 gridInfinite={gridInfinite}
                                 cameraMode={cameraMode}
+                                gestures={gestures}
+                                onTogglePan={handleTogglePan}
+                                onToggleRotate={handleToggleRotate}
+                                onToggleZoom={handleToggleZoom}
                                 onToggleGizmo={handleToggleGizmo}
                                 onToggleGridFollow={handleToggleGridFollow}
                                 onToggleGridInfinite={handleToggleGridInfinite}
