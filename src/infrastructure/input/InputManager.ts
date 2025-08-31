@@ -56,7 +56,7 @@ export class InputManager implements InputManagerProvider {
         const ndc = this.toNdc(screen);
         const world = this.toWorld(ndc);
         const modifiers = this.getModifiers(event);
-        const hudTarget = event.target !== this.target;
+        const hudTarget = this.isHudTarget(event);
         this.eventBus.emit("pointerDown", {
             worldPosition: world,
             screenPosition: screen,
@@ -73,7 +73,7 @@ export class InputManager implements InputManagerProvider {
         const ndc = this.toNdc(screen);
         const world = this.toWorld(ndc);
         const modifiers = this.getModifiers(event);
-        const hudTarget = event.target !== this.target;
+        const hudTarget = this.isHudTarget(event);
         this.eventBus.emit("pointerUp", {
             worldPosition: world,
             screenPosition: screen,
@@ -89,7 +89,7 @@ export class InputManager implements InputManagerProvider {
         const screen = Vec2Factory.create(event.clientX, event.clientY);
         const ndc = this.toNdc(screen);
         const world = this.toWorld(ndc);
-        const hudTarget = event.target !== this.target;
+        const hudTarget = this.isHudTarget(event);
         this.eventBus.emit("click", {
             worldPosition: world,
             screenPosition: screen,
@@ -154,5 +154,13 @@ export class InputManager implements InputManagerProvider {
         }
         const rect = (this.target as HTMLElement).getBoundingClientRect();
         return { width: rect.width, height: rect.height };
+    }
+
+    /** Verifica se o evento ocorreu fora do alvo */
+    private isHudTarget(event: Event): boolean {
+        if (!(this.target instanceof HTMLElement)) return false;
+        const node = event.target;
+        if (!(node instanceof Node)) return false;
+        return !this.target.contains(node);
     }
 }

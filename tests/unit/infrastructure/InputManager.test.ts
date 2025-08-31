@@ -50,18 +50,21 @@ describe("InputManager", () => {
         const downArgs = emitSpy.mock.calls[1];
         expect(downArgs[0]).toBe("pointerDown");
         expect(downArgs[1].button).toBe(0);
+        expect(downArgs[1].hudTarget).toBe(false);
 
         window.dispatchEvent(
             new PointerEvent("pointerup", { clientX: 400, clientY: 300, button: 0 }),
         );
         const upArgs = emitSpy.mock.calls[2];
         expect(upArgs[0]).toBe("pointerUp");
+        expect(upArgs[1].hudTarget).toBe(false);
 
         window.dispatchEvent(
             new MouseEvent("click", { clientX: 400, clientY: 300, button: 0 }),
         );
         const clickArgs = emitSpy.mock.calls[3];
         expect(clickArgs[0]).toBe("click");
+        expect(clickArgs[1].hudTarget).toBe(false);
 
         window.dispatchEvent(new KeyboardEvent("keydown", { code: "KeyA" }));
         const keyDownArgs = emitSpy.mock.calls[4];
