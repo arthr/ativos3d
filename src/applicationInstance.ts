@@ -7,4 +7,4 @@ import { Application } from "./Application";
  */
 const eventBus = new EventBus();
 const canvasSize: CameraDimensions = { width: window.innerWidth, height: window.innerHeight };
-export const application = new Application(eventBus, canvasSize);
+export const application = new Application(eventBus, canvasSize, window);
