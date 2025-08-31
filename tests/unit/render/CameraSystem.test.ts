@@ -100,7 +100,7 @@ describe("CameraSystem", () => {
         expect(ortho.right).toBeCloseTo(aspect);
     });
 
-    it("deve atualizar a câmera ao redimensionar", () => {
+    it("deve ajustar a câmera ao redimensionar", () => {
         const eventBus = new EventBus();
         const listener = vi.fn();
         eventBus.on("cameraUpdated", listener);
@@ -108,10 +108,24 @@ describe("CameraSystem", () => {
             { mode: "persp" },
             { eventBus, canvasSize: { width: 100, height: 100 } },
         );
-        const firstCamera = system.getCamera();
+        const firstCamera = system.getCamera() as PerspectiveCamera;
         system.resize({ width: 200, height: 150 });
-        const secondCamera = system.getCamera();
-        expect(secondCamera).not.toBe(firstCamera);
+        const secondCamera = system.getCamera() as PerspectiveCamera;
+        expect(secondCamera).toBe(firstCamera);
+        expect(secondCamera.aspect).toBeCloseTo(200 / 150);
         expect(listener).toHaveBeenCalledWith({ camera: secondCamera });
+    });
+
+    it("não deve substituir câmera externa ao redimensionar", () => {
+        const eventBus = new EventBus();
+        const listener = vi.fn();
+        eventBus.on("cameraUpdated", listener);
+        const system = CameraSystem.getInstance({ mode: "persp" }, { eventBus });
+        const externalCamera = new PerspectiveCamera();
+        system.setExternalCamera(externalCamera);
+        system.resize({ width: 300, height: 100 });
+        expect(system.getCamera()).toBe(externalCamera);
+        expect(externalCamera.aspect).toBeCloseTo(3);
+        expect(listener).toHaveBeenCalledWith({ camera: externalCamera });
     });
 });
