@@ -9,4 +9,6 @@ export type InputAction =
     | "undo"
     | "redo"
     | "confirm"
-    | "cancel";
+    | "cancel"
+    | "toggle"
+    | "special";
