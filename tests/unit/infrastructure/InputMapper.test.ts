@@ -83,5 +83,21 @@ describe("InputMapper", () => {
         eventBus.emit("keyDown", { code: "KeyD", modifiers: baseModifiers, repeat: false });
         expect(triggered).toBe(true);
     });
+
+    it("permite limpar o contexto ativo", () => {
+        const mapping: InputMapping = { key: "KeyE", action: "toggle", context: "mode" };
+        mapper.registerMapping(mapping);
+        let called = false;
+        eventBus.on("actionTriggered", () => {
+            called = true;
+        });
+        mapper.setContext("mode");
+        eventBus.emit("keyDown", { code: "KeyE", modifiers: baseModifiers, repeat: false });
+        expect(called).toBe(true);
+        called = false;
+        mapper.setContext();
+        eventBus.emit("keyDown", { code: "KeyE", modifiers: baseModifiers, repeat: false });
+        expect(called).toBe(false);
+    });
 });
 

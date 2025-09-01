@@ -8,7 +8,7 @@ import { EventBus } from "@core/events/EventBus";
 export class InputMapper {
     private readonly eventBus: EventBus;
     private readonly mappings: InputMapping[] = [];
-    private context?: string;
+    private context: string | undefined;
     private unsubscribe: () => void;
 
     constructor(dependencies: { eventBus: EventBus; mappings?: InputMapping[] }) {
