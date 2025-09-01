@@ -52,7 +52,7 @@ export function ToolHud(): JSX.Element {
     }
 
     return (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center absolute bottom-0 left-0 gap-2">
             <button
                 aria-label="view mode"
                 aria-pressed={mode === "view"}
