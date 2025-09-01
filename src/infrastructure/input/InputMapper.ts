@@ -1,4 +1,4 @@
-import type { InputMapping } from "@core/types/input";
+import type { InputMapping, Modifiers } from "@core/types/input";
 import type { InputEvents } from "@core/types/events/InputEvents";
 import { EventBus } from "@core/events/EventBus";
 
@@ -48,7 +48,7 @@ export class InputMapper {
     }
 
     /** Compara modificadores do evento com os do mapeamento */
-    private modifiersMatch(a: InputMapping["modifiers"], b: InputMapping["modifiers"]): boolean {
+    private modifiersMatch(a: Modifiers, b: Modifiers): boolean {
         return (
             a.shift === b.shift &&
             a.ctrl === b.ctrl &&
