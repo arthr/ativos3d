@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import { InputMapper } from "@infrastructure/input";
 import { EventBus } from "@core/events/EventBus";
 import type { InputMapping } from "@core/types/input";
@@ -71,6 +71,29 @@ describe("InputMapper", () => {
         mapper.setContext("edit");
         eventBus.emit("keyDown", { code: "KeyC", modifiers: baseModifiers, repeat: false });
         expect(called).toBe(true);
+    });
+
+    it("considera contexto e modificadores simultaneamente", () => {
+        const mapping: InputMapping = {
+            key: "KeyF",
+            action: "special",
+            context: "mode",
+            modifiers: { ...baseModifiers, ctrl: true },
+        };
+        mapper.registerMapping(mapping);
+        const handler = vi.fn();
+        eventBus.on("actionTriggered", handler);
+        eventBus.emit("keyDown", { code: "KeyF", modifiers: { ...baseModifiers, ctrl: true }, repeat: false });
+        expect(handler).not.toHaveBeenCalled();
+        mapper.setContext("mode");
+        eventBus.emit("keyDown", { code: "KeyF", modifiers: baseModifiers, repeat: false });
+        expect(handler).not.toHaveBeenCalled();
+        eventBus.emit("keyDown", {
+            code: "KeyF",
+            modifiers: { ...baseModifiers, ctrl: true },
+            repeat: false,
+        });
+        expect(handler).toHaveBeenCalledTimes(1);
     });
 
     it("permite registrar mapeamentos após inicialização", () => {
