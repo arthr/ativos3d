@@ -7,7 +7,7 @@ import { EventBus } from "@core/events/EventBus";
 import { CommandStack } from "@core/commands";
 import { EntityManager } from "@domain/entities";
 import { CameraSystem, CameraController, RenderLoop } from "@infrastructure/render";
-import { InputManager } from "@infrastructure/input";
+import { InputManager, InputMapper } from "@infrastructure/input";
 
 /**
  * Classe principal da aplicação
@@ -65,6 +65,7 @@ export class Application {
         // Inicializa o RenderLoop (usado pelo R3F)
         const renderLoop = new RenderLoop();
         const inputManager = new InputManager({ eventBus, cameraSystem, target: inputTarget });
+        const inputMapper = new InputMapper({ eventBus });
 
         this.container.set("eventBus", eventBus);
         this.container.set("commandStack", commandStack);
@@ -73,6 +74,7 @@ export class Application {
         this.container.set("cameraController", cameraController);
         this.container.set("renderLoop", renderLoop);
         this.container.set("inputManager", inputManager);
+        this.container.set("inputMapper", inputMapper);
 
         return {
             eventBus,
@@ -82,6 +84,7 @@ export class Application {
             cameraController,
             renderLoop,
             inputManager,
+            inputMapper,
         } as DependencyMap;
     }
 
@@ -91,6 +94,7 @@ export class Application {
     dispose(): void {
         this.resolve("cameraController").dispose();
         this.resolve("inputManager").dispose();
+        this.resolve("inputMapper").dispose();
         this.resolve("entityManager").clear();
         this.resolve("eventBus").clearAll();
         this.resizeTarget.removeEventListener("resize", this.handleResize);
@@ -108,6 +112,7 @@ type DependencyMap = {
     cameraController: CameraController;
     renderLoop: RenderLoop;
     inputManager: InputManager;
+    inputMapper: InputMapper;
 };
 
 /**
