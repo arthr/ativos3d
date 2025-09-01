@@ -1,15 +1,7 @@
 import type { IconType } from "react-icons";
 import { useMemo, useState, type JSX } from "react";
-import {
-    FiEye,
-    FiShoppingCart,
-    FiTool,
-    FiCamera,
-    FiGrid,
-    FiPlus,
-    FiMove,
-    FiTrash,
-} from "react-icons/fi";
+import { FiEye, FiShoppingCart, FiTool, FiCamera, FiGrid, FiMove, FiTrash } from "react-icons/fi";
+import { PiHandDepositBold } from "react-icons/pi";
 import { GiBrickWall } from "react-icons/gi";
 import { HiMiniEyeDropper } from "react-icons/hi2";
 import { BiSolidBadgeDollar, BiLayerPlus } from "react-icons/bi";
@@ -20,9 +12,9 @@ type HudMode = "view" | "buy" | "build" | null;
 type HudOption = { key: string; Icon: IconType; label: string };
 
 const MODE_LABEL: Record<Exclude<HudMode, null>, string> = {
-    view: "visualização",
-    buy: "objetos",
-    build: "construção",
+    view: "View",
+    buy: "Buy",
+    build: "Build",
 };
 
 const MODE_ICON: Record<Exclude<HudMode, null>, IconType> = {
@@ -37,7 +29,7 @@ const MODE_OPTIONS: Record<Exclude<HudMode, null>, HudOption[]> = {
         { key: "ortho", Icon: FiGrid, label: "ortho" },
     ],
     buy: [
-        { key: "place", Icon: FiPlus, label: "colocar" },
+        { key: "place", Icon: PiHandDepositBold, label: "colocar" },
         { key: "move", Icon: FiMove, label: "mover" },
         { key: "eyedropper", Icon: HiMiniEyeDropper, label: "copiar" },
         { key: "sell", Icon: BiSolidBadgeDollar, label: "vender" },
@@ -116,8 +108,18 @@ export function ToolHud(): JSX.Element {
                                     : "bg-white/70 dark:bg-neutral-800/70 text-neutral-800 dark:text-neutral-200 hover:bg-white dark:hover:bg-neutral-800",
                             )}
                         >
-                            <Icon className="text-lg" />
-                            <span className="text-sm font-medium">{MODE_LABEL[m]}</span>
+                            <div
+                                className={cn(
+                                    "grid place-items-center h-12 w-12 rounded-xl",
+                                    "ring-1",
+                                    pressed
+                                        ? "ring-white/40 bg-white/10"
+                                        : "ring-black/10 dark:ring-white/10 bg-black/5 dark:bg-white/5",
+                                )}
+                            >
+                                <Icon className="text-lg" />
+                                <span className="text-xs font-medium">{MODE_LABEL[m]}</span>
+                            </div>
                         </button>
                     );
                 })}
@@ -152,8 +154,8 @@ export function ToolHud(): JSX.Element {
                                     aria-pressed={isActive}
                                     onClick={() => selectOption(mode, key)}
                                     className={cn(
-                                        "min-w-[64px] w-20 flex flex-col items-center gap-1",
-                                        "rounded-xl p-2 transition-all",
+                                        "group inline-flex items-center gap-2 px-3 py-2 rounded-xl select-none",
+                                        "transition-all",
                                         isActive
                                             ? "bg-emerald-500/90 text-white shadow-inner"
                                             : "bg-white/80 dark:bg-neutral-800/80 text-neutral-800 dark:text-neutral-100 hover:bg-white dark:hover:bg-neutral-800",
@@ -169,15 +171,12 @@ export function ToolHud(): JSX.Element {
                                         )}
                                     >
                                         <Icon className="text-xl" />
+                                        <span className="text-[11px] leading-none">{label}</span>
                                     </div>
-                                    <span className="text-[11px] leading-none">{label}</span>
                                 </button>
                             );
                         })}
                     </div>
-
-                    {/* barra de progresso/decoração opcional */}
-                    <div className="mt-3 h-1 rounded-full bg-black/10 dark:bg-white/10" />
                 </div>
             )}
         </div>
