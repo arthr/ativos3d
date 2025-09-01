@@ -118,6 +118,26 @@ pnpm lint
 pnpm vitest --run
 ```
 
+### **InputMapper**
+O `InputMapper` converte eventos de teclado em ações publicadas no `EventBus`.
+
+```typescript
+import { InputMapper } from "@infrastructure/input";
+
+const mapper = new InputMapper({
+  eventBus,
+  mappings: [
+    { key: "KeyZ", action: "undo", modifiers: { ctrl: true, shift: false, alt: false, meta: false, space: false } },
+  ],
+});
+
+eventBus.on("actionTriggered", ({ action }) => {
+  // registre ou trate a ação disparada
+});
+```
+
+Use `registerMapping` para adicionar novos atalhos e `setContext` para alternar contextos.
+
 ## **Arquitetura de Renderização (R3F Owner)**
 
 - Canvas: a renderização 3D é controlada exclusivamente pelo React Three Fiber (R3F) e Drei.
