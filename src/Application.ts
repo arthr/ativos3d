@@ -22,12 +22,12 @@ export class Application {
      */
     constructor(
         eventBus: EventBus,
-        canvasSize?: CameraDimensions,
+        canvasSize: CameraDimensions,
         inputTarget: HTMLElement | Window = window,
     ) {
         this.resizeTarget = inputTarget instanceof Window ? inputTarget : window;
         this.initializeContainer(eventBus, canvasSize, inputTarget);
-        this.handleResize = () => {
+        this.handleResize = (): void => {
             const cameraSystem = this.resolve("cameraSystem");
             cameraSystem.resize({
                 width: this.resizeTarget.innerWidth,
@@ -55,7 +55,7 @@ export class Application {
      */
     private initializeContainer(
         eventBus: EventBus,
-        canvasSize: CameraDimensions | undefined,
+        canvasSize: CameraDimensions,
         inputTarget: HTMLElement | Window,
     ): DependencyMap {
         const commandStack = new CommandStack(eventBus);
