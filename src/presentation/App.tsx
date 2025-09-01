@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState, type JSX } from "react";
 import { Canvas } from "@react-three/fiber";
-import { GridLayer } from "@presentation/layers/GridLayer";
 import { RenderLoopProvider } from "@presentation/providers/RenderLoopProvider";
 import { SceneBridge } from "@presentation/bridges/SceneBridge";
+import { GridLayer } from "@presentation/layers/GridLayer";
 import { CameraLayer } from "@presentation/layers/CameraLayer";
 import { ControlsLayer } from "@presentation/layers/ControlsLayer";
+import { HudLayer } from "@presentation/layers/HudLayer";
 import { ObjectsLayer } from "@presentation/layers/ObjectsLayer";
 import { WallsLayer } from "@presentation/layers/WallsLayer";
 import { FloorLayer } from "@presentation/layers/FloorLayer";
@@ -86,6 +87,7 @@ export function App(): JSX.Element {
                 <WallsLayer />
                 <ObjectsLayer />
             </Canvas>
+            <HudLayer />
             {showDebug && <DeveloperPanel />}
         </>
     );
