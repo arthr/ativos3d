@@ -1,18 +1,31 @@
 import type { JSX } from "react";
 import { useHudState } from "../hooks/useHudState";
-import { ModePanel, ToolPanel } from "./components";
+import { ModePanel, ToolPanel, CatalogPanel } from "./components";
+import { CATALOG_ITEMS } from "./constants/hudConstants";
 
 /**
  * HUD principal com visual "game UI"
  * Gerencia modos (view/buy/build) e ferramentas disponíveis
  */
 export function ToolHud(): JSX.Element {
-    const { mode, activeSelectedKey, toggleMode, selectOption } = useHudState();
+    const {
+        mode,
+        activeSelectedKey,
+        catalogSelected,
+        shouldShowCatalog,
+        toggleMode,
+        selectOption,
+        selectCatalogItem,
+    } = useHudState();
 
     function handleToolSelect(key: string): void {
         if (mode) {
             selectOption(mode, key);
         }
+    }
+
+    function handleCatalogSelect(key: string): void {
+        selectCatalogItem(key);
     }
 
     return (
@@ -33,6 +46,14 @@ export function ToolHud(): JSX.Element {
                     mode={mode}
                     selectedKey={activeSelectedKey}
                     onToolSelect={handleToolSelect}
+                />
+            )}
+
+            {shouldShowCatalog && (
+                <CatalogPanel
+                    items={CATALOG_ITEMS}
+                    selectedKey={catalogSelected}
+                    onCatalogSelect={handleCatalogSelect}
                 />
             )}
         </div>

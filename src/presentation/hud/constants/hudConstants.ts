@@ -8,7 +8,7 @@ import { BiSolidBadgeDollar } from "react-icons/bi";
 import { MdOutlineSensorDoor } from "react-icons/md";
 import { TbWindow } from "react-icons/tb";
 
-import type { HudMode, HudOption } from "@core/types/ui/HudTypes";
+import type { HudMode, HudOption, HudCatalogItem } from "@core/types/ui/HudTypes";
 
 /**
  * Labels para cada modo do HUD
@@ -50,3 +50,54 @@ export const MODE_OPTIONS: Record<Exclude<HudMode, null>, HudOption[]> = {
         { key: "bulldoze", Icon: PiBulldozerBold, label: "demolir" },
     ],
 };
+
+/**
+ * Itens do catálogo para a ferramenta "place" do modo "buy"
+ */
+export const CATALOG_ITEMS: HudCatalogItem[] = [
+    {
+        key: "chair",
+        Icon: FiGrid, // Temporário - substituir por ícone de cadeira
+        label: "Cadeira",
+        category: "furniture",
+        tags: ["seating", "furniture"],
+        price: 150,
+        enabled: true,
+    },
+    {
+        key: "table",
+        Icon: FiGrid, // Temporário - substituir por ícone de mesa
+        label: "Mesa",
+        category: "furniture",
+        tags: ["table", "furniture"],
+        price: 300,
+        enabled: true,
+    },
+    {
+        key: "sofa",
+        Icon: FiGrid, // Temporário - substituir por ícone de sofá
+        label: "Sofá",
+        category: "furniture",
+        tags: ["seating", "furniture", "living"],
+        price: 800,
+        enabled: true,
+    },
+    {
+        key: "bed",
+        Icon: FiGrid, // Temporário - substituir por ícone de cama
+        label: "Cama",
+        category: "furniture",
+        tags: ["bedroom", "furniture", "sleep"],
+        price: 1200,
+        enabled: true,
+    },
+    {
+        key: "tv",
+        Icon: FiGrid, // Temporário - substituir por ícone de TV
+        label: "TV",
+        category: "electronics",
+        tags: ["entertainment", "electronics"],
+        price: 2000,
+        enabled: false, // Exemplo de item desabilitado
+    },
+];

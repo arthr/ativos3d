@@ -15,9 +15,27 @@ export interface HudOption {
 }
 
 /**
+ * Item de catálogo no HUD
+ */
+export interface HudCatalogItem {
+    key: string;
+    Icon: IconType;
+    label: string;
+    category: string;
+    tags: string[];
+    price: number;
+    enabled: boolean;
+}
+
+/**
  * Estado de seleção por modo
  */
 export type HudSelection = Partial<Record<Exclude<HudMode, null>, string>>;
+
+/**
+ * Estado de seleção de catálogo (separado para buy > place)
+ */
+export type CatalogSelection = string | null;
 
 /**
  * Props para componente de botão de modo
@@ -52,4 +70,22 @@ export interface ToolPanelProps {
     mode: Exclude<HudMode, null>;
     selectedKey: string | null;
     onToolSelect: (key: string) => void;
+}
+
+/**
+ * Props para componente de botão de catálogo
+ */
+export interface CatalogButtonProps {
+    item: HudCatalogItem;
+    isActive: boolean;
+    onSelect: () => void;
+}
+
+/**
+ * Props para painel de catálogo
+ */
+export interface CatalogPanelProps {
+    items: HudCatalogItem[];
+    selectedKey: string | null;
+    onCatalogSelect: (key: string) => void;
 }
