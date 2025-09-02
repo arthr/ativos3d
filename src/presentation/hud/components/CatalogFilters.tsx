@@ -83,10 +83,7 @@ export function CatalogFilters({
                 <div className="text-xs text-neutral-500 dark:text-neutral-400 whitespace-nowrap">
                     {filteredCount} de {totalItems}
                 </div>
-            </div>
 
-            {/* Linha inferior: Filtros e ações */}
-            <div className="flex items-center gap-2">
                 {/* Filtro por categoria */}
                 <div className="relative">
                     <FiFilter className="absolute left-2.5 top-1/2 -translate-y-1/2 text-neutral-400 text-sm pointer-events-none" />
@@ -114,22 +111,22 @@ export function CatalogFilters({
                 </div>
 
                 {/* Botão limpar filtros */}
-                {hasActiveFilters && (
-                    <button
-                        onClick={onClearFilters}
-                        className={cn(
-                            "px-2 py-1.5 text-xs",
-                            "bg-neutral-100/50 dark:bg-neutral-700/50",
-                            "border border-neutral-200/50 dark:border-neutral-600/50",
-                            "rounded-lg",
-                            "text-neutral-600 dark:text-neutral-300",
-                            "hover:bg-neutral-200/50 dark:hover:bg-neutral-600/50",
-                            "transition-all",
-                        )}
-                    >
-                        Limpar
-                    </button>
-                )}
+                <button
+                    disabled={!hasActiveFilters}
+                    onClick={onClearFilters}
+                    className={cn(
+                        "px-2 py-1.5 text-xs",
+                        "bg-neutral-100/50 dark:bg-neutral-700/50",
+                        "border border-neutral-200/50 dark:border-neutral-600/50",
+                        "rounded-lg",
+                        "text-neutral-600 dark:text-neutral-300",
+                        "disabled:opacity-50 disabled:cursor-not-allowed",
+                        "hover:bg-neutral-200/50 dark:hover:bg-neutral-600/50",
+                        "transition-all",
+                    )}
+                >
+                    Limpar
+                </button>
             </div>
         </div>
     );

@@ -100,4 +100,49 @@ export const CATALOG_ITEMS: HudCatalogItem[] = [
         price: 2000,
         enabled: false, // Exemplo de item desabilitado
     },
+    {
+        key: "lamp",
+        Icon: FiGrid, // Temporário - substituir por ícone de luminária
+        label: "Luminária",
+        category: "decor",
+        tags: ["light", "decor", "illumination"],
+        price: 250,
+        enabled: true,
+    },
+    {
+        key: "bookshelf",
+        Icon: FiGrid, // Temporário - substituir por ícone de estante
+        label: "Estante",
+        category: "furniture",
+        tags: ["storage", "furniture", "books"],
+        price: 600,
+        enabled: true,
+    },
+    {
+        key: "refrigerator",
+        Icon: FiGrid, // Temporário - substituir por ícone de geladeira
+        label: "Geladeira",
+        category: "appliances",
+        tags: ["kitchen", "appliances", "cold"],
+        price: 1800,
+        enabled: true,
+    },
+    {
+        key: "microwave",
+        Icon: FiGrid, // Temporário - substituir por ícone de micro-ondas
+        label: "Micro-ondas",
+        category: "appliances",
+        tags: ["kitchen", "appliances", "cooking"],
+        price: 700,
+        enabled: true,
+    },
+    {
+        key: "painting",
+        Icon: FiGrid, // Temporário - substituir por ícone de quadro
+        label: "Quadro",
+        category: "decor",
+        tags: ["art", "decor", "wall"],
+        price: 350,
+        enabled: true,
+    },
 ];
