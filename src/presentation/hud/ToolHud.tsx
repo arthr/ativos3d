@@ -13,10 +13,10 @@ import { CATALOG_ITEMS, MODE_OPTIONS } from "./constants/hudConstants";
  */
 export function ToolHud(): JSX.Element {
     const { eventBus } = useApplication();
-    const mapperRef = useRef<InputMapper>();
+    const mapperRef = useRef<InputMapper>(null);
     const modeRef = useRef<HudMode>(null);
-    const toggleRef = useRef<(m: Exclude<HudMode, null>) => void>();
-    const selectRef = useRef<(m: Exclude<HudMode, null>, k: string) => void>();
+    const toggleRef = useRef<(m: Exclude<HudMode, null>) => void>(null);
+    const selectRef = useRef<(m: Exclude<HudMode, null>, k: string) => void>(null);
 
     const {
         mode,
@@ -40,10 +40,11 @@ export function ToolHud(): JSX.Element {
         mapper.registerMapping({ key: "F2", action: "mode.buy" });
         mapper.registerMapping({ key: "F3", action: "mode.build" });
 
-        (Object.entries(MODE_OPTIONS) as Array<[
-            Exclude<HudMode, null>,
-            typeof MODE_OPTIONS["view"],
-        ]>).forEach(([m, options]) => {
+        (
+            Object.entries(MODE_OPTIONS) as Array<
+                [Exclude<HudMode, null>, (typeof MODE_OPTIONS)["view"]]
+            >
+        ).forEach(([m, options]) => {
             options.forEach((opt, index) => {
                 mapper.registerMapping({
                     key: `Digit${index + 1}`,
@@ -55,21 +56,19 @@ export function ToolHud(): JSX.Element {
 
         const off = eventBus.on("actionTriggered", ({ action }) => {
             if (action.startsWith("mode.")) {
-                toggleRef.current?.(
-                    action.split(".")[1] as Exclude<HudMode, null>,
-                );
+                toggleRef.current?.(action.split(".")[1] as Exclude<HudMode, null>);
                 return;
             }
 
             if (action.startsWith("tool.") && modeRef.current) {
                 selectRef.current?.(
                     modeRef.current as Exclude<HudMode, null>,
-                    action.split(".")[1],
+                    action.split(".")[1] ?? "",
                 );
             }
         });
 
-        return () => {
+        return (): void => {
             mapper.dispose();
             off();
         };

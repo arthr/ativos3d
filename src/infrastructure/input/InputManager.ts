@@ -1,12 +1,15 @@
+import type { Camera } from "three";
+import type { Vec2 } from "@core/geometry/types/Vec2";
+import type { Vec3 } from "@core/geometry/types/Vec3";
 import type { InputManagerDependencies, InputManagerProvider, Modifiers } from "@core/types/input";
 import { Vec2Factory, Vec3Factory } from "@core/geometry";
 import { Raycaster, Plane, Vector2, Vector3 } from "three";
-import type { Camera } from "three";
 
 /**
  * Gerencia eventos de input e publica no EventBus
  */
 export class InputManager implements InputManagerProvider {
+    private readonly dependencies: InputManagerDependencies;
     private readonly eventBus: InputManagerDependencies["eventBus"];
     private readonly cameraSystem: InputManagerDependencies["cameraSystem"];
     private readonly target: InputManagerDependencies["target"];
@@ -14,16 +17,17 @@ export class InputManager implements InputManagerProvider {
     private readonly plane = new Plane(new Vector3(0, 1, 0), 0);
     private lastScreen = Vec2Factory.create(-Infinity, -Infinity);
 
-    constructor(private readonly dependencies: InputManagerDependencies) {
-        this.eventBus = dependencies.eventBus;
-        this.cameraSystem = dependencies.cameraSystem;
-        this.target = dependencies.target;
+    constructor(dependencies: InputManagerDependencies) {
+        this.dependencies = dependencies;
+        this.eventBus = this.dependencies.eventBus;
+        this.cameraSystem = this.dependencies.cameraSystem;
+        this.target = this.dependencies.target;
         this.target.addEventListener("pointermove", this.handlePointerMove);
         this.target.addEventListener("pointerdown", this.handlePointerDown);
         this.target.addEventListener("pointerup", this.handlePointerUp);
         this.target.addEventListener("click", this.handleClick);
-        this.target.addEventListener("keydown", this.handleKeyDown as EventListener);
-        this.target.addEventListener("keyup", this.handleKeyUp as EventListener);
+        this.target.addEventListener("keydown", this.handleKeyDown);
+        this.target.addEventListener("keyup", this.handleKeyUp);
     }
 
     /** Remove todos os listeners registrados */
@@ -32,13 +36,14 @@ export class InputManager implements InputManagerProvider {
         this.target.removeEventListener("pointerdown", this.handlePointerDown);
         this.target.removeEventListener("pointerup", this.handlePointerUp);
         this.target.removeEventListener("click", this.handleClick);
-        this.target.removeEventListener("keydown", this.handleKeyDown as EventListener);
-        this.target.removeEventListener("keyup", this.handleKeyUp as EventListener);
+        this.target.removeEventListener("keydown", this.handleKeyDown);
+        this.target.removeEventListener("keyup", this.handleKeyUp);
     }
 
     /** Lida com movimento do ponteiro */
-    private handlePointerMove = (event: PointerEvent): void => {
-        const screen = Vec2Factory.create(event.clientX, event.clientY);
+    private handlePointerMove = (event: Event): void => {
+        const pointerEvent = event as PointerEvent;
+        const screen = Vec2Factory.create(pointerEvent.clientX, pointerEvent.clientY);
         if (screen.x === this.lastScreen.x && screen.y === this.lastScreen.y) return;
         this.lastScreen = screen;
         const ndc = this.toNdc(screen);
@@ -51,75 +56,80 @@ export class InputManager implements InputManagerProvider {
     };
 
     /** Lida com pressionar botão do ponteiro */
-    private handlePointerDown = (event: PointerEvent): void => {
-        const screen = Vec2Factory.create(event.clientX, event.clientY);
+    private handlePointerDown = (event: Event): void => {
+        const pointerEvent = event as PointerEvent;
+        const screen = Vec2Factory.create(pointerEvent.clientX, pointerEvent.clientY);
         const ndc = this.toNdc(screen);
         const world = this.toWorld(ndc);
-        const modifiers = this.getModifiers(event);
-        const hudTarget = this.isHudTarget(event);
+        const modifiers = this.getModifiers(pointerEvent);
+        const hudTarget = this.isHudTarget(pointerEvent);
         this.eventBus.emit("pointerDown", {
             worldPosition: world,
             screenPosition: screen,
             ndc,
-            button: event.button,
+            button: pointerEvent.button,
             modifiers,
             hudTarget,
         });
     };
 
     /** Lida com soltar botão do ponteiro */
-    private handlePointerUp = (event: PointerEvent): void => {
-        const screen = Vec2Factory.create(event.clientX, event.clientY);
+    private handlePointerUp = (event: Event): void => {
+        const pointerEvent = event as PointerEvent;
+        const screen = Vec2Factory.create(pointerEvent.clientX, pointerEvent.clientY);
         const ndc = this.toNdc(screen);
         const world = this.toWorld(ndc);
-        const modifiers = this.getModifiers(event);
-        const hudTarget = this.isHudTarget(event);
+        const modifiers = this.getModifiers(pointerEvent);
+        const hudTarget = this.isHudTarget(pointerEvent);
         this.eventBus.emit("pointerUp", {
             worldPosition: world,
             screenPosition: screen,
             ndc,
-            button: event.button,
+            button: pointerEvent.button,
             modifiers,
             hudTarget,
         });
     };
 
     /** Lida com clique do ponteiro */
-    private handleClick = (event: MouseEvent): void => {
-        const screen = Vec2Factory.create(event.clientX, event.clientY);
+    private handleClick = (event: Event): void => {
+        const mouseEvent = event as MouseEvent;
+        const screen = Vec2Factory.create(mouseEvent.clientX, mouseEvent.clientY);
         const ndc = this.toNdc(screen);
         const world = this.toWorld(ndc);
-        const hudTarget = this.isHudTarget(event);
+        const hudTarget = this.isHudTarget(mouseEvent);
         this.eventBus.emit("click", {
             worldPosition: world,
             screenPosition: screen,
-            button: event.button,
+            button: mouseEvent.button,
             hudTarget,
         });
     };
 
     /** Lida com pressionar tecla */
-    private handleKeyDown = (event: KeyboardEvent): void => {
-        if (event.repeat) return;
-        const modifiers = this.getModifiers(event);
+    private handleKeyDown = (event: Event): void => {
+        const keyboardEvent = event as KeyboardEvent;
+        if (keyboardEvent.repeat) return;
+        const modifiers = this.getModifiers(keyboardEvent);
         this.eventBus.emit("keyDown", {
-            code: event.code,
+            code: keyboardEvent.code,
             modifiers,
-            repeat: event.repeat,
+            repeat: keyboardEvent.repeat,
         });
     };
 
     /** Lida com soltar tecla */
-    private handleKeyUp = (event: KeyboardEvent): void => {
-        const modifiers = this.getModifiers(event);
+    private handleKeyUp = (event: Event): void => {
+        const keyboardEvent = event as KeyboardEvent;
+        const modifiers = this.getModifiers(keyboardEvent);
         this.eventBus.emit("keyUp", {
-            code: event.code,
+            code: keyboardEvent.code,
             modifiers,
         });
     };
 
     /** Converte screen position para NDC */
-    private toNdc(screen: { x: number; y: number }) {
+    private toNdc(screen: { x: number; y: number }): Vec2 {
         const { width, height } = this.getTargetSize();
         const x = (screen.x / width) * 2 - 1;
         const y = -(screen.y / height) * 2 + 1;
@@ -127,7 +137,7 @@ export class InputManager implements InputManagerProvider {
     }
 
     /** Converte NDC para posição no mundo */
-    private toWorld(ndc: { x: number; y: number }) {
+    private toWorld(ndc: { x: number; y: number }): Vec3 {
         const camera = this.cameraSystem.getCamera() as Camera;
         this.raycaster.setFromCamera(new Vector2(ndc.x, ndc.y), camera);
         const intersection = new Vector3();
@@ -147,7 +157,7 @@ export class InputManager implements InputManagerProvider {
     }
 
     /** Obtém tamanho do alvo */
-    private getTargetSize() {
+    private getTargetSize(): { width: number; height: number } {
         if ("innerWidth" in this.target) {
             const w = this.target as Window;
             return { width: w.innerWidth, height: w.innerHeight };
@@ -157,7 +167,7 @@ export class InputManager implements InputManagerProvider {
     }
 
     /** Verifica se o evento ocorreu fora do alvo */
-    private isHudTarget(event: Event): boolean {
+    private isHudTarget(event: MouseEvent | PointerEvent): boolean {
         if (!(this.target instanceof HTMLElement)) return false;
         const node = event.target;
         if (!(node instanceof Node)) return false;
