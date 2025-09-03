@@ -20,6 +20,7 @@ export interface HudOption {
 export interface HudCatalogItem {
     key: string;
     Icon: IconType;
+    image: string | null;
     label: string;
     category: string;
     tags: string[];

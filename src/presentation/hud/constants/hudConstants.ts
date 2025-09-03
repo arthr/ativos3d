@@ -57,7 +57,8 @@ export const MODE_OPTIONS: Record<Exclude<HudMode, null>, HudOption[]> = {
 export const CATALOG_ITEMS: HudCatalogItem[] = [
     {
         key: "chair",
-        Icon: FiGrid, // Temporário - substituir por ícone de cadeira
+        Icon: FiGrid,
+        image: "/assets/images/chair.jpg",
         label: "Cadeira",
         category: "furniture",
         tags: ["seating", "furniture"],
@@ -66,7 +67,8 @@ export const CATALOG_ITEMS: HudCatalogItem[] = [
     },
     {
         key: "table",
-        Icon: FiGrid, // Temporário - substituir por ícone de mesa
+        Icon: FiGrid,
+        image: "/assets/images/table.jpg",
         label: "Mesa",
         category: "furniture",
         tags: ["table", "furniture"],
@@ -75,7 +77,8 @@ export const CATALOG_ITEMS: HudCatalogItem[] = [
     },
     {
         key: "sofa",
-        Icon: FiGrid, // Temporário - substituir por ícone de sofá
+        Icon: FiGrid,
+        image: "/assets/images/sofa.jpg",
         label: "Sofá",
         category: "furniture",
         tags: ["seating", "furniture", "living"],
@@ -84,7 +87,8 @@ export const CATALOG_ITEMS: HudCatalogItem[] = [
     },
     {
         key: "bed",
-        Icon: FiGrid, // Temporário - substituir por ícone de cama
+        Icon: FiGrid,
+        image: "/assets/images/bed.jpg",
         label: "Cama",
         category: "furniture",
         tags: ["bedroom", "furniture", "sleep"],
@@ -93,16 +97,18 @@ export const CATALOG_ITEMS: HudCatalogItem[] = [
     },
     {
         key: "tv",
-        Icon: FiGrid, // Temporário - substituir por ícone de TV
+        Icon: FiGrid,
+        image: "/assets/images/tv.jpg",
         label: "TV",
         category: "electronics",
         tags: ["entertainment", "electronics"],
         price: 2000,
-        enabled: false, // Exemplo de item desabilitado
+        enabled: false,
     },
     {
         key: "lamp",
-        Icon: FiGrid, // Temporário - substituir por ícone de luminária
+        Icon: FiGrid,
+        image: "/assets/images/lamp.jpg",
         label: "Luminária",
         category: "decor",
         tags: ["light", "decor", "illumination"],
@@ -111,7 +117,8 @@ export const CATALOG_ITEMS: HudCatalogItem[] = [
     },
     {
         key: "bookshelf",
-        Icon: FiGrid, // Temporário - substituir por ícone de estante
+        Icon: FiGrid,
+        image: "/assets/images/bookshelf.jpg",
         label: "Estante",
         category: "furniture",
         tags: ["storage", "furniture", "books"],
@@ -120,7 +127,8 @@ export const CATALOG_ITEMS: HudCatalogItem[] = [
     },
     {
         key: "refrigerator",
-        Icon: FiGrid, // Temporário - substituir por ícone de geladeira
+        Icon: FiGrid,
+        image: "/assets/images/refrigerator.jpg",
         label: "Geladeira",
         category: "appliances",
         tags: ["kitchen", "appliances", "cold"],
@@ -129,7 +137,8 @@ export const CATALOG_ITEMS: HudCatalogItem[] = [
     },
     {
         key: "microwave",
-        Icon: FiGrid, // Temporário - substituir por ícone de micro-ondas
+        Icon: FiGrid,
+        image: "/assets/images/microwave.jpg",
         label: "Micro-ondas",
         category: "appliances",
         tags: ["kitchen", "appliances", "cooking"],
@@ -138,7 +147,8 @@ export const CATALOG_ITEMS: HudCatalogItem[] = [
     },
     {
         key: "painting",
-        Icon: FiGrid, // Temporário - substituir por ícone de quadro
+        Icon: FiGrid,
+        image: "/assets/images/painting.jpg",
         label: "Quadro",
         category: "decor",
         tags: ["art", "decor", "wall"],

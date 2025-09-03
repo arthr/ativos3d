@@ -31,7 +31,7 @@ export function CatalogPanel({
     return (
         <div
             className={cn(
-                "pointer-events-auto w-[680px] transition-all",
+                "pointer-events-auto w-[680px] transition-all ",
                 "rounded-2xl bg-white/75 dark:bg-neutral-900/60",
                 "backdrop-blur-md ring-1 ring-black/10 dark:ring-white/10 shadow-xl",
                 "px-4 py-3",
@@ -49,7 +49,7 @@ export function CatalogPanel({
             />
 
             {filteredItems.length > 0 ? (
-                <div className="flex items-stretch gap-3 w-full overflow-x-auto">
+                <div className="flex items-stretch gap-3 w-full overflow-x-auto pb-1 catalog-scrollbar">
                     {filteredItems.map((item) => (
                         <CatalogButton
                             key={item.key}
