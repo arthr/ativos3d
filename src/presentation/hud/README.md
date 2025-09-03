@@ -8,7 +8,8 @@ O sistema HUD (Heads-Up Display) é uma interface modular e extensível para apl
 
 - **Modos de Operação**: View, Buy e Build
 - **Ferramentas Contextuais**: Cada modo possui suas próprias ferramentas
-- **Catálogo Condicional**: Sistema de catálogo que aparece apenas em contextos específicos
+- **Catálogo Condicional**: Aparece apenas em `buy > place`
+- **Busca e Filtros no Catálogo**: Filtragem por texto e categoria (novo)
 - **Estado Inteligente**: Gerenciamento automático de estado com limpeza condicional
 - **Interface Responsiva**: Adaptável a diferentes tamanhos de tela
 
@@ -26,7 +27,8 @@ src/
 │   └── classNames.ts                  # Utilitário para classes condicionais
 ├── presentation/
 │   ├── hooks/
-│   │   └── useHudState.ts            # Hook de gerenciamento de estado
+│   │   ├── useHudState.ts            # Hook de estado do HUD
+│   │   └── useCatalogFilters.ts      # Hook de filtros do catálogo (novo)
 │   └── hud/
 │       ├── constants/
 │       │   └── hudConstants.ts       # Constantes e dados do sistema
@@ -37,6 +39,7 @@ src/
 │       │   ├── CatalogButton.tsx     # Botão individual de catálogo
 │       │   ├── ModePanel.tsx         # Painel de seleção de modos
 │       │   ├── ToolPanel.tsx         # Painel de ferramentas
+│       │   ├── CatalogFilters.tsx    # Filtros do catálogo (novo)
 │       │   └── CatalogPanel.tsx      # Painel de catálogo condicional
 │       ├── ToolHud.tsx               # Componente principal
 │       └── README.md                 # Esta documentação
@@ -50,8 +53,9 @@ graph TD
     A --> C[ModePanel]
     A --> D[ToolPanel]
     A --> E[CatalogPanel]
+    E --> J[CatalogFilters]
     
-    B --> F[Estado Global]
+    B --> F[Estado HUD]
     C --> G[ModeButton]
     D --> H[ToolButton]
     E --> I[CatalogButton]
@@ -97,7 +101,13 @@ graph TD
 
 - **Props**: `items`, `selectedKey`, `onCatalogSelect`
 - **Condicional**: Só aparece em `buy > place`
-- **Recursos**: Preços, estados enabled/disabled
+- **Recursos**: Busca por texto, filtro por categoria, preços, enabled/disabled
+
+#### `CatalogFilters` (novo)
+**Responsabilidade**: UI de filtros do catálogo (busca e categoria)
+
+- **Props**: `searchText`, `selectedCategory`, `availableCategories`, `onSearchChange`, `onCategoryChange`, `onClearFilters`, `totalItems`, `filteredCount`
+- **Comportamento**: Atualiza filtros em tempo real e exibe contagem
 
 ### 🔘 Botões Individuais
 
@@ -149,6 +159,29 @@ graph TD
 - **Estado Consistente**: Previne estados inválidos
 - **Performance**: Computed properties para otimização
 
+### `useCatalogFilters` (novo)
+
+**Responsabilidade**: Gerenciar busca por texto e filtro por categoria do catálogo
+
+#### Estado e Derivados
+```typescript
+{
+  searchText: string;               // Texto de busca
+  selectedCategory: string | null;  // Categoria ativa
+  filteredItems: HudCatalogItem[];  // Itens após filtros
+  availableCategories: string[];    // Categorias derivadas dos itens
+}
+```
+
+#### Métodos Disponíveis
+```typescript
+{
+  setSearchText: (text: string) => void;           // Atualiza busca
+  setSelectedCategory: (c: string | null) => void; // Atualiza categoria
+  clearFilters: () => void;                        // Limpa todos filtros
+}
+```
+
 ---
 
 ## 📊 Sistema de Dados
@@ -191,6 +224,7 @@ graph TD
 interface HudCatalogItem {
   key: string;           // Identificador único
   Icon: IconType;        // Ícone React
+  image: string | null;  // URL da imagem
   label: string;         // Nome exibido
   category: string;      // Categoria (furniture, electronics)
   tags: string[];        // Tags para busca/filtro
@@ -205,6 +239,11 @@ interface HudCatalogItem {
 - **Sofá** - R$ 800 (furniture)
 - **Cama** - R$ 1.200 (furniture)
 - **TV** - R$ 2.000 (electronics, desabilitada)
+- **Luminária** - R$ 250 (decor)
+- **Estante** - R$ 600 (furniture)
+- **Geladeira** - R$ 1.800 (appliances)
+- **Micro-ondas** - R$ 700 (appliances)
+- **Quadro** - R$ 350 (decor)
 
 ---
 
@@ -231,6 +270,14 @@ mode === "buy" && selectedTool === "place"
 - **Estado Independente**: `catalogSelected` separado das ferramentas
 - **Limpeza Automática**: Reset quando sai do contexto correto
 - **Computed Property**: `shouldShowCatalog` determina visibilidade
+
+### Filtros do Catálogo (novo)
+
+- **Busca por texto**: Aplica-se sobre `label`, `tags` e `category`
+- **Filtro por categoria**: Seleção direta via `select`
+- **Contador**: Exibe `filteredCount` de `totalItems`
+- **Limpar filtros**: Botão `Limpar` desabilitado quando não há filtros ativos
+- Implementado por `useCatalogFilters` e `CatalogFilters`
 
 ---
 
@@ -494,8 +541,8 @@ function ExternalComponent() {
 ## 🔄 Roadmap e Melhorias Futuras
 
 ### Funcionalidades Planejadas
-- [ ] **Sistema de Busca**: Filtrar itens do catálogo
-- [ ] **Categorias**: Organizar catálogo por categorias
+- [x] **Sistema de Busca**: Filtrar itens do catálogo
+- [x] **Categorias**: Organizar catálogo por categorias
 - [ ] **Favoritos**: Sistema de itens favoritos
 - [ ] **Histórico**: Últimos itens utilizados
 - [ ] **Temas**: Suporte a múltiplos temas visuais
@@ -513,8 +560,3 @@ function ExternalComponent() {
 - [ ] **Drag & Drop**: Arrastar itens para cena
 - [ ] **Preview**: Visualização antes de colocar
 - [ ] **Undo/Redo**: Integração com sistema de comandos
-
----
-
-*Documentação atualizada em: Dezembro 2024*
-*Versão do Sistema: 2.0.0*
