@@ -43,7 +43,7 @@ Prioridade: R3F/Drei é o owner da cena; Core/Domain permanecem headless. Use Ev
     - Importar o hook `useRenderObjects` e iterar `list` para renderizar.
     - Emissão de eventos de interação (ex.: `onPointerDown`) deve publicar no `EventBus` (ver `src/presentation/layers/ControlsLayer.tsx:28` como referência de emissão `cameraUpdated`).
 
-- [ ] Camada `WallsLayer`
+- [x] Camada `WallsLayer`
   - Arquivo: `src/presentation/layers/WallsLayer.tsx`
   - Objetivo: renderizar paredes com base no estado do domínio.
   - Contratos do domínio (CONTEXT.md): parede possui `{ start: Vec3; end: Vec3; height: number }`.
@@ -56,7 +56,7 @@ Prioridade: R3F/Drei é o owner da cena; Core/Domain permanecem headless. Use Ev
        - Hook `useWalls` análogo ao `useRenderObjects` que observa `componentAdded/Removed` para `WallComponent` e fornece lista para a camada.
   - Renderização: utilizar `<mesh>` com geometria extrudada/box para cada parede; orientação pelo vetor `end-start`; altura mapeada na escala Y.
 
-- [ ] Camada `FloorLayer`
+- [x] Camada `FloorLayer`
   - Arquivo: `src/presentation/layers/FloorLayer.tsx`
   - Objetivo: renderizar pisos com base no domínio.
   - Contratos (CONTEXT.md): piso possui `{ position: Vec3; size: Vec3; material: string }`.
@@ -70,7 +70,7 @@ Prioridade: R3F/Drei é o owner da cena; Core/Domain permanecem headless. Use Ev
   - Inserir `<ObjectsLayer/>`, `<WallsLayer/>`, `<FloorLayer/>` dentro do `<Canvas>`, após `<ControlsLayer/>` e `<GridLayer/>`.
 
 - [x] Testes das camadas (ObjectsLayer)
-- [ ] Testes das camadas (WallsLayer/FloorLayer)
+- [] Testes das camadas (WallsLayer/FloorLayer)
   - Criar: `tests/unit/presentation/ObjectsLayer.test.tsx`, `WallsLayer.test.tsx`, `FloorLayer.test.tsx`.
   - Estratégia: mockar `useRenderObjects`/`useWalls`/`useFloors` para controlar fixtures; montar com `@testing-library/react` e `@react-three/fiber` test utils; validar número de meshes e props principais (`visible`, `color`).
 
