@@ -181,6 +181,28 @@ export class CollisionDetection {
         };
     }
 
+    static raycastBodies(query: RaycastQuery, bodies: CollisionBody[]): RaycastResult {
+        let closest: RaycastResult | null = null;
+
+        for (const body of bodies) {
+            if (query.layerMask !== undefined && (body.layers & query.layerMask) === 0) {
+                continue;
+            }
+
+            const translated = this.translateAABB(body.bounds, body.position);
+            const result = this.raycastAABB(query, translated);
+            if (!result.hit) {
+                continue;
+            }
+
+            if (!closest || (result.distance ?? Infinity) < (closest.distance ?? Infinity)) {
+                closest = { ...result, body };
+            }
+        }
+
+        return closest ?? { hit: false };
+    }
+
     /**
      * Calcula sobreposição entre duas AABBs
      */

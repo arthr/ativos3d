@@ -374,6 +374,75 @@ describe("CollisionDetection", () => {
         });
     });
 
+    describe("raycastBodies", () => {
+        it("deve retornar corpo mais próximo intersectado", () => {
+            const bodyA = CollisionFactory.createCollisionBodyFromBox({
+                id: "A",
+                position: Vec3Factory.create(5, 0, 0),
+                size: Vec3Factory.create(1, 1, 1),
+            });
+            const bodyB = CollisionFactory.createCollisionBodyFromBox({
+                id: "B",
+                position: Vec3Factory.create(2, 0, 0),
+                size: Vec3Factory.create(1, 1, 1),
+            });
+            const query: RaycastQuery = CollisionFactory.createRaycastQuery({
+                origin: Vec3Factory.zero(),
+                direction: Vec3Factory.create(1, 0, 0),
+                maxDistance: 10,
+            });
+
+            const result = CollisionDetection.raycastBodies(query, [bodyA, bodyB]);
+
+            expect(result.hit).toBe(true);
+            expect(result.body?.id).toBe("B");
+            expect(result.distance).toBeCloseTo(1.5);
+        });
+
+        it("deve respeitar filtro de camada", () => {
+            const bodyA = CollisionFactory.createCollisionBodyFromBox({
+                id: "A",
+                position: Vec3Factory.create(2, 0, 0),
+                size: Vec3Factory.create(1, 1, 1),
+                layers: 1,
+            });
+            const bodyB = CollisionFactory.createCollisionBodyFromBox({
+                id: "B",
+                position: Vec3Factory.create(5, 0, 0),
+                size: Vec3Factory.create(1, 1, 1),
+                layers: 2,
+            });
+            const query: RaycastQuery = CollisionFactory.createRaycastQuery({
+                origin: Vec3Factory.zero(),
+                direction: Vec3Factory.create(1, 0, 0),
+                maxDistance: 10,
+                layerMask: 2,
+            });
+
+            const result = CollisionDetection.raycastBodies(query, [bodyA, bodyB]);
+
+            expect(result.hit).toBe(true);
+            expect(result.body?.id).toBe("B");
+        });
+
+        it("não deve detectar quando nenhum corpo é atingido", () => {
+            const body = CollisionFactory.createCollisionBodyFromBox({
+                id: "A",
+                position: Vec3Factory.create(5, 5, 5),
+                size: Vec3Factory.create(1, 1, 1),
+            });
+            const query: RaycastQuery = CollisionFactory.createRaycastQuery({
+                origin: Vec3Factory.zero(),
+                direction: Vec3Factory.create(1, 0, 0),
+                maxDistance: 10,
+            });
+
+            const result = CollisionDetection.raycastBodies(query, [body]);
+
+            expect(result.hit).toBe(false);
+        });
+    });
+
     describe("casos extremos", () => {
         it("deve lidar com AABB degenerado (tamanho zero)", () => {
             const boxA: AABB = AABBFactory.create(
