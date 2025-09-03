@@ -3,3 +3,4 @@
  */
 
 export type { SnapType } from "./SnapTypes";
+export type { GridSnapDependencies, GridSnapProvider } from "./GridSnap";
