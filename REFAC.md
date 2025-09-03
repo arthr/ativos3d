@@ -113,8 +113,8 @@ A renderização é controlada por React Three Fiber (R3F) com Drei. Cada parte 
 #### **4.2 Sistema de Picking**
 - [x] Implementar Raycasting
 - [x] Implementar ObjectSelection
-- [ ] Implementar HoverSystem
-- [ ] Testes para picking
+- [x] Implementar HoverSystem
+- [x] Testes para picking
 
 #### **4.3 Sistema de Snap**
 - [ ] Implementar GridSnap
