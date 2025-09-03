@@ -11,3 +11,4 @@ export * from "./ui";
 export * from "./scene";
 export * from "./render";
 export * from "./snap";
+export * from "./picking";
