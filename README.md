@@ -163,3 +163,4 @@ Arquivos úteis:
 ## **Projecto Legacy (Legado)**
 
 O código antigo está preservado em `legacy/` para referência durante a migração.
+Veja `docs/comparison.md` para o mapeamento de funcionalidades portadas do legado.

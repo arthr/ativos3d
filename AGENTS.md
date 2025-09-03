@@ -14,3 +14,7 @@ Se detectar divergência entre arquivos:
 5) Por fim, demais fontes.
 Se ainda houver ambiguidade: proponha 2–3 opções e escolha a mais aderente a `/.cursor/.cursorrules` e ao `CONTEXT.md`.
 ```
+
+### Documentos de Apoio
+
+- Consulte `docs/comparison.md` para o mapeamento de funcionalidades portadas do legado.
