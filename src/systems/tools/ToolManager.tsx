@@ -7,8 +7,9 @@ import { StrategyComponent, ToolContext } from "./strategies/types";
 export function ToolManager({ strategies }: { strategies: Record<Tool, StrategyComponent> }) {
   const { camera, gl, scene } = useThree();
   const activeTool = useStore((s) => s.activeTool);
+  const mode = useStore((s) => s.mode);
   const ctx = useMemo<ToolContext>(() => ({ camera, gl, scene }), [camera, gl, scene]);
-  const Strategy = strategies[activeTool];
+  const Strategy = mode === "view" ? null : strategies[activeTool];
   return Strategy ? <Strategy ctx={ctx} /> : null;
 }
 
