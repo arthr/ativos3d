@@ -4,6 +4,7 @@ import { EventBus } from "@core/events/EventBus";
 import { Vec3Factory, Vec2Factory, CollisionFactory } from "@core/geometry";
 import { PerspectiveCamera } from "three";
 import type { CameraSystemProvider } from "@core/types/camera/CameraSystem";
+import type { CollisionBody } from "@core/geometry";
 
 /**
  * Testes para WallSnap
@@ -31,7 +32,7 @@ describe("WallSnap", () => {
         wallSnap = new WallSnap({
             eventBus,
             cameraSystem,
-            getWallBodies: () => bodies,
+            getWallBodies: (): CollisionBody[] => bodies,
         });
     });
 

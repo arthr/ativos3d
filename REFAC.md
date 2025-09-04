@@ -119,8 +119,9 @@ A renderização é controlada por React Three Fiber (R3F) com Drei. Cada parte 
 #### **4.3 Sistema de Snap**
 - [x] Implementar GridSnap
 - [x] Implementar ObjectSnap
-- [ ] Implementar WallSnap
-- [ ] Testes para snap
+- [x] Implementar WallSnap
+- [x] Implementar EndpointSnap
+- [x] Testes para snap
 
 ### **Fase 5: Ferramentas e Estratégias**
 

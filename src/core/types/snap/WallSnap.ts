@@ -1,6 +1,6 @@
 import type { EventBus } from "../../events/EventBus";
 import type { CameraSystemProvider } from "../camera/CameraSystem";
-import type { Vec2, Vec3, CollisionBody } from "@core/geometry";
+import type { Vec2, Vec3, CollisionBody } from "../../geometry";
 
 export interface WallSnapDependencies {
     readonly eventBus: EventBus;
