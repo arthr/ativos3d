@@ -5,6 +5,7 @@ import type { EventBus } from "@core/events/EventBus";
 import type { CameraSystem } from "@infrastructure/render/CameraSystem";
 import type { CameraController } from "@infrastructure/render/CameraController";
 import type { RenderLoop } from "@infrastructure/render/RenderLoop";
+import type { ToolManager } from "@application/tools/ToolManager";
 
 /**
  * Hook que expõe dependências principais da aplicação
@@ -16,6 +17,7 @@ export function useApplication(): {
     cameraSystem: CameraSystem;
     cameraController: CameraController;
     renderLoop: RenderLoop;
+    toolManager: ToolManager;
 } {
     return {
         eventBus: application.resolve("eventBus"),
@@ -24,5 +26,6 @@ export function useApplication(): {
         cameraSystem: application.resolve("cameraSystem"),
         cameraController: application.resolve("cameraController"),
         renderLoop: application.resolve("renderLoop"),
+        toolManager: application.resolve("toolManager"),
     };
 }

@@ -8,6 +8,8 @@ import { CommandStack } from "@core/commands";
 import { EntityManager } from "@domain/entities";
 import { CameraSystem, CameraController, RenderLoop } from "@infrastructure/render";
 import { InputManager, InputMapper } from "@infrastructure/input";
+import { ToolManager } from "@application/tools/ToolManager";
+import { registerBasicTools } from "@application/tools/basic";
 
 /**
  * Classe principal da aplicação
@@ -66,6 +68,8 @@ export class Application {
         const renderLoop = new RenderLoop();
         const inputManager = new InputManager({ eventBus, cameraSystem, target: inputTarget });
         const inputMapper = new InputMapper({ eventBus });
+        const toolManager = new ToolManager(eventBus);
+        registerBasicTools(toolManager, eventBus);
 
         this.container.set("eventBus", eventBus);
         this.container.set("commandStack", commandStack);
@@ -75,6 +79,7 @@ export class Application {
         this.container.set("renderLoop", renderLoop);
         this.container.set("inputManager", inputManager);
         this.container.set("inputMapper", inputMapper);
+        this.container.set("toolManager", toolManager);
 
         return {
             eventBus,
@@ -85,6 +90,7 @@ export class Application {
             renderLoop,
             inputManager,
             inputMapper,
+            toolManager,
         } as DependencyMap;
     }
 
@@ -113,6 +119,7 @@ type DependencyMap = {
     renderLoop: RenderLoop;
     inputManager: InputManager;
     inputMapper: InputMapper;
+    toolManager: ToolManager;
 };
 
 /**

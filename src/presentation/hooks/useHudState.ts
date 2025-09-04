@@ -14,6 +14,7 @@ export function useHudState(): {
     toggleMode: (next: Exclude<HudMode, null>) => void;
     selectOption: (m: Exclude<HudMode, null>, key: string) => void;
     selectCatalogItem: (key: string) => void;
+    setMode: (m: HudMode) => void;
 } {
     const [mode, setMode] = useState<HudMode>(null);
     const [selected, setSelected] = useState<HudSelection>({});
@@ -79,5 +80,6 @@ export function useHudState(): {
         toggleMode,
         selectOption,
         selectCatalogItem,
+        setMode,
     };
 }

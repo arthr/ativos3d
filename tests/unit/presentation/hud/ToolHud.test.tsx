@@ -5,6 +5,7 @@ import { EventBus } from "@core/events/EventBus";
 import type { Modifiers } from "@core/types/input";
 
 let eventBus: EventBus;
+const toolManager = { setActive: vi.fn() };
 const baseModifiers: Modifiers = {
     shift: false,
     ctrl: false,
@@ -14,7 +15,7 @@ const baseModifiers: Modifiers = {
 };
 
 vi.mock("@presentation/hooks/useApplication", () => ({
-    useApplication: () => ({ eventBus }),
+    useApplication: () => ({ eventBus, toolManager }),
 }));
 
 describe("ToolHud atalhos de teclado", () => {
