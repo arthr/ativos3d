@@ -1,6 +1,7 @@
 import { useEffect, useRef, type JSX } from "react";
 import type { InputAction } from "@core/types/input";
 import type { HudMode } from "@core/types/ui/HudTypes";
+import type { ToolType } from "@core/types";
 import { InputMapper } from "@infrastructure/input";
 import { useApplication } from "@presentation/hooks/useApplication";
 import { useHudState } from "../hooks/useHudState";
@@ -12,7 +13,7 @@ import { CATALOG_ITEMS, MODE_OPTIONS } from "./constants/hudConstants";
  * Gerencia modos (view/buy/build) e ferramentas disponíveis
  */
 export function ToolHud(): JSX.Element {
-    const { eventBus } = useApplication();
+    const { eventBus, toolManager } = useApplication();
     const mapperRef = useRef<InputMapper>(null);
     const modeRef = useRef<HudMode>(null);
     const toggleRef = useRef<(m: Exclude<HudMode, null>) => void>(null);
@@ -26,6 +27,7 @@ export function ToolHud(): JSX.Element {
         toggleMode,
         selectOption,
         selectCatalogItem,
+        setMode,
     } = useHudState();
 
     toggleRef.current = toggleMode;
@@ -61,10 +63,12 @@ export function ToolHud(): JSX.Element {
             }
 
             if (action.startsWith("tool.") && modeRef.current) {
+                const tool = action.split(".")[1] ?? "";
                 selectRef.current?.(
                     modeRef.current as Exclude<HudMode, null>,
-                    action.split(".")[1] ?? "",
+                    tool,
                 );
+                toolManager.setActive(tool as ToolType);
             }
         });
 
@@ -79,14 +83,21 @@ export function ToolHud(): JSX.Element {
     }, [mode]);
 
     function handleToolSelect(key: string): void {
-        if (mode) {
-            selectOption(mode, key);
-        }
+        if (!mode) return;
+        selectOption(mode, key);
+        toolManager.setActive(key as ToolType);
     }
 
     function handleCatalogSelect(key: string): void {
         selectCatalogItem(key);
     }
+
+    useEffect(() => {
+        const off = eventBus.on("modeChanged", ({ mode: nextMode }) => {
+            setMode(nextMode);
+        });
+        return () => off();
+    }, [eventBus, setMode]);
 
     return (
         <div

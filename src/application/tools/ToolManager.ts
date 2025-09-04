@@ -30,6 +30,15 @@ export class ToolManager {
         this.eventBus.emit("toolActivated", { tool });
     }
 
+    /** Define a ferramenta ativa ou desativa quando null */
+    setActive(tool: ToolType | null): void {
+        if (!tool) {
+            this.deactivate();
+            return;
+        }
+        this.activate(tool);
+    }
+
     /** Desativa a ferramenta ativa */
     deactivate(): void {
         if (!this.activeTool) return;
