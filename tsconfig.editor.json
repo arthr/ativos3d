@@ -1,0 +1,29 @@
+// tsconfig.editor.json (use este no VS Code)
+{
+    "extends": "./tsconfig.json",
+    "include": ["src/**/*.ts", "src/**/*.tsx"],
+    "exclude": [
+        "node_modules",
+        "dist",
+        "build",
+        "coverage",
+        ".next",
+        ".nuxt",
+        ".turbo",
+        "out",
+        "storybook-static",
+        "cypress",
+        "playwright-report",
+        "tmp",
+        ".cache",
+        "**/*.stories.tsx",
+        "**/*.test.ts",
+        "**/*.test.tsx",
+        "**/*.spec.ts",
+        "**/*.spec.tsx"
+    ],
+    "compilerOptions": {
+        // limitar ambient types globais
+        "types": ["node", "vitest"] // adicione só o que realmente usa, ex: "jest" ou "vitest"
+    }
+}

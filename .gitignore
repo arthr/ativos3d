@@ -5,6 +5,8 @@ node_modules
 # Build outputs
 dist
 build
+!src/application/tools/build/
+!tests/unit/application/tools/build/
 
 # Environment
 *.env
