@@ -126,10 +126,10 @@ A renderização é controlada por React Three Fiber (R3F) com Drei. Cada parte 
 ### **Fase 5: Ferramentas e Estratégias**
 
 #### **5.1 Sistema de Ferramentas**
-- [ ] Implementar ToolManager
-- [ ] Implementar ToolStrategy Pattern
-- [ ] Implementar ToolState
-- [ ] Testes para ferramentas
+- [x] Implementar ToolManager
+- [x] Implementar ToolStrategy Pattern
+- [x] Implementar ToolState
+- [x] Testes para ferramentas
 
 #### **5.2 Ferramentas Básicas**
 - [ ] Implementar ViewTool
