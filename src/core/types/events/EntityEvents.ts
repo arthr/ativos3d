@@ -11,4 +11,6 @@ export interface EntityEvents {
     componentRemoved: { entityId: EntityId; componentType: string };
     componentUpdated: { entityId: EntityId; component: Component };
     entityUpdated: { entityId: EntityId };
+    entityMoved: { entityId: EntityId };
+    objectPlaced: { entityId: EntityId };
 }
