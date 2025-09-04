@@ -53,6 +53,7 @@ export const MODE_OPTIONS: Record<Exclude<HudMode, null>, HudOption[]> = {
 
 /**
  * Itens do catálogo para a ferramenta "place" do modo "buy"
+ * Mock de itens para testes
  */
 export const CATALOG_ITEMS: HudCatalogItem[] = [
     {
