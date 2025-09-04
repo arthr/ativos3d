@@ -26,6 +26,5 @@ export class FloorTool implements ToolStrategy {
         const entity = this.entityManager.createEntity();
         const floorComponent = FloorComponent.create({ position, size, material });
         this.entityManager.addComponent(entity.id, floorComponent);
-        this.eventBus.emit("floorCreated", { entityId: entity.id });
     }
 }

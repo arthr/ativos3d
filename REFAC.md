@@ -132,17 +132,17 @@ A renderização é controlada por React Three Fiber (R3F) com Drei. Cada parte 
 - [x] Testes para ferramentas
 
 #### **5.2 Ferramentas Básicas**
-- [ ] Implementar ViewTool
-- [ ] Implementar SelectTool
-- [ ] Implementar PlaceTool
-- [ ] Implementar MoveTool
-- [ ] Implementar DeleteTool
+- [x] Implementar ViewTool
+- [x] Implementar SelectTool
+- [x] Implementar PlaceTool
+- [x] Implementar MoveTool
+- [x] Implementar DeleteTool
 
 #### **5.3 Ferramentas de Construção**
-- [ ] Implementar WallTool
-- [ ] Implementar FloorTool
-- [ ] Implementar EyedropperTool
-- [ ] Testes para ferramentas
+- [x] Implementar WallTool
+- [x] Implementar FloorTool
+- [x] Implementar EyedropperTool
+- [x] Testes para ferramentas
 
 ### **Fase 6: Validação e Física**
 

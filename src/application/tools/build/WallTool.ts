@@ -28,6 +28,5 @@ export class WallTool implements ToolStrategy {
         const entity = this.entityManager.createEntity();
         const wall = WallComponent.create({ start, end, height, thickness });
         this.entityManager.addComponent(entity.id, wall);
-        this.eventBus.emit("wallCreated", { entityId: entity.id });
     }
 }

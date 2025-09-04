@@ -10,6 +10,4 @@ export interface ToolEvents {
     toolDeactivated: { tool: ToolType };
     modeChanged: { mode: ModeType };
     eyedropperSampled: { entityId: EntityId; component: Component };
-    floorCreated: { entityId: EntityId };
-    wallCreated: { entityId: EntityId };
 }
