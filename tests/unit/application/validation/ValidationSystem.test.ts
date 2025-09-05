@@ -1,8 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { ValidationSystem, type Validator } from "@application/validation/ValidationSystem";
+import { ValidationSystem } from "@application/validation/ValidationSystem";
 import { EventBus } from "@core/events/EventBus";
 import { Vec3Factory } from "@core/geometry";
 import { Entity } from "@domain/entities";
+import type { Validator, ValidationContext } from "@core/types";
 
 /**
  * Testes para ValidationSystem
@@ -24,11 +25,16 @@ describe("ValidationSystem", () => {
             errors: [],
         }));
 
-        system.registerValidator(first);
-        system.registerValidator(second);
-        system.registerValidator(third);
+        system.addValidator(first);
+        system.addValidator(second);
+        system.addValidator(third);
 
-        const result = system.validate(entity, Vec3Factory.create(0, 0, 0));
+        const context: ValidationContext = {
+            entityId: entity.id,
+            position: Vec3Factory.create(0, 0, 0),
+            entity,
+        };
+        const result = system.validate(context);
 
         expect(result.isValid).toBe(false);
         expect(result.errors).toEqual(["e2"]);
@@ -42,7 +48,7 @@ describe("ValidationSystem", () => {
         const system = ValidationSystem.getInstance(eventBus, () => entity);
 
         const validator: Validator = () => ({ isValid: true, errors: [], warnings: [] });
-        system.registerValidator(validator);
+        system.addValidator(validator);
 
         const listener = vi.fn();
         eventBus.on("validationCompleted", listener);

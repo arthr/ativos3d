@@ -1,19 +1,20 @@
-import type { Entity, EntityId, ValidationResult } from "@core/types";
-import type { Vec3 } from "@core/geometry";
+import type {
+    Entity,
+    EntityId,
+    ValidationResult,
+    ValidationContext,
+    Validator,
+    ValidationPipeline,
+} from "@core/types";
 import type { EventBus } from "@core/events/EventBus";
 import type { ValidationEvents } from "@core/types/events/ValidationEvents";
 
 /**
- * Função que valida uma entidade em uma posição
- */
-export type Validator = (entity: Entity, position: Vec3) => ValidationResult;
-
-/**
  * Sistema responsável por coordenar a validação de entidades
  */
-export class ValidationSystem {
+export class ValidationSystem implements ValidationPipeline {
     private static instance: ValidationSystem | null = null;
-    private readonly validators: Validator[] = [];
+    private validators: Validator[] = [];
     private readonly eventBus: EventBus;
     private readonly getEntity: (id: EntityId) => Entity | null;
 
@@ -45,21 +46,28 @@ export class ValidationSystem {
     }
 
     /**
-     * Registra um novo validador
+     * Adiciona um novo validador
      */
-    public registerValidator(validator: Validator): void {
+    public addValidator(validator: Validator): void {
         this.validators.push(validator);
+    }
+
+    /**
+     * Remove um validador
+     */
+    public removeValidator(validator: Validator): void {
+        this.validators = this.validators.filter((v) => v !== validator);
     }
 
     /**
      * Executa os validadores sequencialmente e para ao encontrar um erro
      */
-    public validate(entity: Entity, position: Vec3): ValidationResult {
+    public validate(context: ValidationContext): ValidationResult {
         const errors: string[] = [];
         const warnings: string[] = [];
 
         for (const validator of this.validators) {
-            const result = validator(entity, position);
+            const result = validator(context);
             if (result.warnings) warnings.push(...result.warnings);
             if (!result.isValid) {
                 errors.push(...result.errors);
@@ -89,7 +97,12 @@ export class ValidationSystem {
             return;
         }
 
-        const result = this.validate(entity, position);
+        const context: ValidationContext = {
+            entityId,
+            position,
+            entity,
+        };
+        const result = this.validate(context);
         this.eventBus.emit("validationCompleted", {
             entityId,
             position,

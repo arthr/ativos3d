@@ -12,3 +12,4 @@ export * from "./scene";
 export * from "./render";
 export * from "./snap";
 export * from "./picking";
+export * from "./validation";
