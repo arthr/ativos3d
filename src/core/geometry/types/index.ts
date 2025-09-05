@@ -9,3 +9,4 @@ export * from "./Vec3";
 export * from "./AABB";
 export * from "./Transform";
 export * from "./Collision";
+export * from "./Footprint";
