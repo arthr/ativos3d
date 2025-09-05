@@ -79,4 +79,32 @@ describe("ToolManager", () => {
 
         expect(strategy.handleInput).toHaveBeenCalledWith(input);
     });
+
+    it("não reativa ferramenta já ativa", () => {
+        const eventBus = new EventBus();
+        const manager = new ToolManager(eventBus);
+        const strategy: ToolStrategy = {
+            activate: vi.fn(),
+            deactivate: vi.fn(),
+            handleInput: vi.fn(),
+        };
+        const emit = vi.spyOn(eventBus, "emit");
+        manager.register("select", strategy);
+
+        manager.activate("select");
+        manager.activate("select");
+
+        expect(strategy.activate).toHaveBeenCalledTimes(1);
+        expect(emit).toHaveBeenCalledTimes(1);
+    });
+
+    it("não emite evento ao desativar sem ferramenta ativa", () => {
+        const eventBus = new EventBus();
+        const manager = new ToolManager(eventBus);
+        const emit = vi.spyOn(eventBus, "emit");
+
+        manager.deactivate();
+
+        expect(emit).not.toHaveBeenCalled();
+    });
 });
