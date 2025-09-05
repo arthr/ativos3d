@@ -10,6 +10,7 @@ import { CameraSystem, CameraController, RenderLoop } from "@infrastructure/rend
 import { InputManager, InputMapper } from "@infrastructure/input";
 import { ToolManager } from "@application/tools/ToolManager";
 import { registerBasicTools } from "@application/tools/basic";
+import { ValidationSystem } from "@application/validation/ValidationSystem";
 
 /**
  * Classe principal da aplicação
@@ -70,6 +71,10 @@ export class Application {
         const inputMapper = new InputMapper({ eventBus });
         const toolManager = new ToolManager(eventBus);
         registerBasicTools(toolManager, eventBus);
+        const validationSystem = ValidationSystem.getInstance(
+            eventBus,
+            (id) => entityManager.getEntity(id) ?? null,
+        );
 
         this.container.set("eventBus", eventBus);
         this.container.set("commandStack", commandStack);
@@ -80,6 +85,7 @@ export class Application {
         this.container.set("inputManager", inputManager);
         this.container.set("inputMapper", inputMapper);
         this.container.set("toolManager", toolManager);
+        this.container.set("validationSystem", validationSystem);
 
         return {
             eventBus,
@@ -91,6 +97,7 @@ export class Application {
             inputManager,
             inputMapper,
             toolManager,
+            validationSystem,
         } as DependencyMap;
     }
 
@@ -120,6 +127,7 @@ type DependencyMap = {
     inputManager: InputManager;
     inputMapper: InputMapper;
     toolManager: ToolManager;
+    validationSystem: ValidationSystem;
 };
 
 /**
