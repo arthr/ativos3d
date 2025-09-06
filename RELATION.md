@@ -2,10 +2,10 @@
 
 ## Visão Geral
 
-* **Flowstates** (`docs/resources-flowstate/*.md`) → descrevem **comportamento/estado** das ferramentas
-* **RESOURCES_MATRIX.md** → **contrato testável** com critérios de aceitação
+* **Flowstates** (`docs/requirements/resources-flowstate/*.md`) → descrevem **comportamento/estado** das ferramentas
+* **RESOURCES_MATRIX.md** (`docs/requirements/`) → **contrato testável** com critérios de aceitação
 * **README.md** (resources-flowstate) → **tabela de cobertura** (Req → Flows)
-* **CHECKLIST.md** → **escopo** (o "o quê")
+* **CHECKLIST.md** (`docs/requirements/`) → **escopo** (o "o quê")
 
 ## Status Atual
 
@@ -59,8 +59,8 @@ status: draft
 Em caso de conflito entre documentações:
 
 1. **/.cursor/.cursorrules** (regras do sistema)
-2. **RESOURCES_MATRIX.md** (contrato testável)
+2. **docs/requirements/RESOURCES_MATRIX.md** (contrato testável)
 3. **README.md** (tabela de cobertura)
-4. **CONTEXT.md** (contexto do projeto)
-5. **REFAC.md** (plano de refatoração)
+4. **docs/architecture/CONTEXT.md** (contexto do projeto)
+5. **docs/architecture/REFAC.md** (plano de refatoração)
 6. **Flowstates individuais** (implementação específica)
