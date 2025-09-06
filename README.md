@@ -109,7 +109,7 @@ src/
 - Sistema de orçamento
 - Persistência e templates
 
-> 📋 **Matriz Completa**: Consulte [RESOURCES_MATRIX.md](./RESOURCES_MATRIX.md) para todos os requisitos e status
+> 📋 **Matriz Completa**: Consulte [RESOURCES_MATRIX.md](docs/requirements/RESOURCES_MATRIX.md) para todos os requisitos e status
 
 ## 🛠️ Desenvolvimento
 
@@ -304,7 +304,7 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para de
 
 - 🧭 **[AGENTS.md](./AGENTS.md)** - Bússola para desenvolvimento
 - 🗺️ **[REPOMAP.md](./REPOMAP.md)** - Mapa completo do código
-- 📊 **[RESOURCES_MATRIX.md](./RESOURCES_MATRIX.md)** - Matriz de requisitos
+- 📊 **[RESOURCES_MATRIX.md](docs/requirements/RESOURCES_MATRIX.md)** - Matriz de requisitos
 - 🔗 **[RELATION.md](./RELATION.md)** - Relações entre documentações
 - 🏗️ **[docs/architecture/](./docs/architecture/)** - Documentação de arquitetura
 - 📋 **[docs/requirements/](./docs/requirements/)** - Requisitos e flowstates

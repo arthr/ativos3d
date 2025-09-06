@@ -64,7 +64,7 @@ Documentação do sistema antigo preservada para referência durante a migraçã
 |-----------|--------|----------|-------------|
 | **Architecture** | 🟢 Completa | 3 | Recente |
 | **Requirements** | 🟢 Completa | 22+ | Recente |
-| **Development** | 🟡 Parcial | 5 | Média |
+| **Development** | 🟡 Parcial | 3 | Média |
 | **Legacy** | 🔴 Arquivada | 4 | Antiga |
 
 ---
