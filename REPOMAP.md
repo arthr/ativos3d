@@ -156,9 +156,7 @@ docs/
 ├── development/           # 🟡 Guias de desenvolvimento
 │   ├── boas_praticas_3d.md   # Boas práticas 3D
 │   ├── build_mechanics.md    # Mecânicas de construção
-│   ├── validation_pipeline.md # Pipeline de validação
-│   ├── roadmap_melhorias.md  # Roadmap
-│   └── small_tasks.md        # Tarefas pequenas
+│   └── validation_pipeline.md # Pipeline de validação
 ├── legacy/                # 🔴 Documentação legada
 │   ├── LEGACY_AGENTS.md      # Agents antigo
 │   ├── data_models.md        # Modelos de dados antigos

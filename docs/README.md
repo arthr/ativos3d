@@ -24,8 +24,6 @@ Guias práticos para desenvolvimento, boas práticas e roadmaps.
 - **[boas_praticas_3d.md](./development/boas_praticas_3d.md)** - Boas práticas para desenvolvimento 3D
 - **[build_mechanics.md](./development/build_mechanics.md)** - Mecânicas de construção e ferramentas
 - **[validation_pipeline.md](./development/validation_pipeline.md)** - Pipeline de validação e testes
-- **[roadmap_melhorias.md](./development/roadmap_melhorias.md)** - Roadmap de melhorias futuras
-- **[small_tasks.md](./development/small_tasks.md)** - Lista de tarefas pequenas
 
 ### 🔄 **Legacy** - Documentação Legada
 Documentação do sistema antigo preservada para referência durante a migração.
