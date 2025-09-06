@@ -1,7 +1,3 @@
-/**
- * TODO: Refatorar para estar de acordo com o Roadmap de Refatoração do projeto.
- * Arquivo `REFAC.md` para mais detalhes.
- */
 import type { CameraDimensions } from "@core/types/camera";
 import { EventBus } from "@core/events/EventBus";
 import { CommandStack } from "@core/commands";
@@ -11,6 +7,8 @@ import { InputManager, InputMapper } from "@infrastructure/input";
 import { ToolManager } from "@application/tools/ToolManager";
 import { registerBasicTools } from "@application/tools/basic";
 import { ValidationSystem } from "@application/validation/ValidationSystem";
+import { createPlacementValidator } from "@application/validation/validators/PlacementValidator";
+import { TransformComponent } from "@domain/components/TransformComponent";
 
 /**
  * Classe principal da aplicação
@@ -75,6 +73,17 @@ export class Application {
             eventBus,
             (id) => entityManager.getEntity(id) ?? null,
         );
+        const placementValidator = createPlacementValidator({
+            getLot: () => ({ width: 100, depth: 100 }), // TODO: substituir quando houver informação do lote real
+            getExistingEntities: () => entityManager.getAllEntities(),
+            getFootprint: () => null, // TODO: Implementar recuperação de footprint
+            getTransform: (entity) => {
+                const transform = entity.getComponent<TransformComponent>("TransformComponent");
+                if (!transform) return null;
+                return { position: transform.position, rotation: transform.rotation };
+            },
+        });
+        validationSystem.addValidator(placementValidator);
 
         this.container.set("eventBus", eventBus);
         this.container.set("commandStack", commandStack);
