@@ -1,11 +1,27 @@
 import type { JSX } from "react";
 import { Canvas } from "@react-three/fiber";
-import { RoundedBox, Edges, ContactShadows, OrbitControls, Box } from "@react-three/drei";
+import { ContactShadows, OrbitControls, Grid } from "@react-three/drei";
+import SofaModel from "@presentation/models/SofaModel";
+import CoffeeTableModel from "@presentation/models/CoffeTableModel";
+import RackWithTVModel from "@presentation/models/RackWithTVModel";
 
 export default function Object3DTest(): JSX.Element {
+    const gridSize: [number, number] = [40, 40];
+    const gridConfig = {
+        cellSize: 0.5,
+        cellThickness: 1,
+        cellColor: "#6f6f6f",
+        sectionSize: 3,
+        sectionThickness: 1.2,
+        sectionColor: "#ddd",
+        fadeDistance: 30,
+        fadeStrength: 1,
+        followCamera: false,
+        infiniteGrid: false,
+    };
     return (
         <Canvas
-            shadows
+            shadows="soft"
             camera={{ position: [6, 6, 8], fov: 45 }}
             style={{ width: "100vw", height: "100vh" }}
         >
@@ -16,77 +32,23 @@ export default function Object3DTest(): JSX.Element {
             {/* Piso */}
             <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
                 <planeGeometry args={[40, 40]} />
-                <meshStandardMaterial color="honeydew" flatShading />
+                <meshToonMaterial color="honeydew" />
             </mesh>
 
-            {/* Sofá */}
-            <group position={[-2, 0.6, 2]}>
-                <RoundedBox args={[4.2, 1.2, 1.8]} radius={0.08} castShadow>
-                    <meshStandardMaterial color="white" flatShading />
-                </RoundedBox>
-                <group position={[0, 0.2, 0]}>
-                    {[-1, 0, 1].map((i) => (
-                        <RoundedBox
-                            key={i}
-                            args={[1.2, 0.5, 1.5]}
-                            radius={0.06}
-                            position={[i * 1.35, 0.4, 0]}
-                            castShadow
-                        >
-                            <meshToonMaterial color="skyblue" />
-                        </RoundedBox>
-                    ))}
-                </group>
-                <Edges />
-            </group>
-
-            {/* Mesa */}
-            <RoundedBox position={[0, 0.35, 0]} args={[1.8, 0.4, 1]} radius={0.06} castShadow>
-                <meshStandardMaterial color="white" flatShading />
-            </RoundedBox>
-
-            {/* Rack + TV */}
-            <group position={[3.5, 0.5, -2]}>
-                <RoundedBox args={[2.6, 0.8, 0.6]} radius={0.06} castShadow>
-                    <meshStandardMaterial color="white" flatShading />
-                </RoundedBox>
-                {/* Pés do rack */}
-                <group position={[0, -0.5, 0]}>
-                    {[-1, 0, 1].map((i) => (
-                        <Box key={i} position={[i * 1, 0.1, 0]} args={[0.03, 0.2, 0.5]} castShadow>
-                            <meshStandardMaterial color="sienna" flatShading />
-                        </Box>
-                    ))}
-                </group>
-                {/* TV */}
-                <mesh position={[0, 1, 0]} castShadow>
-                    <boxGeometry args={[2, 1.2, 0.06]} />
-                    <meshToonMaterial color="black" />
-                    {/* TV Screen */}
-                    <group>
-                        <Box position={[0, 0, 0.03]} args={[1.9, 1.1, 0.01]}>
-                            <meshStandardMaterial color="gray" flatShading />
-                        </Box>
-                    </group>
-                    {/* Power LED Indicator at bottom right */}
-                    <group>
-                        {/* Green LED */}
-                        <Box position={[0.97, -0.57, 0.03]} args={[0.03, 0.03, 0.01]}>
-                            <meshStandardMaterial color="green" flatShading />
-                        </Box>
-                    </group>
-                    <Edges color="#666" />
-                </mesh>
-            </group>
+            {/* POSIÇÕES PADRÃO (pivô no piso) */}
+            <SofaModel position={[0, 0, 3]} />
+            <CoffeeTableModel position={[0, 0, 0]} />
+            <RackWithTVModel position={[0, 0, -2]} />
 
             <ContactShadows
-                position={[0, 0.1, 0]}
-                opacity={0.35}
+                position={[0, 0.01, 0]}
+                opacity={0.25}
                 near={-0.1}
                 scale={50}
                 resolution={1024}
                 blur={0.025}
             />
+            <Grid position={[0, 0.01, 0]} args={gridSize} {...gridConfig} />
             <OrbitControls makeDefault screenSpacePanning={false} />
         </Canvas>
     );
