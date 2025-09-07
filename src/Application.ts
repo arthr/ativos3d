@@ -1,4 +1,5 @@
 import type { CameraDimensions } from "@core/types/camera";
+import type { SpatialIndex } from "@core/spatial";
 import { EventBus } from "@core/events/EventBus";
 import { CommandStack } from "@core/commands";
 import { EntityManager } from "@domain/entities";
@@ -8,6 +9,7 @@ import { ToolManager } from "@application/tools/ToolManager";
 import { registerBasicTools } from "@application/tools/basic";
 import { ValidationSystem } from "@application/validation/ValidationSystem";
 import { createPlacementValidator } from "@application/validation/validators/PlacementValidator";
+import { createSpatialIndex } from "@core/spatial";
 import { TransformComponent } from "@domain/components/TransformComponent";
 
 /**
@@ -73,6 +75,7 @@ export class Application {
             eventBus,
             (id) => entityManager.getEntity(id) ?? null,
         );
+        const spatialIndex = createSpatialIndex();
         const placementValidator = createPlacementValidator({
             getLot: () => ({ width: 100, depth: 100 }), // TODO: substituir quando houver informação do lote real
             getExistingEntities: () => entityManager.getAllEntities(),
@@ -82,6 +85,7 @@ export class Application {
                 if (!transform) return null;
                 return { position: transform.position, rotation: transform.rotation };
             },
+            spatialIndex,
         });
         validationSystem.addValidator(placementValidator);
 
@@ -95,6 +99,7 @@ export class Application {
         this.container.set("inputMapper", inputMapper);
         this.container.set("toolManager", toolManager);
         this.container.set("validationSystem", validationSystem);
+        this.container.set("spatialIndex", spatialIndex);
 
         return {
             eventBus,
@@ -107,6 +112,7 @@ export class Application {
             inputMapper,
             toolManager,
             validationSystem,
+            spatialIndex,
         } as DependencyMap;
     }
 
@@ -137,6 +143,7 @@ type DependencyMap = {
     inputMapper: InputMapper;
     toolManager: ToolManager;
     validationSystem: ValidationSystem;
+    spatialIndex: SpatialIndex;
 };
 
 /**
