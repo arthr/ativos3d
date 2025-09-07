@@ -15,30 +15,32 @@ export interface ObjectsCollisionValidatorDependencies {
 /**
  * Valida colisão AABB  entre a entidade e outras já existentes
  */
-export function creabObjectsCollisionValidator(deps: ObjectsCollisionValidatorDependencies): Validator {
+export function createObjectsCollisionValidator(
+    deps: ObjectsCollisionValidatorDependencies,
+): Validator {
     return ({ entity, position, rotation, entityId }: ValidationContext): ValidationResult => {
-        if(!entity) return { isValid: false, errors: ["Entidade não encontrada"] };
+        if (!entity) return { isValid: false, errors: ["Entidade não encontrada"] };
 
         const footprint = deps.getFootprint(entity);
-        if(!footprint) return { isValid: true, errors: [] };
+        if (!footprint) return { isValid: true, errors: [] };
 
         const rot: Vec3 = rotation ?? Vec3Factory.create(0, 0, 0);
         const rotated = FootprintOperations.rotateFootprint3D(footprint, rot);
         const aabb = FootprintOperations.footprintAABB3D(rotated, position);
 
         for (const other of deps.getExistingEntities()) {
-            if(other.id === entityId) continue;
+            if (other.id === entityId) continue;
             const otherFp = deps.getFootprint(other);
-            if(!otherFp) continue;
+            if (!otherFp) continue;
             const otherTr = deps.getTransform(other);
-            if(!otherTr) continue;
+            if (!otherTr) continue;
             const otherRotated = FootprintOperations.rotateFootprint3D(otherFp, otherTr.rotation);
             const otherAabb = FootprintOperations.footprintAABB3D(otherRotated, otherTr.position);
-            if(AABBOperations.intersects(aabb, otherAabb)) {
+            if (AABBOperations.intersects(aabb, otherAabb)) {
                 return { isValid: false, errors: ["Colisão com outra entidade"] };
             }
         }
 
         return { isValid: true, errors: [] };
-    }
+    };
 }
