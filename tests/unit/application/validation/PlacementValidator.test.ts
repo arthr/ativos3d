@@ -3,6 +3,7 @@ import { createPlacementValidator } from "@application/validation/validators/Pla
 import { Entity } from "@domain/entities";
 import { Vec3Factory } from "@core/geometry";
 import type { Footprint3D, Vec3 } from "@core/geometry";
+import { createSpatialIndex } from "@core/spatial";
 
 /**
  * Testes para PlacementValidator
@@ -15,12 +16,15 @@ describe("PlacementValidator", () => {
         const footprints = new Map<string, Footprint3D>();
         const transforms = new Map<string, { position: Vec3; rotation: Vec3 }>();
         const entities: Entity[] = [];
+        const spatialIndex = createSpatialIndex();
 
         return {
             getLot: (): { width: number; depth: number } => lot,
             getFootprint: (e: Entity): Footprint3D | null => footprints.get(e.id) ?? null,
-            getTransform: (e: Entity): { position: Vec3; rotation: Vec3 } | null => transforms.get(e.id) ?? null,
+            getTransform: (e: Entity): { position: Vec3; rotation: Vec3 } | null =>
+                transforms.get(e.id) ?? null,
             getExistingEntities: (): Entity[] => entities,
+            spatialIndex,
             footprints,
             transforms,
             entities,
@@ -55,7 +59,10 @@ describe("PlacementValidator", () => {
         const other = Entity.create("e2");
         deps.footprints.set(entity.id, footprint);
         deps.footprints.set(other.id, footprint);
-        deps.transforms.set(other.id, { position: Vec3Factory.create(1, 0, 1), rotation: Vec3Factory.create(0, 0, 0) });
+        deps.transforms.set(other.id, {
+            position: Vec3Factory.create(1, 0, 1),
+            rotation: Vec3Factory.create(0, 0, 0),
+        });
         deps.entities.push(other);
         const validator = createPlacementValidator(deps);
         const result = validator({
@@ -74,7 +81,10 @@ describe("PlacementValidator", () => {
         const other = Entity.create("e2");
         deps.footprints.set(entity.id, footprint);
         deps.footprints.set(other.id, footprint);
-        deps.transforms.set(other.id, { position: Vec3Factory.create(5, 0, 5), rotation: Vec3Factory.create(0, 0, 0) });
+        deps.transforms.set(other.id, {
+            position: Vec3Factory.create(5, 0, 5),
+            rotation: Vec3Factory.create(0, 0, 0),
+        });
         deps.entities.push(other);
         const validator = createPlacementValidator(deps);
         const result = validator({

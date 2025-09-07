@@ -3,6 +3,7 @@ import { createObjectsCollisionValidator } from "@application/validation/validat
 import { Entity } from "@domain/entities";
 import { Vec3Factory } from "@core/geometry";
 import type { Footprint3D, Vec3 } from "@core/geometry";
+import { createSpatialIndex } from "@core/spatial";
 
 /**
  * Testes para ObjectsCollisionValidator
@@ -14,12 +15,14 @@ describe("ObjectsCollisionValidator", () => {
         const footprints = new Map<string, Footprint3D>();
         const transforms = new Map<string, { position: Vec3; rotation: Vec3 }>();
         const entities: Entity[] = [];
+        const spatialIndex = createSpatialIndex();
 
         return {
             getExistingEntities: (): Entity[] => entities,
             getFootprint: (e: Entity): Footprint3D | null => footprints.get(e.id) ?? null,
             getTransform: (e: Entity): { position: Vec3; rotation: Vec3 } | null =>
                 transforms.get(e.id) ?? null,
+            spatialIndex,
             footprints,
             transforms,
             entities,
