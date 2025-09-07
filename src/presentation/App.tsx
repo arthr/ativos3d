@@ -13,10 +13,14 @@ import { GizmoLayer } from "@presentation/layers/GizmoLayer";
 import { DeveloperPanel } from "@/presentation/panels/developer/DeveloperPanel";
 import { useApplication } from "@presentation/hooks/useApplication";
 
+// Componente apenas para testar estilos 3D para os objetos (Não é parte do MVP)
+import Object3DTest from "./Object3DTest";
+
 /**
  * Componente raiz da interface do Ativos3D.
  */
 export function App(): JSX.Element {
+    const showObject3DTest = new URLSearchParams(window.location.search).has("test3d");
     const showDebug = new URLSearchParams(window.location.search).has("debug");
     const { eventBus } = useApplication();
     const initialGizmo = useMemo(() => {
@@ -73,20 +77,24 @@ export function App(): JSX.Element {
     }, [eventBus]);
     return (
         <>
-            <Canvas className="block" style={{ width: "100vw", height: "100vh" }}>
-                <RenderLoopProvider />
-                <SceneBridge />
-                <CameraLayer />
-                <ControlsLayer />
-                <GizmoLayer show={showGizmo} />
-                <GridLayer
-                    config={{ followCamera: gridFollowCamera, infiniteGrid: gridInfiniteGrid }}
-                />
-                <ambientLight />
-                <FloorLayer />
-                <WallsLayer />
-                <ObjectsLayer />
-            </Canvas>
+            {showObject3DTest ? (
+                <Object3DTest />
+            ) : (
+                <Canvas className="block" style={{ width: "100vw", height: "100vh" }}>
+                    <RenderLoopProvider />
+                    <SceneBridge />
+                    <CameraLayer />
+                    <ControlsLayer />
+                    <GizmoLayer show={showGizmo} />
+                    <GridLayer
+                        config={{ followCamera: gridFollowCamera, infiniteGrid: gridInfiniteGrid }}
+                    />
+                    <ambientLight />
+                    <FloorLayer />
+                    <WallsLayer />
+                    <ObjectsLayer />
+                </Canvas>
+            )}
             <HudLayer />
             {showDebug && <DeveloperPanel />}
         </>
