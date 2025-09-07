@@ -148,9 +148,11 @@ A renderização é controlada por React Three Fiber (R3F) com Drei. Cada parte 
 
 #### **6.1 Sistema de Validação**
 - [x] Implementar ValidationSystem
-- [ ] Implementar PlacementValidator
-- [ ] Implementar CollisionValidator
-- [ ] Testes para validação
+- [x] Implementar PlacementValidator
+- [x] Implementar CollisionValidator
+- [x] Testes para validação
+
+> Nota: ainda são necessárias otimizações e possíveis validadores futuros para cenários avançados.
 
 #### **6.2 Sistema de Física**
 - [ ] Implementar PhysicsSystem
