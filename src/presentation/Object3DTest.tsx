@@ -4,6 +4,8 @@ import { ContactShadows, OrbitControls, Grid } from "@react-three/drei";
 import SofaModel from "@presentation/models/SofaModel";
 import CoffeeTableModel from "@presentation/models/CoffeTableModel";
 import RackWithTVModel from "@presentation/models/RackWithTVModel";
+import OfficeDeskModel from "@presentation/models/OfficeDeskModel";
+import OfficeChairModel from "@presentation/models/OfficeChairModel";
 
 export default function Object3DTest(): JSX.Element {
     const gridSize: [number, number] = [40, 40];
@@ -36,9 +38,11 @@ export default function Object3DTest(): JSX.Element {
             </mesh>
 
             {/* POSIÇÕES PADRÃO (pivô no piso) */}
-            <SofaModel position={[0, 0, 3]} />
+            <SofaModel position={[0, 0, 3]} scale={[0.6, 0.6, 0.6]} />
             <CoffeeTableModel position={[0, 0, 0]} />
             <RackWithTVModel position={[0, 0, -2]} />
+            <OfficeDeskModel position={[0, 0, -4]} />
+            <OfficeChairModel position={[0, 0, -6]} />
 
             <ContactShadows
                 position={[0, 0.01, 0]}
