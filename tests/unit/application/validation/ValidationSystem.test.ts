@@ -54,13 +54,39 @@ describe("ValidationSystem", () => {
         eventBus.on("validationCompleted", listener);
 
         const position = Vec3Factory.create(1, 2, 3);
-        eventBus.emit("validationRequested", { entityId: entity.id, position });
+        const rotation = Vec3Factory.create(0, 0, 0);
+        eventBus.emit("validationRequested", { entityId: entity.id, position, rotation });
 
         expect(listener).toHaveBeenCalledWith({
             entityId: entity.id,
             position,
             valid: true,
             errors: [],
+        });
+    });
+
+    it("propaga rotação diferente de zero para os validadores", () => {
+        const eventBus = new EventBus();
+        const entity = Entity.create("e1");
+        const system = ValidationSystem.getInstance(eventBus, () => entity);
+
+        const validator = vi.fn<ReturnType<Validator>, Parameters<Validator>>(() => ({
+            isValid: true,
+            errors: [],
+            warnings: [],
+        }));
+        system.addValidator(validator);
+
+        const position = Vec3Factory.create(1, 2, 3);
+        const rotation = Vec3Factory.create(0, 90, 0);
+
+        eventBus.emit("validationRequested", { entityId: entity.id, position, rotation });
+
+        expect(validator).toHaveBeenCalledWith({
+            entityId: entity.id,
+            position,
+            rotation,
+            entity,
         });
     });
 });

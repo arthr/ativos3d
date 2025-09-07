@@ -8,6 +8,7 @@ export interface ValidationEvents {
     validationRequested: {
         entityId: EntityId;
         position: Vec3;
+        rotation: Vec3;
     };
 
     validationCompleted: {

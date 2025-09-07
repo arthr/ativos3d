@@ -85,6 +85,7 @@ export class ValidationSystem implements ValidationPipeline {
     private handleValidationRequested = ({
         entityId,
         position,
+        rotation,
     }: ValidationEvents["validationRequested"]): void => {
         const entity = this.getEntity(entityId);
         if (!entity) {
@@ -100,6 +101,7 @@ export class ValidationSystem implements ValidationPipeline {
         const context: ValidationContext = {
             entityId,
             position,
+            rotation,
             entity,
         };
         const result = this.validate(context);
