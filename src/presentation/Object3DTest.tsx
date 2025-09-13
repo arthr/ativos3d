@@ -6,6 +6,7 @@ import CoffeeTableModel from "@presentation/models/CoffeTableModel";
 import RackWithTVModel from "@presentation/models/RackWithTVModel";
 import OfficeDeskModel from "@presentation/models/OfficeDeskModel";
 import OfficeChairModel from "@presentation/models/OfficeChairModel";
+import OfficeDeskWithChairModel from "@presentation/models/OfficeDeskWithChairModel";
 
 export default function Object3DTest(): JSX.Element {
     const gridSize: [number, number] = [40, 40];
@@ -20,6 +21,12 @@ export default function Object3DTest(): JSX.Element {
         fadeStrength: 1,
         followCamera: false,
         infiniteGrid: false,
+    };
+    const rotationDegrees = {
+        east: 0,
+        west: Math.PI,
+        north: Math.PI / 2,
+        south: -Math.PI / 2,
     };
     return (
         <Canvas
@@ -38,11 +45,17 @@ export default function Object3DTest(): JSX.Element {
             </mesh>
 
             {/* POSIÇÕES PADRÃO (pivô no piso) */}
-            <SofaModel position={[0, 0, 3]} scale={[0.6, 0.6, 0.6]} />
-            <CoffeeTableModel position={[0, 0, 0]} />
-            <RackWithTVModel position={[0, 0, -2]} />
-            <OfficeDeskModel position={[0, 0, -4]} />
-            <OfficeChairModel position={[0, 0, -6]} />
+            <SofaModel position={[3, 0, 0]} rotation={[0, rotationDegrees.south, 0]} />
+            <CoffeeTableModel position={[0, 0, 0]} rotation={[0, rotationDegrees.south, 0]} />
+
+            <RackWithTVModel position={[-3, 0, 0]} rotation={[0, rotationDegrees.north, 0]} />
+
+            <OfficeDeskModel position={[0, 0, -4]} rotation={[0, rotationDegrees.west, 0]} />
+            <OfficeChairModel position={[0, 0, -3]} rotation={[0, rotationDegrees.west, 0]} />
+            <OfficeDeskWithChairModel
+                position={[3, 0, -4]}
+                rotation={[0, rotationDegrees.west, 0]}
+            />
 
             <ContactShadows
                 position={[0, 0.01, 0]}

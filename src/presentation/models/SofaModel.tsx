@@ -5,17 +5,17 @@ import { aabbFromDims, cornerPositions } from "./_utils";
 
 export type ModelProps = JSX.IntrinsicElements["group"];
 
-export const SOFA_DIMS = { x: 4.2, y: 0.7, z: 1.8 }; // largura, altura, profundidade
+export const SOFA_DIMS = { x: 2.52, y: 0.42, z: 1.08 }; // largura, altura, profundidade (SofaModel * 0.6)
 export const SOFA_AABB = aabbFromDims(SOFA_DIMS.x, SOFA_DIMS.y, SOFA_DIMS.z);
 
 export default function SofaModel(props: ModelProps): JSX.Element {
     const { x, y, z } = SOFA_DIMS;
 
     // ---- Config dos pés ----
-    const footRadius = 0.06;
-    const footHeight = 0.15;
-    const insetX = 0.12; // margem em X
-    const insetZ = 0.1; // margem em Z
+    const footRadius = 0.036; // 0.06 * 0.6
+    const footHeight = 0.09; // 0.15 * 0.6
+    const insetX = 0.072; // 0.12 * 0.6 - margem em X
+    const insetZ = 0.06; // 0.1 * 0.6 - margem em Z
 
     // Posições dos cantos (com inset). Altura = metade do pé (apoiado no piso)
     const footPositions = cornerPositions(x, z, insetX, insetZ, footHeight / 2);
@@ -33,9 +33,16 @@ export default function SofaModel(props: ModelProps): JSX.Element {
             </Box>
 
             {/* Assentos */}
-            <group position={[0, 0.05 + bodyY, 0]}>
+            <group position={[0, 0.03 + bodyY, 0]}>
+                {" "}
+                {/* 0.05 * 0.6 = 0.03 */}
                 {[-1, 0, 1].map((i) => (
-                    <Box key={i} args={[1.2, 0.2, 1.5]} position={[i * 1.35, 0.4, 0]} castShadow>
+                    <Box
+                        key={i}
+                        args={[0.72, 0.12, 0.9]} // [1.2 * 0.6, 0.2 * 0.6, 1.5 * 0.6]
+                        position={[i * 0.81, 0.24, 0]} // [1.35 * 0.6, 0.4 * 0.6, 0]
+                        castShadow
+                    >
                         {SkyblueToon}
                         <Edges color={SkyblueEdgeColor} opacity={1} />
                     </Box>

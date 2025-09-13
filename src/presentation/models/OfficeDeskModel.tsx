@@ -6,7 +6,7 @@ import { WhiteToon, EdgeColor } from "./_materials";
 export type ModelProps = JSX.IntrinsicElements["group"];
 
 // Dimensões externas (L x H x P)
-export const DESK_DIMS = { x: 2.0, y: 0.75, z: 0.8 };
+export const DESK_DIMS = { x: 2.5, y: 1.2, z: 1 };
 export const DESK_AABB = aabbFromDims(DESK_DIMS.x, DESK_DIMS.y, DESK_DIMS.z);
 
 type SideSpec = {
