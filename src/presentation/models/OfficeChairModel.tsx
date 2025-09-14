@@ -1,5 +1,5 @@
 import type { JSX } from "react";
-import { Box, Cylinder, Edges, RoundedBox, Tube } from "@react-three/drei";
+import { Box, Cylinder, Edges, Tube } from "@react-three/drei";
 import { aabbFromDims } from "./_utils";
 import { EdgeColor } from "./_materials";
 import { CatmullRomCurve3, Vector3 } from "three";
@@ -43,17 +43,17 @@ export default function OfficeChairModel(props: ModelProps): JSX.Element {
     const headrestConnectorH = headrestGap; // altura do conector (preenche o gap)
 
     // ---- Config dos Braços ----
-    const armrestW = 0.35; // largura do braço (comprimento)
+    const armrestW = 0.4; // largura do braço (comprimento)
     const armrestD = 0.08; // profundidade do braço (largura)
-    const armrestH = 0.04; // altura/espessura do braço
+    const armrestH = 0.025; // altura/espessura do braço
     const armrestY = seatY + seatH / 2 + 0.15; // altura dos braços (acima do assento)
     const armrestOffsetX = seatW / 2 + armrestD / 2; // distância do centro (lateral do assento)
     const armrestZ = 0.05; // posição Z (ligeiramente à frente do centro do assento)
     const armrestRotationY = -Math.PI * 0.5; // ~90° rotação para frente
 
-    // ---- Config dos Suportes dos Braços ----
-    const armSupportR = 0.015; // raio dos suportes metálicos
-    const armSupportH = armrestY - seatY - seatH / 2; // altura dos suportes (do assento até o braço)
+    // ---- Config dos Conectores Curvos dos Braços ----
+    const armConnectorR = 0.02; // raio dos tubos conectores (similar ao conector central)
+    const armConnectorSegments = 8; // segmentos para suavidade da curva
 
     // ---- Config do Conector Central (Tubo Curvo) ----
     const centralConnectorR = 0.03; // raio do tubo central
@@ -95,6 +95,16 @@ export default function OfficeChairModel(props: ModelProps): JSX.Element {
         ), // ponto médio suave
         new Vector3(0, backrestY - backrestPartH, backrestZ - 0.08), // fim: base do encosto inferior
     ]);
+
+    // Curvas em L para os conectores dos braços (esquerdo e direito)
+    // Conectam do centro lateral do assento até a parte inferior dos braços
+    const createArmConnectorCurve = (side: -1 | 1): CatmullRomCurve3 => {
+        return new CatmullRomCurve3([
+            new Vector3(side * (seatW / 2 - 0.02), seatY, armrestZ), // início: lateral do assento
+            new Vector3(side * (seatW / 2 + 0.03), seatY + 0.04, armrestZ), // ponto médio: curva suave para fora e para cima
+            new Vector3(side * armrestOffsetX, armrestY - armrestH / 2 + 0.01, armrestZ), // fim: base do braço
+        ]);
+    };
 
     // Posições e rotações das partes do encosto (relativas ao grupo do encosto)
     // Cada parte tem altura backrestPartH, com gap backrestGap entre elas
@@ -187,30 +197,29 @@ export default function OfficeChairModel(props: ModelProps): JSX.Element {
             {sides.map((side) => (
                 <group key={`armrest-group-${side > 0 ? "right" : "left"}`}>
                     {/* Braço */}
-                    <RoundedBox
+                    <Box
                         args={[armrestW, armrestH, armrestD]}
-                        radius={0.01}
-                        smoothness={4}
                         position={[side * armrestOffsetX, armrestY, armrestZ]}
                         rotation={[0, armrestRotationY, 0]}
                         castShadow
                     >
                         {OrangeToon}
                         <Edges color={EdgeColor} />
-                    </RoundedBox>
+                    </Box>
 
-                    {/* Suporte do Braço */}
-                    <Cylinder
-                        args={[armSupportR, armSupportR, armSupportH]}
-                        position={[
-                            side * armrestOffsetX,
-                            seatY + seatH / 2 + armSupportH / 2,
-                            armrestZ,
+                    {/* Conector Curvo do Braço (Formato L) */}
+                    <Tube
+                        args={[
+                            createArmConnectorCurve(side),
+                            armConnectorSegments,
+                            armConnectorR,
+                            8,
+                            false,
                         ]}
                         castShadow
                     >
                         {MetalToon}
-                    </Cylinder>
+                    </Tube>
                 </group>
             ))}
 
