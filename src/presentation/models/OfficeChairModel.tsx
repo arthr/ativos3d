@@ -1,5 +1,5 @@
 import type { JSX } from "react";
-import { Box, Cylinder, Edges, Tube } from "@react-three/drei";
+import { Box, Cylinder, Edges, RoundedBox, Tube } from "@react-three/drei";
 import { aabbFromDims } from "./_utils";
 import { EdgeColor } from "./_materials";
 import { CatmullRomCurve3, Vector3 } from "three";
@@ -7,7 +7,7 @@ import { CatmullRomCurve3, Vector3 } from "three";
 export type ModelProps = JSX.IntrinsicElements["group"];
 
 // Envelope externo para navegação/seleção
-export const CHAIR_DIMS = { x: 0.6, y: 1.0, z: 0.6 };
+export const CHAIR_DIMS = { x: 0.8, y: 1.4, z: 0.6 }; // Aumentada largura X para acomodar braços
 export const CHAIR_AABB = aabbFromDims(CHAIR_DIMS.x, CHAIR_DIMS.y, CHAIR_DIMS.z);
 
 export default function OfficeChairModel(props: ModelProps): JSX.Element {
@@ -26,10 +26,34 @@ export default function OfficeChairModel(props: ModelProps): JSX.Element {
     const backrestY = 1.05; // altura base do encosto
     const backrestZ = -0.3; // posição Z (atrás do assento)
 
+    // ---- Config do Encosto da Cabeça ----
+    const headrestW = backrestW / 2; // metade da largura do encosto principal
+    const headrestH = 0.12; // altura do encosto da cabeça
+    const headrestT = backrestT; // mesma espessura do encosto principal
+    const headrestGap = 0.15; // espaço entre encosto superior e encosto da cabeça
+    const headrestY = backrestY + backrestPartH + backrestGap + headrestGap + headrestH / 2; // posição Y do encosto da cabeça
+
     // ---- Config dos Conectores ----
     const connectorR = 0.008; // raio dos cilindros conectores
     const connectorH = backrestGap + 0.02; // altura dos conectores (preenche o gap)
     const connectorOffsetX = 0.15; // distância do centro nas laterais
+
+    // ---- Config do Conector do Encosto da Cabeça ----
+    const headrestConnectorR = 0.012; // raio do conector central (mais grosso)
+    const headrestConnectorH = headrestGap; // altura do conector (preenche o gap)
+
+    // ---- Config dos Braços ----
+    const armrestW = 0.35; // largura do braço (comprimento)
+    const armrestD = 0.08; // profundidade do braço (largura)
+    const armrestH = 0.04; // altura/espessura do braço
+    const armrestY = seatY + seatH / 2 + 0.15; // altura dos braços (acima do assento)
+    const armrestOffsetX = seatW / 2 + armrestD / 2; // distância do centro (lateral do assento)
+    const armrestZ = 0.05; // posição Z (ligeiramente à frente do centro do assento)
+    const armrestRotationY = -Math.PI * 0.5; // ~90° rotação para frente
+
+    // ---- Config dos Suportes dos Braços ----
+    const armSupportR = 0.015; // raio dos suportes metálicos
+    const armSupportH = armrestY - seatY - seatH / 2; // altura dos suportes (do assento até o braço)
 
     // ---- Config do Conector Central (Tubo Curvo) ----
     const centralConnectorR = 0.03; // raio do tubo central
@@ -159,6 +183,37 @@ export default function OfficeChairModel(props: ModelProps): JSX.Element {
                 <Edges color={EdgeColor} />
             </Box>
 
+            {/* ========== BRAÇOS ========== */}
+            {sides.map((side) => (
+                <group key={`armrest-group-${side > 0 ? "right" : "left"}`}>
+                    {/* Braço */}
+                    <RoundedBox
+                        args={[armrestW, armrestH, armrestD]}
+                        radius={0.01}
+                        smoothness={4}
+                        position={[side * armrestOffsetX, armrestY, armrestZ]}
+                        rotation={[0, armrestRotationY, 0]}
+                        castShadow
+                    >
+                        {OrangeToon}
+                        <Edges color={EdgeColor} />
+                    </RoundedBox>
+
+                    {/* Suporte do Braço */}
+                    <Cylinder
+                        args={[armSupportR, armSupportR, armSupportH]}
+                        position={[
+                            side * armrestOffsetX,
+                            seatY + seatH / 2 + armSupportH / 2,
+                            armrestZ,
+                        ]}
+                        castShadow
+                    >
+                        {MetalToon}
+                    </Cylinder>
+                </group>
+            ))}
+
             {/* ========== CONECTOR CENTRAL CURVO ========== */}
             <Tube
                 args={[
@@ -203,6 +258,31 @@ export default function OfficeChairModel(props: ModelProps): JSX.Element {
                         </Cylinder>
                     )),
                 )}
+
+                {/* Encosto da Cabeça */}
+                <Box
+                    args={[headrestW, headrestH, headrestT]}
+                    position={[0, headrestY - backrestY, backrestPositions[0]?.offsetZ ?? -0.14]}
+                    rotation={[backrestPositions[0]?.rotationX ?? -Math.PI * 0.01, 0, 0]}
+                    castShadow
+                >
+                    {OrangeToon}
+                    <Edges color={EdgeColor} />
+                </Box>
+
+                {/* Conector Central do Encosto da Cabeça */}
+                <Cylinder
+                    args={[headrestConnectorR, headrestConnectorR, headrestConnectorH]}
+                    position={[
+                        0,
+                        headrestY - backrestY - headrestH / 2 - headrestGap / 2,
+                        backrestPositions[0]?.offsetZ ?? -0.14,
+                    ]}
+                    rotation={[backrestPositions[0]?.rotationX ?? -Math.PI * 0.01, 0, 0]}
+                    castShadow
+                >
+                    {MetalToon}
+                </Cylinder>
             </group>
         </group>
     );

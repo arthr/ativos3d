@@ -6,7 +6,7 @@ import { WhiteToon, EdgeColor } from "./_materials";
 export type ModelProps = JSX.IntrinsicElements["group"];
 
 // Dimensões externas (L x H x P)
-export const DESK_DIMS = { x: 2.5, y: 1.2, z: 1 };
+export const DESK_DIMS = { x: 2.5, y: 1.1, z: 1 };
 export const DESK_AABB = aabbFromDims(DESK_DIMS.x, DESK_DIMS.y, DESK_DIMS.z);
 
 type SideSpec = {
@@ -31,8 +31,8 @@ export default function OfficeDeskModel(props: ModelProps): JSX.Element {
     const legSize = 0.04; // seção pé (quadrado)
 
     // saias
-    const skirtH = legH / 2; // altura (vertical)
-    const skirtFrontH = skirtH / 3; // altura da saia da frente
+    const skirtH = legH / 3; // altura (vertical)
+    const skirtFrontH = skirtH / 5; // altura da saia da frente
     const skirtT = 0.04; // espessura (profundidade da saia)
     const gapTop = 0; // opcional: folga entre topo da saia e tampo
 
